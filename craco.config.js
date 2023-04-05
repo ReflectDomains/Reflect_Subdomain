@@ -9,6 +9,11 @@ module.exports = {
       });
       return config;
     },
+    // resolve: {
+    //   alias: {
+    //     "@material-ui/styled-engine": "@material-ui/styled-engine-sc",
+    //   },
+    // },
   },
   plugins: [{ plugin: CracoLessPlugin }],
   // devServer: {

@@ -1,10 +1,10 @@
+import { styled } from "@mui/material";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Suspense, memo } from "react";
 import { Outlet } from "react-router";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 
-const Header = styled.div`
+const Header = styled("div")`
   height: 80px;
   background-color: aquamarine;
   display: flex;

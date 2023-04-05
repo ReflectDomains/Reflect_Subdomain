@@ -1,9 +1,12 @@
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
     <div>
       <p>home</p>
+
+      <Button>demo</Button>
 
       <div>
         <Link to="/children">Go to children</Link>
