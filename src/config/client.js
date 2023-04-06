@@ -2,7 +2,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient } from "wagmi";
-import { polygonMumbai, polygon } from "wagmi/chains";
+import { goerli } from "wagmi/chains";
 import {
   injectedWallet,
   metaMaskWallet,
@@ -15,7 +15,7 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, provider } = configureChains(
-  [polygonMumbai, polygon],
+  [goerli],
   [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
 );
 
@@ -33,7 +33,7 @@ const connectors = connectorsForWallets([
 ]);
 
 const wagmiClient = createClient({
-  // autoConnect: true,
+  autoConnect: true,
   connectors,
   provider,
 });
