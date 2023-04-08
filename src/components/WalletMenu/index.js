@@ -3,9 +3,10 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { memo, useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { splitAddress } from "../../utils";
-import { TrustWallet } from "../../assets";
+import { ProfileIcon, ExitIcon } from "../../assets";
 import { ListItemText, Menu, MenuItem, styled } from "@mui/material";
-import { ExitToAppOutlined, PermIdentityOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import CommonAvatar from "../CommonAvatar";
 
 const WalletItem = styled(MenuItem)(({ theme }) => ({
   ...theme.typography.caption,
@@ -17,16 +18,23 @@ const WalletItem = styled(MenuItem)(({ theme }) => ({
 const ConnectWallet = () => {
   const { openConnectModal } = useConnectModal();
   const { disconnect } = useDisconnect();
-  const { address, isConnecting, isDisconnected } = useAccount();
-
+  const { address } = useAccount();
+  // const { data } = useEnsAvatar({ address });
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     console.log("event:", event);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClickProfile = () => {
+    navigate("/profile");
+    handleClose();
   };
 
   const disconnectWallet = () => {
@@ -52,7 +60,7 @@ const ConnectWallet = () => {
         <LoadingButton
           id="wallet-menu"
           shape="round"
-          startIcon={<TrustWallet />}
+          startIcon={<CommonAvatar scope={24} address={address} />}
           aria-controls={open ? "wallet-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
@@ -71,12 +79,12 @@ const ConnectWallet = () => {
         }}
         sx={(theme) => ({ marginTop: theme.spacing(1) })}
       >
-        <WalletItem onClick={handleClose}>
-          <PermIdentityOutlined fontSize="small" />
+        <WalletItem onClick={handleClickProfile}>
+          <ProfileIcon />
           <ListItemText>Profile</ListItemText>
         </WalletItem>
         <WalletItem onClick={disconnectWallet}>
-          <ExitToAppOutlined fontSize="small" />
+          <ExitIcon />
           <ListItemText>Disconnect</ListItemText>
         </WalletItem>
       </Menu>

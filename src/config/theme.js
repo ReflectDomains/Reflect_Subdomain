@@ -8,11 +8,13 @@ let theme = createTheme({
       contrastText: "#FFFFFFE5",
       hover: "#2A13EA",
       active: "#2A1372",
+      disabled:
+        "linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), #2A13AE",
     },
     secondary: {
-      main: "#fff",
+      main: "#F2F4F5",
       contrastText: "#333333",
-      hover: "#F2F4F5",
+      hover: "#E2E2E2",
     },
   },
   spacing: 10,
@@ -30,6 +32,15 @@ let theme = createTheme({
       fontWeight: 500,
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 800,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
 });
 
 theme = createTheme(theme, {
@@ -43,13 +54,17 @@ theme = createTheme(theme, {
     MuiButton: {
       styleOverrides: {
         root: ({ ownerState, theme }) => ({
+          minWidth: "120px",
+          height: "44px",
           background: theme.palette.secondary.main,
           color: theme.palette.secondary.contrastText,
           fontSize: theme.typography.fontSize,
+          fontWeight: 800,
           borderRadius: theme.spacing(1),
           textTransform: "initial",
           boxShadow: "unset",
           ...(ownerState.shape === "round" && {
+            minWidth: "180px",
             borderRadius: "50px",
           }),
           ":hover": {
@@ -66,6 +81,10 @@ theme = createTheme(theme, {
           ":active": {
             backgroundColor: theme.palette.primary.active,
           },
+          "&.Mui-disabled": {
+            color: theme.palette.primary.contrastText,
+            background: theme.palette.primary.disabled,
+          },
         }),
       },
     },
@@ -80,6 +99,8 @@ theme = createTheme(theme, {
     MuiList: {
       styleOverrides: {
         root: {
+          display: "grid",
+          gap: "10px",
           padding: theme.spacing(1),
         },
       },
@@ -104,9 +125,6 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           padding: theme.spacing(1),
-          ":hover": {
-            color: "#F2F4F5",
-          },
         },
       },
     },
@@ -114,9 +132,63 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           minWidth: "unset",
-          padding: theme.spacing(1, 2),
+          padding: theme.spacing(1),
           borderRadius: theme.spacing(1),
           fontSize: theme.typography.fontSize,
+          transition: "all 0.25s",
+          ":hover": {
+            backgroundColor: "#F2F4F5",
+          },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: theme.typography.fontSize,
+          color: theme.typography.caption.color,
+        },
+      },
+    },
+    MuiInput: {
+      styleOverrides: {
+        root: {
+          minWidth: "320px",
+          height: "44px",
+          border: "1px solid #00000033",
+          borderRadius: theme.spacing(1),
+          padding: theme.spacing(1),
+          transition: "border-width .1s",
+          "&.Mui-focused": {
+            border: "2px solid #2A13AE66",
+          },
+          ":hover": {
+            borderWidth: "2px",
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          width: "350px",
+          "& .MuiOutlinedInput-root": {
+            padding: theme.spacing(1),
+            paddingBottom: theme.spacing(3.5),
+            fieldset: {
+              transition: "border-width .1s",
+              borderRadius: theme.spacing(1),
+            },
+            ":hover fieldset": {
+              border: "2px solid #00000033",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#2A13AE66",
+            },
+          },
+          input: {
+            padding: 0,
+          },
         },
       },
     },

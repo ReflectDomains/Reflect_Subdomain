@@ -8,8 +8,6 @@ const AuthRouter = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("address:", address);
-
   useEffect(() => {
     const matches = matchRoutes(routes, location);
 
@@ -25,8 +23,6 @@ const AuthRouter = ({ children }) => {
     if (needConnected && !address) {
       alert("Please connected wallet");
       navigate("/");
-    } else {
-      navigate(location.pathname);
     }
     // eslint-disable-next-line
   }, [location.pathname, address]);

@@ -1,8 +1,6 @@
-import { Box, Stack } from "@mui/material";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Stack } from "@mui/material";
 import { memo } from "react";
-import { Link } from "react-router-dom";
-import { Logo } from "../../assets/index";
+import { LogoIcon } from "../../assets/index";
 import WalletMenu from "../WalletMenu";
 
 const Header = () => {
@@ -12,12 +10,11 @@ const Header = () => {
       justifyContent="space-between"
       alignItems="center"
       sx={(theme) => ({
-        height: "104px",
+        height: "70px",
         padding: theme.spacing(0, 4),
       })}
     >
-      <Logo />
-      {/* <ConnectButton showBalance={false} /> */}
+      <LogoIcon />
       <WalletMenu />
     </Stack>
   );

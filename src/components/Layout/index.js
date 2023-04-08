@@ -1,8 +1,6 @@
-import { styled } from "@mui/material";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Container } from "@mui/material";
 import { Suspense, memo } from "react";
 import { Outlet } from "react-router";
-import { Link } from "react-router-dom";
 import Header from "./Header";
 
 const Layout = () => {
@@ -10,7 +8,9 @@ const Layout = () => {
     <div>
       <Header />
       <Suspense fallback={"loading"}>
-        <Outlet />
+        <Container maxWidth="md" sx={{ maxWidth: "800px", margin: "0 auto" }}>
+          <Outlet />
+        </Container>
       </Suspense>
     </div>
   );
