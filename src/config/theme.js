@@ -273,6 +273,15 @@ theme = createTheme(theme, {
         }),
       },
     },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontSize: "16px",
+          color: "#333",
+          fontWeight: 500,
+        },
+      },
+    },
   },
 });
 

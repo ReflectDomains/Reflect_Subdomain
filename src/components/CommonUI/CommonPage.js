@@ -1,4 +1,4 @@
-import { Box, Card, Paper, Typography, styled } from "@mui/material";
+import { Box, Card, Typography, styled } from "@mui/material";
 import { memo } from "react";
 
 const Title = styled(Typography)(() => ({

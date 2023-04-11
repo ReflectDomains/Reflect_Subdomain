@@ -1,23 +1,13 @@
-import {
-  Avatar,
-  Box,
-  CardContent,
-  CardMedia,
-  IconButton,
-  Stack,
-  Tab,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Box, IconButton, Stack, Tab, Typography, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import avatar from "../../assets/images/avatar.png";
 import CommonPage from "../../components/CommonUI/CommonPage";
 import CommonAvatar from "../../components/CommonAvatar";
-import { useAccount } from "wagmi";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { TabContext, TabList } from "@mui/lab";
 import { useState } from "react";
 import SubNames from "./SubNames";
+import Domains from "./Domains";
 
 const ProfileBackground = styled(Box)(() => ({
   width: "100%",
@@ -55,7 +45,7 @@ const ProfileTab = styled(Tab)(({ theme }) => ({
 const Profile = () => {
   const navigate = useNavigate();
   // profile | subNames | domains
-  const [tabValue, setTabValue] = useState("subNames");
+  const [tabValue, setTabValue] = useState("domains");
 
   const handleChangeTab = (_, newValue) => {
     setTabValue(newValue);
@@ -92,7 +82,11 @@ const Profile = () => {
             <Bio>This is a Web3 Reflect domain</Bio>
           </Box>
         </UserBasicInfo>
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            navigate("/setting");
+          }}
+        >
           <SettingsIcon
             fontSize="30px"
             sx={(theme) => ({
@@ -124,7 +118,7 @@ const Profile = () => {
           </Box>
           {tabValue === "portfolio" && <Box>portfolio</Box>}
           {tabValue === "subNames" && <SubNames />}
-          {tabValue === "domains" && <Box>domains</Box>}
+          {tabValue === "domains" && <Domains />}
         </TabContext>
       </Box>
     </CommonPage>

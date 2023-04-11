@@ -2,6 +2,7 @@ import { Stack } from "@mui/material";
 import { memo } from "react";
 import { LogoIcon } from "../../assets/index";
 import WalletMenu from "../WalletMenu";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -14,7 +15,15 @@ const Header = () => {
         padding: theme.spacing(0, 4),
       })}
     >
-      <LogoIcon />
+      <Link to="/">
+        <LogoIcon
+          sx={{
+            ":hover": {
+              cursor: "pointer",
+            },
+          }}
+        />
+      </Link>
       <WalletMenu />
     </Stack>
   );

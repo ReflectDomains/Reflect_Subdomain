@@ -43,11 +43,14 @@ const Setting = () => {
             onError={handleUploadAvatarError}
           />
           <MultipleInput
+            value={inpVal}
             label="Slogan"
             labelSx={LabelText}
             multiline
             rows={4}
             minRows={4}
+            maxcounts={100}
+            onChange={handleChange}
           />
 
           {/* Social Media */}

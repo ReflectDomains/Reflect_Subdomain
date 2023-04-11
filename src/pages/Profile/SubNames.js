@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Input,
-  TextField,
   styled,
   Stack,
   Divider,
@@ -126,7 +125,7 @@ const SubNames = () => {
                 },
               })}
             >
-              <Title className="title">Accordion 1</Title>
+              <Title className="title">reflect.metabown.eth</Title>
               <ExpiryDate className="des">
                 Expiry: 2025.02.21(XX days)
               </ExpiryDate>
