@@ -96,6 +96,11 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {},
+      },
+    },
     MuiList: {
       styleOverrides: {
         root: {
@@ -152,7 +157,7 @@ theme = createTheme(theme, {
     },
     MuiInput: {
       styleOverrides: {
-        root: {
+        root: ({ ownerState, theme }) => ({
           minWidth: "320px",
           height: "44px",
           border: "1px solid #00000033",
@@ -165,7 +170,24 @@ theme = createTheme(theme, {
           ":hover": {
             borderWidth: "2px",
           },
-        },
+          ...(ownerState.variant === "filled" && {
+            backgroundColor: theme.palette.secondary.main,
+            border: "1px solid transparent",
+            transition: "border-width .1s",
+            ...theme.typography.caption,
+            "&:hover": {
+              border: "1px solid #0000001A",
+            },
+            "&.Mui-focused": {
+              border: "1px solid #0000001A",
+            },
+            "&::placeholder": {
+              fontSize: "16px",
+              fontWeight: 500,
+              color: "#999",
+            },
+          }),
+        }),
       },
     },
     MuiTextField: {
@@ -190,6 +212,65 @@ theme = createTheme(theme, {
             padding: 0,
           },
         },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "unset",
+        },
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderTop: "0px",
+          boxShadow: "unset",
+          "&:before": {
+            height: "0px",
+          },
+          "&.Mui-expanded": {
+            margin: "unset",
+            marginTop: "10px",
+          },
+          "&:hover": {},
+        }),
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          height: "60px",
+          padding: theme.spacing(0, 2),
+          minHeight: "unset",
+          borderRadius: theme.spacing(1),
+          "&:hover": {
+            backgroundColor: theme.palette.secondary.main,
+          },
+          "&.Mui-expanded": {
+            minHeight: "unset",
+            backgroundColor: theme.palette.secondary.main,
+            borderRadius: theme.spacing(1, 1, 0, 0),
+          },
+          "& .MuiAccordionSummary-content": {
+            margin: 0,
+            "&.Mui-expanded": {
+              margin: 0,
+            },
+          },
+        }),
+      },
+    },
+    MuiAccordionDetails: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          padding: theme.spacing(0, 2, 2),
+          backgroundColor: theme.palette.secondary.main,
+          borderRadius: theme.spacing(0, 0, 1, 1),
+          "&.Mui-expanded": {
+            transition: "unset",
+          },
+        }),
       },
     },
   },

@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, styled } from "@mui/material";
+import { Box, Card, Paper, Typography, styled } from "@mui/material";
 import { memo } from "react";
 
 const Title = styled(Typography)(() => ({
@@ -6,14 +6,16 @@ const Title = styled(Typography)(() => ({
   fontWeight: 800,
 }));
 
-const Content = styled(Paper)(({ theme }) => ({
+const Content = styled(Card)(({ theme }) => ({
+  position: "relative",
   boxShadow: "0px 4px 34px -8px rgba(39, 23, 132, 0.2)",
   borderRadius: "30px",
   padding: theme.spacing(4),
   marginTop: theme.spacing(2),
+  zIndex: 2,
 }));
 
-const CommonPage = ({ title, children }) => {
+const CommonPage = ({ title, children, sx }) => {
   return (
     <Box
       sx={(theme) => ({
@@ -21,7 +23,7 @@ const CommonPage = ({ title, children }) => {
       })}
     >
       <Title>{title}</Title>
-      <Content>{children}</Content>
+      <Content sx={sx}>{children}</Content>
     </Box>
   );
 };

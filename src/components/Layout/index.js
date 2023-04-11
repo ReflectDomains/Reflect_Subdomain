@@ -8,7 +8,11 @@ const Layout = () => {
     <div>
       <Header />
       <Suspense fallback={"loading"}>
-        <Container maxWidth="md" sx={{ maxWidth: "800px", margin: "0 auto" }}>
+        <Container
+          maxWidth="md"
+          disableGutters={true}
+          sx={{ padding: "0", margin: "0 auto" }}
+        >
           <Outlet />
         </Container>
       </Suspense>

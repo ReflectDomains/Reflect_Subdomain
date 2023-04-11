@@ -53,7 +53,7 @@ const AvatarInput = ({
     <Box>
       <InputLabel sx={labelSx}>{label}</InputLabel>
       <Stack direction="row" alignItems="center" spacing={2} mt={1}>
-        <CommonAvatar scope={100} address={address} avatar={avatar} />
+        <CommonAvatar scope={100} address={address} />
         <LoadingButton component="label" loading={uploading}>
           Replace
           <input
