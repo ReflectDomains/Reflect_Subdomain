@@ -2,6 +2,11 @@ const { createTheme } = require("@mui/material");
 
 // font-size
 let theme = createTheme({
+  color: {
+    success: "#41BF82",
+    main: "#2A13AE",
+    error: "#D85C4B",
+  },
   palette: {
     primary: {
       main: "#2A13AE",
@@ -62,7 +67,7 @@ theme = createTheme(theme, {
         root: ({ ownerState, theme }) => ({
           minWidth: "120px",
           height: "44px",
-          background: theme.palette.secondary.main,
+          background: "#FFF",
           color: theme.palette.secondary.contrastText,
           fontSize: theme.typography.fontSize,
           fontWeight: 800,
@@ -104,6 +109,14 @@ theme = createTheme(theme, {
             background: theme.palette.primary.disabled,
           },
         }),
+        outlined: ({ theme }) => ({
+          color: theme.palette.primary.main,
+          ":hover": {
+            backgroundColor: "#fff",
+            borderRadius: theme.palette.primary.hover,
+            color: theme.palette.primary.hover,
+          },
+        }),
       },
     },
     MuiPaper: {
@@ -134,6 +147,10 @@ theme = createTheme(theme, {
           padding: theme.spacing(1, 2),
           borderRadius: theme.spacing(1),
           fontSize: theme.typography.fontSize,
+          transition: "all 0.25s",
+          ":hover": {
+            backgroundColor: "#F2F4F5",
+          },
         },
       },
     },

@@ -2,6 +2,7 @@ import { Box, Button, Stack, Typography, styled } from "@mui/material";
 import { MentionIcon } from "../../assets";
 import PopularDomainCard from "./PopularDomainCard";
 import avatar from "../../assets/images/avatar.png";
+import { useNavigate } from "react-router-dom";
 
 const Title = styled(Typography)(() => ({
   fontSize: "36px",
@@ -27,12 +28,21 @@ const PopularDomainsText = styled(Typography)(({ theme }) => ({
 }));
 
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
-    <Box>
+    <>
       <Title>One-stop buy,sale,management of your web3 subname of ENS</Title>
 
       <Stack direction="row" justifyContent="center" spacing={3} mt={6}>
-        <HomeButton color="black">Buy Subname </HomeButton>
+        <HomeButton
+          color="black"
+          onClick={() => {
+            navigate("/search");
+          }}
+        >
+          Buy Subname{" "}
+        </HomeButton>
         <Stack
           direction="row"
           justifyContent="center"
@@ -61,7 +71,7 @@ const Home = () => {
         <PopularDomainCard avatar={avatar} name="reflect.eth" cup={"🥉"} />
         <PopularDomainCard avatar={avatar} name="sns.eth" />
       </Stack>
-    </Box>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ import Layout from "../components/Layout";
 const Home = lazy(() => import("../pages/Home"));
 const OthersPages = lazy(() => import("../pages/OthersPages"));
 const ErrorPage = lazy(() => import("../pages/ErrorPage"));
-const Children = lazy(() => import("../pages/Home/Children"));
+const Search = lazy(() => import("../pages/Search"));
 const Profile = lazy(() => import("../pages/Profile"));
 const Setting = lazy(() => import("../pages/Setting"));
 
@@ -21,8 +21,8 @@ const routes = [
       },
 
       {
-        path: "children/:id",
-        element: <Children />,
+        path: "search",
+        element: <Search />,
         needConnected: true,
       },
       {
