@@ -1,78 +1,78 @@
-import { Box, Button, Stack, Typography, styled } from "@mui/material";
-import { MentionIcon } from "../../assets";
-import PopularDomainCard from "./PopularDomainCard";
-import avatar from "../../assets/images/avatar.png";
-import { useNavigate } from "react-router-dom";
+import { Button, Stack, Typography, styled } from '@mui/material';
+import { MentionIcon } from '../../assets';
+import PopularDomainCard from './PopularDomainCard';
+import avatar from '../../assets/images/avatar.png';
+import { useNavigate } from 'react-router-dom';
 
 const Title = styled(Typography)(() => ({
-  fontSize: "36px",
-  fontWeight: 800,
-  textAlign: "center",
-  marginTop: "20vh",
+	fontSize: '36px',
+	fontWeight: 800,
+	textAlign: 'center',
+	marginTop: '20vh',
 }));
 
 const HomeButton = styled(Button)(({ theme }) => ({
-  minWidth: "300px",
-  height: "50px",
+	minWidth: '300px',
+	height: '50px',
 }));
 
 const MentionButton = styled(MentionIcon)(() => ({
-  cursor: "pointer",
+	cursor: 'pointer',
 }));
 
 const PopularDomainsText = styled(Typography)(({ theme }) => ({
-  textAlign: "center",
-  fontSize: "28px",
-  fontWeight: 800,
-  marginTop: theme.spacing(14),
+	textAlign: 'center',
+	fontSize: '28px',
+	fontWeight: 800,
+	marginTop: theme.spacing(14),
 }));
 
 const Home = () => {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
 
-  return (
-    <>
-      <Title>One-stop buy,sale,management of your web3 subname of ENS</Title>
+	return (
+		<>
+			<Title>One-stop buy,sale,management of your web3 subname of ENS</Title>
 
-      <Stack direction="row" justifyContent="center" spacing={3} mt={6}>
-        <HomeButton
-          color="black"
-          onClick={() => {
-            navigate("/search");
-          }}
-        >
-          Buy Subname{" "}
-        </HomeButton>
-        <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          spacing={1}
-        >
-          <HomeButton color="black">Earn By Subname</HomeButton>
-          <MentionButton
-            onClick={() => {
-              console.log("click mention icon");
-            }}
-          />
-        </Stack>
-      </Stack>
+			<Stack direction="row" justifyContent="center" spacing={3} mt={6}>
+				<HomeButton
+					color="black"
+					onClick={() => {
+						navigate('/search');
+					}}
+				>
+					Buy Subname{' '}
+				</HomeButton>
+				<Stack
+					direction="row"
+					justifyContent="center"
+					alignItems="center"
+					spacing={1}
+				>
+					<HomeButton color="black">Earn By Subname</HomeButton>
+					<MentionButton
+						onClick={() => {
+							console.log('click mention icon');
+						}}
+					/>
+				</Stack>
+			</Stack>
 
-      <PopularDomainsText>🔥 Popular Domain Names</PopularDomainsText>
+			<PopularDomainsText>🔥 Popular Domain Names</PopularDomainsText>
 
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mt={5}
-      >
-        <PopularDomainCard avatar={avatar} name="jassen.eth" cup={"🥇"} />
-        <PopularDomainCard avatar={avatar} name="meta.eth" cup={"🥈"} />
-        <PopularDomainCard avatar={avatar} name="reflect.eth" cup={"🥉"} />
-        <PopularDomainCard avatar={avatar} name="sns.eth" />
-      </Stack>
-    </>
-  );
+			<Stack
+				direction="row"
+				justifyContent="space-between"
+				alignItems="center"
+				mt={5}
+			>
+				<PopularDomainCard avatar={avatar} name="jassen.eth" cup={'🥇'} />
+				<PopularDomainCard avatar={avatar} name="meta.eth" cup={'🥈'} />
+				<PopularDomainCard avatar={avatar} name="reflect.eth" cup={'🥉'} />
+				<PopularDomainCard avatar={avatar} name="sns.eth" />
+			</Stack>
+		</>
+	);
 };
 
 export default Home;
