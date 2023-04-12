@@ -16,10 +16,16 @@ import {
   Box,
   TableBody,
 } from "@mui/material";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import DataTable from "./DataTable";
 import { LoadingButton } from "@mui/lab";
+import {
+  digitDefault,
+  digitsDifferentLengthToDefaultPrice,
+  digitsLength,
+  tokenSetDefault,
+} from "../../config/profilePageSetting";
 
 const Cell = styled(TableCell)(({ theme }) => ({
   width: "50px",
@@ -88,24 +94,19 @@ const ManageDomain = () => {
 
   const [domainList, setDomainList] = useState(list);
 
-  const [checkList, setCheckList] = useState({
-    USDT: true,
-    USDC: false,
-    ETH: false,
-    DAI: false,
-  });
+  const [checkList, setCheckList] = useState(tokenSetDefault);
+  const [tokenPriceList, setTokenPriceList] = useState(new Map());
 
   const [digitChecked, setDightChecked] = useState(true);
 
-  const calCheckedCount = useCallback(() => {
+  const calCheckedCount = useMemo(() => {
     const arr = Object.values(checkList);
     const checkedList = arr.filter((item) => item === true);
-    console.log("checkedList:", checkedList);
     return checkedList.length;
   }, [checkList]);
 
   const tableWidth = useMemo(() => {
-    return calCheckedCount() * 20;
+    return calCheckedCount * 20;
   }, [calCheckedCount]);
 
   const handleChangeToken = useCallback(
@@ -119,13 +120,59 @@ const ManageDomain = () => {
     [checkList]
   );
 
-  console.log("checkList:", checkList);
-
   const handleChangeDigit = (event) => {
     setDightChecked(event.target.checked);
+    setCheckList({ ...tokenSetDefault });
+    setTokenPriceList(new Map());
   };
 
-  console.log("tableWidth:", tableWidth);
+  // 说明
+  // 两种模式的价格默认值和域名长度都放在config里面，作为一个配置项
+  // 币种+价格的列表存为map，格式: usdt: [10, 10 ,10], 数组里面的对应的是域名长度 3， 4， 4+，这个配置对应config里面的 digitsLength
+  // 进入页面的时候就获取默认的选择币种对tokenPriceList变量进行操作，更具by-digit的选择状态存入默认价格
+  // 如果checkList改变也会触发tokenPriceList变量的改变，设置新的token和它的默认价格
+  // 改变对应的token的价格修改tokenPriceList已有的key对应长度的价格，(因为我把域名长度作为了常量，所以它的下标index都是固定的，不需要在数组里面循环查找)
+
+  const [saveTimeId, setSaveTimeId] = useState(null);
+
+  const changePrice = useCallback(
+    (v, token, pricePlace) => {
+      saveTimeId && clearTimeout(saveTimeId);
+      const id = setTimeout(() => {
+        const oldTokenPrice = tokenPriceList.has(token)
+          ? [...tokenPriceList.get(token)]
+          : [...digitsDifferentLengthToDefaultPrice];
+        const newPrice = v.target.value;
+        oldTokenPrice.splice(pricePlace, 1, newPrice);
+        setTokenPriceList((v) => v.set(token, oldTokenPrice));
+      }, 200);
+      setSaveTimeId(id);
+      return () => saveTimeId && clearTimeout(saveTimeId);
+    },
+    [tokenPriceList, saveTimeId]
+  );
+
+  const tokenPriceValue = useCallback(
+    (token) => {
+      if (!tokenPriceList.has(token)) {
+        return [...digitsDifferentLengthToDefaultPrice];
+      }
+      return [...tokenPriceList.get(token)];
+    },
+    [tokenPriceList]
+  );
+
+  useEffect(() => {
+    const keys = Object.keys(checkList);
+    keys.forEach((item) => {
+      if (checkList[item]) {
+        const priceData = digitChecked ? tokenPriceValue(item) : [digitDefault];
+        setTokenPriceList((v) => v.set(item, priceData));
+      }
+    });
+  }, [checkList, digitChecked, tokenPriceValue]);
+
+  // console.log(tokenPriceList, 'token price list');
 
   return (
     <>
@@ -147,8 +194,8 @@ const ManageDomain = () => {
                   name={value}
                   value={checkList[value]}
                   checked={checkList[value]}
-                  required={value === "USDT"}
-                  disabled={value !== "USDT"}
+                  // required={value === 'USDT'}
+                  // disabled={value !== 'USDT'}
                   onChange={handleChangeToken}
                 />
               }
@@ -181,26 +228,31 @@ const ManageDomain = () => {
             <TableHead>
               <TableRow sx={{ borderRadius: "20px" }}>
                 <Cell>Token/digit</Cell>
-                <Cell>3</Cell>
-                <Cell>4</Cell>
-                <Cell>4+</Cell>
+                {digitsLength.map((item) => (
+                  <Cell key={item}>{item}</Cell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <Cell component="th" scope="row">
-                  Price
-                </Cell>
-                <Cell component="th" scope="row">
-                  <input defaultValue={10} />
-                </Cell>
-                <Cell component="th" scope="row">
-                  <input defaultValue={10} />
-                </Cell>
-                <Cell component="th" scope="row">
-                  <input defaultValue={10} />
-                </Cell>
-              </TableRow>
+              {Object.keys(checkList).map((value) =>
+                checkList[value] ? (
+                  <TableRow key={value}>
+                    <Cell component="th" scope="row">
+                      {value}
+                    </Cell>
+                    {digitsDifferentLengthToDefaultPrice.map((price, index) => (
+                      <Cell component="th" scope="row" key={index}>
+                        <input
+                          defaultValue={price}
+                          onInput={(v) => changePrice(v, value, index)}
+                        />
+                      </Cell>
+                    ))}
+                  </TableRow>
+                ) : (
+                  ""
+                )
+              )}
             </TableBody>
           </Table>
         ) : (
@@ -221,7 +273,10 @@ const ManageDomain = () => {
                 {Object.keys(checkList).map((value) =>
                   checkList[value] ? (
                     <Cell component="th" scope="row" key={value}>
-                      <input defaultValue={10} />
+                      <input
+                        defaultValue={digitDefault}
+                        onInput={(v) => changePrice(v, value, 0)}
+                      />
                     </Cell>
                   ) : (
                     ""
