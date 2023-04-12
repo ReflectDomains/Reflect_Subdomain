@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
-import DataTable from "./DataTable";
 import { LoadingButton } from "@mui/lab";
 import {
   digitDefault,
@@ -48,51 +47,10 @@ const Cell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const Label = styled(Typography)(({ theme }) => ({
-  // ...theme.typography.caption,
-  // fontSize: theme.typography.fontSize,
-}));
-
-const list = [
-  {
-    name: "Jassen.eth",
-    type: "Management",
-    digit: true,
-    tokens: {
-      USDT: true,
-      USDC: false,
-      ETH: false,
-      DAI: false,
-    },
-  },
-  {
-    name: "meta.eth",
-    type: "earn",
-    digit: false,
-    tokens: {
-      USDT: true,
-      USDC: false,
-      ETH: false,
-      DAI: false,
-    },
-  },
-  {
-    name: "hash.eth",
-    type: "Management",
-    digit: false,
-    tokens: {
-      USDT: true,
-      USDC: false,
-      ETH: false,
-      DAI: false,
-    },
-  },
-];
+const Label = styled(Typography)(() => ({}));
 
 const ManageDomain = () => {
   const { address } = useAccount();
-
-  const [domainList, setDomainList] = useState(list);
 
   const [checkList, setCheckList] = useState(tokenSetDefault);
   const [tokenPriceList, setTokenPriceList] = useState(new Map());
@@ -113,9 +71,17 @@ const ManageDomain = () => {
     (event) => {
       const name = event.target.name;
       const checked = event.target.checked;
-      let falseCount = 0;
-      // TODO:判断是否只剩最后一个可选项，如果是则不可取消选中
-      setCheckList({ ...checkList, [name]: checked });
+      const newChecked = { ...checkList, [name]: checked };
+      // get true length in checklist
+      const trueLength = Object.values(newChecked).filter(
+        (item) => item === true
+      ).length;
+      // required choose one
+      if (trueLength >= 1) {
+        setCheckList({ ...newChecked });
+      } else {
+        setCheckList({ ...checkList });
+      }
     },
     [checkList]
   );
@@ -145,7 +111,7 @@ const ManageDomain = () => {
         const newPrice = v.target.value;
         oldTokenPrice.splice(pricePlace, 1, newPrice);
         setTokenPriceList((v) => v.set(token, oldTokenPrice));
-      }, 200);
+      }, 300);
       setSaveTimeId(id);
       return () => saveTimeId && clearTimeout(saveTimeId);
     },
@@ -172,8 +138,6 @@ const ManageDomain = () => {
     });
   }, [checkList, digitChecked, tokenPriceValue]);
 
-  // console.log(tokenPriceList, 'token price list');
-
   return (
     <>
       {/* Choose tokens */}
@@ -192,7 +156,7 @@ const ManageDomain = () => {
               control={
                 <Checkbox
                   name={value}
-                  value={checkList[value]}
+                  // value={checkList[value]}
                   checked={checkList[value]}
                   // required={value === 'USDT'}
                   // disabled={value !== 'USDT'}
@@ -287,7 +251,6 @@ const ManageDomain = () => {
           </Table>
         )}
       </TableContainer>
-      {/* <DataTable digitChecked={digitChecked} /> */}
       <Box>
         <LoadingButton sx={{ width: "85px" }} variant="contained">
           Confirm
