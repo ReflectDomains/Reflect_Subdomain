@@ -25,7 +25,6 @@ const ConnectWallet = () => {
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
-    console.log("event:", event);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {

@@ -16,6 +16,12 @@ let theme = createTheme({
       contrastText: "#333333",
       hover: "#E2E2E2",
     },
+    black: {
+      main: "#333",
+      contrastText: "#fff",
+      hover: "#000",
+      disabled: "#666666",
+    },
   },
   spacing: 10,
   typography: {
@@ -63,14 +69,26 @@ theme = createTheme(theme, {
           borderRadius: theme.spacing(1),
           textTransform: "initial",
           boxShadow: "unset",
-          ...(ownerState.shape === "round" && {
-            minWidth: "180px",
-            borderRadius: "50px",
-          }),
           ":hover": {
             backgroundColor: theme.palette.secondary.hover,
             boxShadow: "unset",
           },
+          ...(ownerState.shape === "round" && {
+            minWidth: "180px",
+            borderRadius: "50px",
+          }),
+          ...(ownerState.color === "black" && {
+            backgroundColor: theme.palette.black.main,
+            color: theme.palette.black.contrastText,
+            ":hover": {
+              backgroundColor: theme.palette.black.hover,
+              color: theme.palette.black.contrastText,
+            },
+            "&.Mui-disabled": {
+              color: theme.palette.black.contrastText,
+              background: theme.palette.black.disabled,
+            },
+          }),
         }),
         contained: ({ theme }) => ({
           background: theme.palette.primary.main,

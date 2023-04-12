@@ -1,29 +1,67 @@
-import { Link } from "react-router-dom";
-import { LoadingButton } from "@mui/lab";
+import { Box, Button, Stack, Typography, styled } from "@mui/material";
+import { MentionIcon } from "../../assets";
+import PopularDomainCard from "./PopularDomainCard";
+import avatar from "../../assets/images/avatar.png";
+
+const Title = styled(Typography)(() => ({
+  fontSize: "36px",
+  fontWeight: 800,
+  textAlign: "center",
+  marginTop: "20vh",
+}));
+
+const HomeButton = styled(Button)(({ theme }) => ({
+  minWidth: "300px",
+  height: "50px",
+}));
+
+const MentionButton = styled(MentionIcon)(() => ({
+  cursor: "pointer",
+}));
+
+const PopularDomainsText = styled(Typography)(({ theme }) => ({
+  textAlign: "center",
+  fontSize: "28px",
+  fontWeight: 800,
+  marginTop: theme.spacing(14),
+}));
 
 const Home = () => {
   return (
-    <div>
-      <p>home</p>
+    <Box>
+      <Title>One-stop buy,sale,management of your web3 subname of ENS</Title>
 
-      <LoadingButton>demo</LoadingButton>
+      <Stack direction="row" justifyContent="center" spacing={3} mt={6}>
+        <HomeButton color="black">Buy Subname </HomeButton>
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          spacing={1}
+        >
+          <HomeButton color="black">Earn By Subname</HomeButton>
+          <MentionButton
+            onClick={() => {
+              console.log("click mention icon");
+            }}
+          />
+        </Stack>
+      </Stack>
 
-      <div>
-        <Link to="/children">Go to children</Link>
-      </div>
-      <div>
-        <Link to="/children/1">Go to children-1</Link>
-      </div>
-      <div>
-        <Link to="/children/2">Go to children-2</Link>
-      </div>
-      <div>
-        <Link to="/children/3">Go to children-3</Link>
-      </div>
-      <div>
-        <Link to="/children/4">Go to children-4</Link>
-      </div>
-    </div>
+      <PopularDomainsText>🔥 Popular Domain Names</PopularDomainsText>
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={5}
+      >
+        <PopularDomainCard avatar={avatar} name="jassen.eth" cup={"🥇"} />
+        <PopularDomainCard avatar={avatar} name="meta.eth" cup={"🥈"} />
+        <PopularDomainCard avatar={avatar} name="reflect.eth" cup={"🥉"} />
+        <PopularDomainCard avatar={avatar} name="sns.eth" />
+      </Stack>
+    </Box>
   );
 };
 

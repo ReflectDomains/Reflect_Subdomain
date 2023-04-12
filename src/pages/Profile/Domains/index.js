@@ -68,9 +68,6 @@ const Domains = () => {
   const [domainList, setDomainList] = useState(list);
 
   const handleChange = (type, panel) => (event, isExpanded) => {
-    // const isManager = event.target.isManager;
-    // console.log("event:", event);
-    console.log("type:", type);
     if (type === "Management") {
       setExpanded(isExpanded ? panel : false);
     }

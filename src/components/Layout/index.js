@@ -1,11 +1,22 @@
-import { Container } from "@mui/material";
+import { Box, Container, styled } from "@mui/material";
 import { Suspense, memo } from "react";
 import { Outlet } from "react-router";
 import Header from "./Header";
+import BackgroundImage from "../../assets/images/background.png";
+
+const Wrapper = styled(Box)(() => ({
+  width: "100vw",
+  minHeight: "100vh",
+  height: "100%",
+  background: `url(${BackgroundImage})`,
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+}));
 
 const Layout = () => {
   return (
-    <div>
+    <Wrapper>
       <Header />
       <Suspense fallback={"loading"}>
         <Container
@@ -16,7 +27,7 @@ const Layout = () => {
           <Outlet />
         </Container>
       </Suspense>
-    </div>
+    </Wrapper>
   );
 };
 
