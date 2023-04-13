@@ -8,10 +8,11 @@ import {
 	Radio,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { memo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { useParams } from 'react-router-dom';
 import CircleStep from '../../components/CircleStep';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
 	fontSize: '20px',
@@ -61,6 +62,30 @@ const StyledFormControlLabel = styled((props) => (
 
 const Register = () => {
 	const params = useParams();
+	const [step, setStep] = useState(1);
+	const [checked, setChecked] = useState('usdt');
+	const [isApprove, setIsApprove] = useState(false);
+	const [isPaid, setIsPaid] = useState(false);
+
+	const nextPage = useCallback(() => {
+		if (step + 1 <= 3) {
+			setStep(step + 1);
+		}
+	}, [step]);
+
+	const changeRadio = useCallback((e) => {
+		setChecked(e.target.value);
+	}, []);
+
+	const approveOrPay = useCallback(() => {
+		if (!isApprove) {
+			setIsApprove(true);
+		} else {
+			// paid
+			setIsPaid(true);
+		}
+	}, [isApprove]);
+
 	return (
 		<Box>
 			<CommonPage title="Registration">
@@ -81,7 +106,7 @@ const Register = () => {
 						mt: '10px',
 					}}
 				>
-					<CircleStep step={1} total={3} />
+					<CircleStep step={step} total={3} />
 					<TypographySubtitle sx={{ fontSize: '16px', mt: '10px', mb: '20px' }}>
 						Payment Token
 					</TypographySubtitle>
@@ -95,31 +120,63 @@ const Register = () => {
 					}}
 				>
 					<TypographyInfo sx={{ mb: '10px' }}>Supported Tokens:</TypographyInfo>
-					<RadioGroup row>
+					<RadioGroup row onChange={changeRadio}>
 						<StyledFormControlLabel
 							value="usdt"
 							label="10 USDT"
-							checked={true}
+							checked={checked === 'usdt'}
 							control={<Radio999 />}
 						/>
 						<StyledFormControlLabel
 							value="usdc"
 							label="10 USDC"
+							checked={checked === 'usdc'}
 							control={<Radio999 />}
 						/>
 					</RadioGroup>
 					<TypographyDes sx={{ mt: '30px' }}>
-						-Registration fee:10USDC
+						-Registration fee:10 {checked?.toUpperCase()}
 					</TypographyDes>
 					<TypographyDes>-Est.network fee:0.0437ETH </TypographyDes>
-					<TypographyDes>-Estimated total:0.0437ETH+10USDC </TypographyDes>
+					<TypographyDes>
+						-Estimated total:0.0437ETH+10 {checked?.toUpperCase()}{' '}
+					</TypographyDes>
 					<TypographyDes sx={{ mb: '30px' }}>
 						-2.5%service fees is included
 					</TypographyDes>
-					<LoadingButton variant="contained">Approve</LoadingButton>
+					{isPaid ? (
+						<Stack
+							direction="row"
+							alignItems="center"
+							justifyContent="center"
+							sx={(theme) => ({ mb: theme.spacing(2) })}
+						>
+							<TypographyInfo
+								sx={(theme) => ({
+									color: theme.color.success,
+									fontWeight: 800,
+									mr: theme.spacing(1),
+								})}
+							>
+								Paid
+							</TypographyInfo>
+							<CheckCircleRoundedIcon
+								sx={(theme) => ({
+									color: theme.color.success,
+									fontSize: '15px',
+								})}
+							/>
+						</Stack>
+					) : (
+						<LoadingButton variant="contained" onClick={approveOrPay}>
+							{isApprove ? `pay 10 ${checked}` : 'Approve'}
+						</LoadingButton>
+					)}
 				</Box>
 				<Stack flexDirection="row" justifyContent="center" sx={{ mt: '20px' }}>
-					<LoadingButton variant="contained">Next</LoadingButton>
+					<LoadingButton variant="contained" onClick={nextPage}>
+						Next
+					</LoadingButton>
 				</Stack>
 			</CommonPage>
 		</Box>
