@@ -2,6 +2,7 @@ import { Box, MenuItem, Select, Stack, styled } from '@mui/material';
 import StatisticsCard from './StatisticsCard';
 import { useCallback, useState } from 'react';
 import SwitchButton from './SwitchButton';
+import LineBarChart from './LineBarChart';
 
 const StatisticsWrapper = styled(Box)(({ theme }) => ({
 	display: 'grid',
@@ -13,6 +14,7 @@ const DateSelect = styled(Select)(({ theme }) => ({
 	height: '40px',
 	borderRadius: theme.spacing(1),
 	borderColor: '1px solid #0000001A',
+	fontSize: '14px',
 	'&:hover .MuiOutlinedInput-notchedOutline': {
 		borderColor: '#0000001A',
 	},
@@ -58,12 +60,14 @@ const Portfolio = () => {
 					onChange={handleChangeDate}
 				>
 					{dates.map((item) => (
-						<MenuItem key={item} value={item}>
+						<MenuItem key={item} value={item} sx={{ fontSize: '14px' }}>
 							{item}
 						</MenuItem>
 					))}
 				</DateSelect>
 			</Stack>
+
+			<LineBarChart />
 		</>
 	);
 };
