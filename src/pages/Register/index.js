@@ -27,15 +27,15 @@ const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 	...sx,
 }));
 
-const TypographyDes = styled(Typography)(({ sx }) => ({
-	color: '#999',
+const TypographyDes = styled(Typography)(({ theme, sx }) => ({
+	color: theme.color.mentionColor,
 	fontSize: '14px',
 	marginBottom: '10px',
 	...sx,
 }));
 
-const Radio999 = styled(Radio)(() => ({
-	color: '#999',
+const Radio999 = styled(Radio)(({ theme }) => ({
+	color: theme.color.mentionColor,
 }));
 
 const StyledFormControlLabel = styled((props) => (

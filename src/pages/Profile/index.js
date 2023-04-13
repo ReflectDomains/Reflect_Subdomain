@@ -91,7 +91,7 @@ const Profile = () => {
 					<SettingsIcon
 						fontSize="30px"
 						sx={(theme) => ({
-							color: '#333',
+							color: theme.color.text,
 						})}
 					/>
 				</IconButton>

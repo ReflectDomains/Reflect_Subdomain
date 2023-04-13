@@ -7,6 +7,8 @@ let theme = createTheme({
 		main: '#2A13AE',
 		error: '#D85C4B',
 		backColor: '#F2F4F5',
+		mentionColor: '#999',
+		text: '#333',
 	},
 	palette: {
 		primary: {
@@ -220,7 +222,7 @@ theme = createTheme(theme, {
 						'&::placeholder': {
 							fontSize: '16px',
 							fontWeight: 500,
-							color: '#999',
+							color: theme.color.mentionColor,
 						},
 					}),
 				}),

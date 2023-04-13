@@ -41,7 +41,7 @@ const Home = () => {
 						navigate('/search');
 					}}
 				>
-					Buy Subname{' '}
+					Buy Subname
 				</HomeButton>
 				<Stack
 					direction="row"

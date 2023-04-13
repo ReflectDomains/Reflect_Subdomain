@@ -3,6 +3,7 @@ import StatisticsCard from './StatisticsCard';
 import { useCallback, useState } from 'react';
 import SwitchButton from './SwitchButton';
 import LineBarChart from './LineBarChart';
+import TransactionTable from './TransactionTable';
 
 const StatisticsWrapper = styled(Box)(({ theme }) => ({
 	display: 'grid',
@@ -68,6 +69,7 @@ const Portfolio = () => {
 			</Stack>
 
 			<LineBarChart />
+			<TransactionTable />
 		</>
 	);
 };

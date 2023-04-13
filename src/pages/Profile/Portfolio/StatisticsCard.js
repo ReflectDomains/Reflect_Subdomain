@@ -21,7 +21,7 @@ const Price = styled(Typography)(({ theme }) => ({
 const Des = styled(Typography)(({ theme }) => ({
 	fontSize: '10px',
 	textAlign: 'center',
-	color: '#999',
+	color: theme.color.mentionColor,
 	marginTop: theme.spacing(0.5),
 }));
 
