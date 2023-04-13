@@ -6,6 +6,7 @@ const Home = lazy(() => import('../pages/Home'));
 const OthersPages = lazy(() => import('../pages/OthersPages'));
 const ErrorPage = lazy(() => import('../pages/ErrorPage'));
 const Search = lazy(() => import('../pages/Search'));
+const EarnDomain = lazy(() => import('../pages/EarnDomain'));
 const Profile = lazy(() => import('../pages/Profile'));
 const Setting = lazy(() => import('../pages/Setting'));
 const Register = lazy(() => import('../pages/Register'));
@@ -20,10 +21,14 @@ const routes = [
 				element: <Home />,
 				needConnected: false,
 			},
-
 			{
 				path: 'search',
 				element: <Search />,
+				needConnected: true,
+			},
+			{
+				path: 'domain',
+				element: <EarnDomain />,
 				needConnected: true,
 			},
 			{

@@ -49,7 +49,14 @@ const Home = () => {
 					alignItems="center"
 					spacing={1}
 				>
-					<HomeButton color="black">Earn By Subname</HomeButton>
+					<HomeButton
+						color="black"
+						onClick={() => {
+							navigate('/domain');
+						}}
+					>
+						Earn By Subname
+					</HomeButton>
 					<MentionButton
 						onClick={() => {
 							console.log('click mention icon');

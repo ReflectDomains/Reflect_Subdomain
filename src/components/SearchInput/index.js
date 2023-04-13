@@ -156,7 +156,7 @@ const SearchInput = () => {
 									{item.status}
 								</RegisterStatus>
 								<ChevronRightIcon
-									sx={({ theme }) => ({ color: theme.color.mentionColor })}
+									sx={(theme) => ({ color: theme.color.mentionColor })}
 								/>
 							</Stack>
 						</PopoverListItem>

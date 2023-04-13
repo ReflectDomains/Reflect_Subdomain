@@ -5,24 +5,24 @@ import {
 	TableRow,
 	styled,
 	TableCell,
-	TableContainer,
 	Pagination,
 } from '@mui/material';
 import { memo } from 'react';
 
 const HeadCell = styled(TableCell)(({ theme }) => ({
-	padding: theme.spacing(1),
+	padding: theme.spacing(1, 1, 0, 1),
 	borderBottom: 'none',
 	fontWeight: 800,
 	color: theme.color.mentionColor,
-	fontSize: '12px',
+	fontSize: '14px',
 }));
 
 const Cell = styled(TableCell)(({ theme }) => ({
 	padding: theme.spacing(1),
 	borderBottom: 'none',
 	color: theme.color.text,
-	fontSize: '14px',
+	fontWeight: 500,
+	fontSize: '16px',
 }));
 
 const list = [
