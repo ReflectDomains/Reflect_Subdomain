@@ -6,13 +6,13 @@ const CircleStep = ({ step = 1, total = 1 }) => {
 		<Stack
 			justifyContent="center"
 			alignItems="center"
-			sx={{
+			sx={(theme) => ({
 				width: 60,
 				height: 60,
-				backgroundColor: '#f2f4f5',
+				backgroundColor: theme.color.backColor,
 				textAlign: 'center',
 				borderRadius: '50%',
-			}}
+			})}
 		>
 			<Box
 				sx={{

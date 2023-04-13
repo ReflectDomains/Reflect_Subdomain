@@ -6,6 +6,7 @@ let theme = createTheme({
 		success: '#41BF82',
 		main: '#2A13AE',
 		error: '#D85C4B',
+		backColor: '#F2F4F5',
 	},
 	palette: {
 		primary: {
@@ -143,15 +144,15 @@ theme = createTheme(theme, {
 		},
 		MuiListItem: {
 			styleOverrides: {
-				root: {
+				root: ({ theme }) => ({
 					padding: theme.spacing(1, 2),
 					borderRadius: theme.spacing(1),
 					fontSize: theme.typography.fontSize,
 					transition: 'all 0.25s',
 					':hover': {
-						backgroundColor: '#F2F4F5',
+						backgroundColor: theme.color.backColor,
 					},
-				},
+				}),
 			},
 		},
 		MuiListItemIcon: {
@@ -177,7 +178,7 @@ theme = createTheme(theme, {
 					fontSize: theme.typography.fontSize,
 					transition: 'all 0.25s',
 					':hover': {
-						backgroundColor: '#F2F4F5',
+						backgroundColor: theme.color.backColor,
 					},
 				},
 			},
@@ -315,6 +316,13 @@ theme = createTheme(theme, {
 					color: '#333',
 					fontWeight: 500,
 				},
+			},
+		},
+		MuiSelect: {
+			styleOverrides: {
+				root: ({ theme }) => ({
+					height: '40px',
+				}),
 			},
 		},
 	},

@@ -20,7 +20,7 @@ const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
 	...sx,
 }));
 
-const TypographypInfo = styled(Typography)(({ theme, sx }) => ({
+const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 	fontSize: '16px',
 	color: theme.typography.caption.color,
 	fontWeight: 500,
@@ -65,12 +65,12 @@ const Register = () => {
 		<Box>
 			<CommonPage title="Registration">
 				<TypographySubtitle>Basic Info</TypographySubtitle>
-				<TypographypInfo sx={{ mt: '10px' }}>
+				<TypographyInfo sx={{ mt: '10px' }}>
 					Subname: {params?.name}
-				</TypographypInfo>
-				<TypographypInfo sx={{ mt: '10px' }}>
+				</TypographyInfo>
+				<TypographyInfo sx={{ mt: '10px' }}>
 					Expiry:until 2025.x.x (xx days)
-				</TypographypInfo>
+				</TypographyInfo>
 				<TypographySubtitle sx={{ marginTop: '30px' }}>
 					Process
 				</TypographySubtitle>
@@ -94,9 +94,7 @@ const Register = () => {
 						padding: '20px',
 					}}
 				>
-					<TypographypInfo sx={{ mb: '10px' }}>
-						Supported Tokens:
-					</TypographypInfo>
+					<TypographyInfo sx={{ mb: '10px' }}>Supported Tokens:</TypographyInfo>
 					<RadioGroup row>
 						<StyledFormControlLabel
 							value="usdt"

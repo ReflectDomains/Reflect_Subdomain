@@ -1,9 +1,7 @@
 import {
 	Box,
 	Collapse,
-	Fade,
 	Input,
-	InputAdornment,
 	List,
 	ListItem,
 	Stack,
