@@ -9,6 +9,7 @@ let theme = createTheme({
 		backColor: '#F2F4F5',
 		mentionColor: '#999',
 		text: '#333',
+		disabled: '#0000001A',
 	},
 	palette: {
 		primary: {

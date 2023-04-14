@@ -14,6 +14,7 @@ import { ReactComponent as SellIcon } from './icons/profile/sell.svg';
 
 // common
 import { ReactComponent as MentionIcon } from './icons/common/mention.svg';
+import { ReactComponent as HelpIcon } from './icons/common/help.svg';
 
 // register
 import { ReactComponent as EmojLaught } from './icons/register/emo_laught.svg';
@@ -28,5 +29,6 @@ export {
 	SellIcon,
 	BackgroundImage,
 	MentionIcon,
+	HelpIcon,
 	EmojLaught,
 };
