@@ -3,8 +3,11 @@ import { memo } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { TypographyInfo } from '.';
 import { LoadingButton } from '@mui/lab';
+import { useNavigate } from 'react-router-dom';
 
 const LastStep = () => {
+	const navigate = useNavigate();
+
 	return (
 		<Stack direction="column" alignItems="center">
 			<CheckCircleIcon
@@ -22,7 +25,13 @@ const LastStep = () => {
 			>
 				Complete
 			</TypographyInfo>
-			<LoadingButton variant="outlined" sx={{ background: 'transparent' }}>
+			<LoadingButton
+				variant="outlined"
+				sx={{ background: 'transparent' }}
+				onClick={() => {
+					navigate('/profile');
+				}}
+			>
 				View my Subname
 			</LoadingButton>
 		</Stack>
