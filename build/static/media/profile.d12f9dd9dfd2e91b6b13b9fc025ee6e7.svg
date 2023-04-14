@@ -1,0 +1,25 @@
+var _rect, _path;
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+import * as React from "react";
+var SvgProfile = function SvgProfile(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 25,
+    height: 25,
+    fill: "none"
+  }, props), _rect || (_rect = /*#__PURE__*/React.createElement("rect", {
+    width: 6.003,
+    height: 6.003,
+    x: 9.004,
+    y: 4.002,
+    stroke: "#333",
+    strokeWidth: 2.001,
+    rx: 3.001
+  })), _path || (_path = /*#__PURE__*/React.createElement("path", {
+    stroke: "#333",
+    strokeLinecap: "round",
+    strokeWidth: 2.001,
+    d: "M19.008 20.008v-3a4.002 4.002 0 0 0-4.002-4.002H9.004a4.002 4.002 0 0 0-4.002 4.001v3.001"
+  })));
+};
+export default SvgProfile;

@@ -1,0 +1,49 @@
+var _rect, _rect2, _rect3, _rect4, _rect5;
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+import * as React from "react";
+var SvgDel = function SvgDel(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    fill: "none"
+  }, props), _rect || (_rect = /*#__PURE__*/React.createElement("rect", {
+    width: 12,
+    height: 13,
+    x: 6,
+    y: 7,
+    stroke: "#333",
+    strokeWidth: 2,
+    rx: 1
+  })), _rect2 || (_rect2 = /*#__PURE__*/React.createElement("rect", {
+    width: 1,
+    height: 6,
+    x: 9.5,
+    y: 10.5,
+    stroke: "#333",
+    rx: 0.5
+  })), _rect3 || (_rect3 = /*#__PURE__*/React.createElement("rect", {
+    width: 1,
+    height: 6,
+    x: 13.5,
+    y: 10.5,
+    stroke: "#333",
+    rx: 0.5
+  })), _rect4 || (_rect4 = /*#__PURE__*/React.createElement("rect", {
+    width: 17,
+    height: 1,
+    x: 3.5,
+    y: 6.5,
+    stroke: "#333",
+    rx: 0.5
+  })), _rect5 || (_rect5 = /*#__PURE__*/React.createElement("rect", {
+    width: 6,
+    height: 3,
+    x: 9,
+    y: 4,
+    stroke: "#333",
+    strokeWidth: 2,
+    rx: 1
+  })));
+};
+export default SvgDel;

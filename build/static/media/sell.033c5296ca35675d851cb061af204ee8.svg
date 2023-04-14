@@ -1,0 +1,26 @@
+var _g, _defs;
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+import * as React from "react";
+var SvgSell = function SvgSell(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    fill: "none"
+  }, props), _g || (_g = /*#__PURE__*/React.createElement("g", {
+    stroke: "#fff",
+    strokeWidth: 2,
+    clipPath: "url(#sell_svg__a)"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "m13.198 3.299 8.55 8.55a1 1 0 0 1 0 1.415l-8.485 8.485a1 1 0 0 1-1.414 0l-8.55-8.55a1 1 0 0 1-.291-.774l.53-7.955a1 1 0 0 1 .932-.932l7.954-.53a1 1 0 0 1 .774.29Z"
+  }), /*#__PURE__*/React.createElement("path", {
+    strokeLinecap: "round",
+    d: "m6.9 6.899 1.414 1.415"
+  }))), _defs || (_defs = /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("clipPath", {
+    id: "sell_svg__a"
+  }, /*#__PURE__*/React.createElement("path", {
+    fill: "#fff",
+    d: "M0 0h24v24H0z"
+  })))));
+};
+export default SvgSell;

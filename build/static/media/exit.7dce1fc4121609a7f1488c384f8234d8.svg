@@ -1,0 +1,35 @@
+var _rect, _rect2, _rect3, _path;
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+import * as React from "react";
+var SvgExit = function SvgExit(props) {
+  return /*#__PURE__*/React.createElement("svg", _extends({
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    fill: "none"
+  }, props), _rect || (_rect = /*#__PURE__*/React.createElement("rect", {
+    width: 10,
+    height: 2,
+    fill: "#333",
+    rx: 1,
+    transform: "matrix(-1 0 0 1 21 11)"
+  })), _rect2 || (_rect2 = /*#__PURE__*/React.createElement("rect", {
+    width: 5.116,
+    height: 2.203,
+    fill: "#333",
+    rx: 1,
+    transform: "matrix(-.642 -.7667 -.642 .7667 21.699 11.923)"
+  })), _rect3 || (_rect3 = /*#__PURE__*/React.createElement("rect", {
+    width: 5.206,
+    height: 2.203,
+    fill: "#333",
+    rx: 1,
+    transform: "matrix(-.642 .7667 -.642 -.7667 21.756 12.009)"
+  })), _path || (_path = /*#__PURE__*/React.createElement("path", {
+    stroke: "#333",
+    strokeLinecap: "round",
+    strokeWidth: 2,
+    d: "M16 16v2a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v2"
+  })));
+};
+export default SvgExit;
