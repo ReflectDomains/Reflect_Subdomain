@@ -12,7 +12,7 @@ const CustomLinearProgressOut = styled(LinearProgress)(({ value }) => ({
 			position: 'absolute',
 			content: value === 100 ? '"☺️"' : '"😃"',
 			right: '-2px',
-			top: '-10px',
+			top: '-5px',
 			background: `transparent`,
 			width: '40px',
 			height: '60px',

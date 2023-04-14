@@ -113,13 +113,17 @@ theme = createTheme(theme, {
 						background: theme.palette.primary.disabled,
 					},
 				}),
-				outlined: ({ theme }) => ({
+				outlined: ({ theme, ownerState }) => ({
 					color: theme.palette.primary.main,
 					':hover': {
 						backgroundColor: '#fff',
 						borderRadius: theme.palette.primary.hover,
 						color: theme.palette.primary.hover,
 					},
+					...(ownerState.color === 'grey' && {
+						color: theme.palette.black.main,
+						borderColor: 'rgba(0, 0, 0, 0.1);',
+					}),
 				}),
 			},
 		},
