@@ -1,14 +1,15 @@
 import { Box, Stack, Typography, styled, Popover } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { memo, useCallback, useState } from 'react';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { useParams } from 'react-router-dom';
-import CircleStep from '../../components/CircleStep';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
+import StepThree from './StepThree';
+import LastStep from './LastStep';
+import StepAndCircleProcess from './StepAndCircleProcess';
 
-const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
+export const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
 	fontSize: '20px',
 	color: theme.typography.caption.color,
 	fontWeight: 800,
@@ -24,23 +25,17 @@ export const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 
 const Register = () => {
 	const params = useParams();
-	const [step, setStep] = useState(2);
-	const [anchorEl, setAnchorEl] = useState(null);
-
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
-	const open = Boolean(anchorEl);
-	const id = open ? 'simple-popover' : undefined;
+	const [step, setStep] = useState(1);
 
 	const nextPage = useCallback(() => {
-		if (step + 1 <= 3) {
-			setStep(step + 1);
+		if (step + 1 <= 4) {
+			setStep(parseInt(step + 1));
+		}
+	}, [step]);
+
+	const backToAfterStep = useCallback(() => {
+		if (step - 1 > 0) {
+			setStep(parseInt(step - 1));
 		}
 	}, [step]);
 
@@ -64,71 +59,47 @@ const Register = () => {
 						mt: '10px',
 					}}
 				>
-					<CircleStep step={step} total={3} />
-					<Stack
-						direction="row"
-						alignItems="center"
-						sx={{
-							mt: '10px',
-							mb: '20px',
-						}}
-					>
-						<TypographySubtitle
-							sx={(theme) => ({
-								fontSize: '16px',
-								mr: theme.spacing(1),
-							})}
-						>
-							{step === 1
-								? 'Payment Token'
-								: step === 2
-								? 'Pending registration by reflect contract'
-								: 'Setting Profile of Subname(Optional)'}
-						</TypographySubtitle>
-						{step === 2 ? (
-							<ErrorOutlineIcon
-								sx={(theme) => ({
-									fontSize: '20px',
-									color: theme.color.mentionColor,
-								})}
-								onClick={handleClick}
-							/>
-						) : null}
-					</Stack>
+					{step < 4 ? <StepAndCircleProcess step={step} /> : <LastStep />}
 				</Stack>
 				<Box
 					sx={{
-						backgroundColor: '#F7F7F7',
+						backgroundColor: step < 4 ? '#F7F7F7' : '#fff',
 						borderRadius: '10px',
 						width: '100%',
 						padding: '20px',
 					}}
 				>
-					{step === 1 ? <StepOne /> : step === 2 ? <StepTwo /> : null}
+					{step === 1 ? (
+						<StepOne />
+					) : step === 2 ? (
+						<StepTwo />
+					) : step === 3 ? (
+						<StepThree />
+					) : null}
 				</Box>
-				<Stack flexDirection="row" justifyContent="center" sx={{ mt: '20px' }}>
-					<LoadingButton variant="contained" onClick={nextPage}>
-						Next
-					</LoadingButton>
-				</Stack>
+				{step < 4 ? (
+					<Stack
+						flexDirection="row"
+						justifyContent="center"
+						sx={{ mt: '20px' }}
+					>
+						{step > 1 ? (
+							<LoadingButton
+								variant="outlined"
+								onClick={backToAfterStep}
+								sx={(theme) => ({
+									mr: theme.spacing(2),
+								})}
+							>
+								Back
+							</LoadingButton>
+						) : null}
+						<LoadingButton variant="contained" onClick={nextPage}>
+							Next
+						</LoadingButton>
+					</Stack>
+				) : null}
 			</CommonPage>
-			{/* info */}
-			<Popover
-				id={id}
-				open={open}
-				anchorEl={anchorEl}
-				onClose={handleClose}
-				anchorOrigin={{
-					vertical: 'top',
-					horizontal: 'right',
-				}}
-			>
-				<Typography sx={{ p: 2, width: '200px' }}>
-					The reflect contract will execute subdomain registration, the
-					execution process needs to interact with the wallet serval
-					times,please cooperate
-				</Typography>
-			</Popover>
 		</Box>
 	);
 };
