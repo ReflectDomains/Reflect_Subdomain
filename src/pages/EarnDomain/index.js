@@ -3,6 +3,11 @@ import { Radio, Stack, Typography, styled, Box } from '@mui/material';
 import { HelpIcon } from '../../assets';
 import { useState } from 'react';
 import { ProgressBar, Step } from 'react-step-progress-bar';
+import StepOne from './StepOne';
+import ManageDomain from '../../components/ManageDomain';
+import StepTwo from './StepTwo';
+import StepThree from './StepThree';
+import StepFour from './StepFour';
 
 const Title = styled(Typography)(() => ({
 	fontSize: '20px',
@@ -47,9 +52,11 @@ const ProgressWrapper = styled(Box)(({ theme }) => ({
 			display: 'block',
 			position: 'relative',
 			content: '"😮"',
-			left: '90%',
-			top: '-3px',
+			left: '100%',
+			top: '-10px',
 			zIndex: 999,
+			fontSize: '30px',
+			transform: 'translateX(-20px)',
 		},
 	},
 }));
@@ -70,6 +77,14 @@ const ProgressDot = styled(Box)(({ theme, ...props }) => ({
 	height: '5px',
 	borderRadius: '50px',
 	background: props.arrive ? 'white' : 'black',
+}));
+
+const StepsWrapper = styled(Box)(({ theme }) => ({
+	minHeight: '300px',
+	background: '#F6F6F6',
+	marginTop: theme.spacing(2),
+	borderRadius: theme.spacing(1),
+	padding: theme.spacing(2),
 }));
 
 const steps = ['Select domain', 'Settings', 'Update controller', 'Complete'];
@@ -166,6 +181,15 @@ const EarnDomain = () => {
 					))}
 				</ProgressBar>
 			</ProgressWrapper>
+
+			{step === 0 && (
+				<StepsWrapper>
+					<StepOne handleStep={setStep} />
+				</StepsWrapper>
+			)}
+			{step === 1 && <StepTwo handleStep={setStep} />}
+			{step === 2 && <StepThree handleStep={setStep} />}
+			{step === 3 && <StepFour handleStep={setStep} />}
 		</CommonPage>
 	);
 };
