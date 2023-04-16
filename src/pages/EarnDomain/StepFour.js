@@ -1,5 +1,5 @@
 import { Box, Button, Link, Stack, Typography, styled } from '@mui/material';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { Discord, Twitter } from '../../assets';
 import { useNavigate } from 'react-router-dom';
 

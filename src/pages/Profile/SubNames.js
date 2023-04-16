@@ -16,10 +16,6 @@ import { memo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { DelIcon, EditIcon, SellIcon, SetPrimaryNameIcon } from '../../assets';
 
-const SubNamesWrapper = styled(Box)(() => ({
-	position: 'relative',
-}));
-
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
 	fontSize: theme.typography.fontSize,

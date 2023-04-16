@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Stack, Typography, styled } from '@mui/material';
+import { Box, Paper, Typography, styled } from '@mui/material';
 import { memo } from 'react';
 
 const Wrapper = styled(Paper)(({ theme }) => ({

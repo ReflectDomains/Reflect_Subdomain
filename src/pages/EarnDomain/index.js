@@ -4,7 +4,6 @@ import { HelpIcon } from '../../assets';
 import { useState } from 'react';
 import { ProgressBar, Step } from 'react-step-progress-bar';
 import StepOne from './StepOne';
-import ManageDomain from '../../components/ManageDomain';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 import StepFour from './StepFour';

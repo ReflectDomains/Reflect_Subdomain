@@ -12,7 +12,6 @@ import {
 import { memo, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useAccount } from 'wagmi';
 import ManageDomain from '../../../components/ManageDomain';
 
 const Title = styled(Typography)(({ theme }) => ({
@@ -65,7 +64,7 @@ const list = [
 const Domains = () => {
 	const [expanded, setExpanded] = useState('panel0');
 
-	const [domainList, setDomainList] = useState(list);
+	const [domainList] = useState(list);
 
 	const handleChange = (type, panel) => (event, isExpanded) => {
 		if (type === 'Management') {

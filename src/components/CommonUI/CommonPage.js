@@ -1,4 +1,4 @@
-import { Box, Card, Link, Stack, Typography, styled } from '@mui/material';
+import { Box, Card, Link, Typography, styled } from '@mui/material';
 import { memo } from 'react';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
