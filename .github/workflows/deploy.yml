@@ -47,6 +47,13 @@ jobs:
       # 1. ssh-keygen -m PEM -t rsa -b 4096
       # 2. id_rsa to github action
       # 2. cat id_rsa.pub >> authorized_keys
+      - name: check password
+        run: |
+          paw = ${{ secrets.PASSWORD }}
+          if [[ !paw ]]; then
+          echo "no password"
+          else
+          echo paw
       - name: Deploy front-end
         uses: appleboy/scp-action@v0.1.4
         env:
