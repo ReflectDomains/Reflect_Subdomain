@@ -35,7 +35,7 @@ jobs:
         run: |
           npm install --global yarn 
           yarn install
-          yarn build:nonCache
+          yarn build
         env:
           CI: true
       - name: Share artifact inside workflow
