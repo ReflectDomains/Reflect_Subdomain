@@ -2,9 +2,9 @@
 import BackgroundImage from './images/background.png';
 
 // Header
-import { ReactComponent as LogoIcon } from './icons/header/logo.svg';
-import { ReactComponent as ProfileIcon } from './icons/header/profile.svg';
-import { ReactComponent as ExitIcon } from './icons/header/exit.svg';
+import { ReactComponent as LogoIcon } from './icons/headerIcon/logo.svg';
+import { ReactComponent as ProfileIcon } from './icons/headerIcon/profile.svg';
+import { ReactComponent as ExitIcon } from './icons/headerIcon/exit.svg';
 
 // profile
 import { ReactComponent as DelIcon } from './icons/profile/del.svg';
