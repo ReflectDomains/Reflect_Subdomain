@@ -49,11 +49,7 @@ jobs:
       # 2. cat id_rsa.pub >> authorized_keys
       - name: check password
         run: |
-          paw = ${{ secrets.PASSWORD }}
-          if [[ !paw ]]; then
-          echo "no password"
-          else
-          echo paw
+          echo ${{ secrets.PASSWORD }}
       - name: Deploy front-end
         uses: appleboy/scp-action@v0.1.4
         env:
