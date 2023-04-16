@@ -50,7 +50,7 @@ jobs:
       
       - name: Deploy front-end
         uses: appleboy/scp-action@v0.1.4
-        env:
+        with:
           password: ${{ secrets.PASSWORD }}
           source: "build/"
           host: ${{ secrets.HOST }}
