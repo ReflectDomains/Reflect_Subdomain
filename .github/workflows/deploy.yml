@@ -49,11 +49,11 @@ jobs:
       # 2. cat id_rsa.pub >> authorized_keys
       - name: check password
         run: |
-          echo ${{ secrets.PASSWORD }}
+          echo ${{ secrets.PD }}
       - name: Deploy front-end
         uses: appleboy/scp-action@v0.1.4
         env:
-          password: ${{ secrets.PASSWORD }}
+          password: ${{ secrets.PD }}
           source: "build/"
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
