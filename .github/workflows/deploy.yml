@@ -52,7 +52,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.4
         with:
           password: ${{ secrets.PASSWORD }}
-          source: "build/"
+          source: "build/*"
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
