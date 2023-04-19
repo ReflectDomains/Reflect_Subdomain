@@ -147,7 +147,7 @@ const SubNames = () => {
 							/>
 
 							<Stack direction="row" justifyContent="space-between">
-								<LoadingButton startIcon={<DelIcon />}>
+								<LoadingButton startIcon={<DelIcon />} sx={{ mr: 1 }}>
 									Delete subname
 								</LoadingButton>
 								<Stack direction="row" spacing={0.5}>
@@ -157,9 +157,9 @@ const SubNames = () => {
 									<LoadingButton startIcon={<EditIcon />}>
 										Edit profile
 									</LoadingButton>
-									<LoadingButton startIcon={<SellIcon />} variant="contained">
+									{/* <LoadingButton startIcon={<SellIcon />} variant="contained">
 										Sell
-									</LoadingButton>
+									</LoadingButton> */}
 								</Stack>
 							</Stack>
 						</AccordionDetails>
