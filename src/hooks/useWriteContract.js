@@ -13,6 +13,8 @@ const useWriteContract = ({
 	args = [],
 	enabled = true,
 	onSuccess,
+	contractAddress = '',
+	ABIJSON = null,
 }) => {
 	console.log([...args]);
 	const { address } = useAccount();
@@ -21,8 +23,8 @@ const useWriteContract = ({
 	}, [onSuccess]);
 
 	const { config } = usePrepareContractWrite({
-		address: reflectContract,
-		abi: subdomainABI,
+		address: contractAddress || reflectContract,
+		abi: ABIJSON || subdomainABI,
 		functionName: functionName,
 		args: [...args],
 		enabled: enabled && address,
