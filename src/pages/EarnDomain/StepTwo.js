@@ -1,8 +1,10 @@
 import { Box, Button, Stack, Typography, styled } from '@mui/material';
-import { memo, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { reflectContract } from '../../config/contract';
 import { useAccount } from 'wagmi';
+import useWriteContract from '../../hooks/useWriteContract';
+import { LoadingButton } from '@mui/lab';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -34,9 +36,17 @@ const SuccessDes = styled(Typography)(({ theme }) => ({
 }));
 
 const StepTwo = ({ handleStep }) => {
-	const [update, setUpdate] = useState(false);
 	const { address } = useAccount();
 	const params = useParams();
+	const { write, isLoading, isSuccess } = useWriteContract({
+		functionName: 'SetApporveAll',
+		args: [],
+	});
+
+	const approveToEns = useCallback(() => {
+		console.log(write, 'w');
+		write?.();
+	}, [write]);
 
 	return (
 		<Box>
@@ -48,18 +58,18 @@ const StepTwo = ({ handleStep }) => {
 					<Des>CONTROLLER: {reflectContract}</Des>
 					<Des>EXPIRATION DATE: 2024.04.14 at 04:58 (UTC)</Des>
 
-					{update ? (
+					{isSuccess ? (
 						<SuccessDes>Update operator successful</SuccessDes>
 					) : (
-						<Button
+						<LoadingButton
 							variant="contained"
 							sx={{ marginTop: '40px' }}
-							onClick={() => {
-								setUpdate(true);
-							}}
+							onClick={approveToEns}
+							loading={isLoading}
+							disabled={!write || isLoading}
 						>
 							Update operator to Reflect Contract
-						</Button>
+						</LoadingButton>
 					)}
 				</Box>
 			</StepsWrapper>
@@ -75,7 +85,7 @@ const StepTwo = ({ handleStep }) => {
 				</Button>
 				<Button
 					variant="contained"
-					disabled={!update}
+					disabled={!isSuccess}
 					onClick={() => {
 						handleStep(3);
 					}}

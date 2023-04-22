@@ -24,6 +24,8 @@ import {
 	digitsLength,
 	tokenSetDefault,
 } from '../../config/profilePageSetting';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { usdtAddress } from '../../config/contract';
 
 const Cell = styled(TableCell)(({ theme }) => ({
 	width: '50px',
@@ -48,7 +50,7 @@ const Cell = styled(TableCell)(({ theme }) => ({
 
 const Label = styled(Typography)(() => ({}));
 
-const ManageDomain = () => {
+const ManageDomain = ({ onClick, loading = false, isSuccess = false }) => {
 	const { address } = useAccount();
 
 	const [checkList, setCheckList] = useState(tokenSetDefault);
@@ -137,6 +139,18 @@ const ManageDomain = () => {
 		});
 	}, [checkList, digitChecked, tokenPriceValue]);
 
+	const onConfirm = useCallback(() => {
+		const p = tokenPriceList.get('USDT');
+		const obj = [
+			{
+				mode: digitChecked ? 1 : 0,
+				token: usdtAddress,
+				prices: [...p],
+			},
+		];
+		onClick && typeof onClick === 'function' && onClick(obj);
+	}, [onClick, tokenPriceList, digitChecked]);
+
 	return (
 		<>
 			{/* Choose tokens */}
@@ -158,7 +172,7 @@ const ManageDomain = () => {
 									// value={checkList[value]}
 									checked={checkList[value]}
 									// required={value === 'USDT'}
-									// disabled={value !== 'USDT'}
+									disabled={value !== 'USDT'}
 									onChange={handleChangeToken}
 								/>
 							}
@@ -250,11 +264,34 @@ const ManageDomain = () => {
 					</Table>
 				)}
 			</TableContainer>
-			<Box>
-				<LoadingButton sx={{ width: '85px' }} variant="contained">
-					Confirm
-				</LoadingButton>
-			</Box>
+			{isSuccess ? (
+				<Stack flexDirection="row" justifyContent="center">
+					<Typography
+						sx={(theme) => ({
+							color: theme.color.success,
+							mr: 1,
+						})}
+					>
+						Settings successful
+					</Typography>
+					<CheckCircleIcon
+						sx={(theme) => ({
+							color: theme.color.success,
+						})}
+					/>
+				</Stack>
+			) : (
+				<Box>
+					<LoadingButton
+						onClick={onConfirm}
+						sx={{ width: '85px' }}
+						variant="contained"
+						loading={loading}
+					>
+						Confirm
+					</LoadingButton>
+				</Box>
+			)}
 		</>
 	);
 };
