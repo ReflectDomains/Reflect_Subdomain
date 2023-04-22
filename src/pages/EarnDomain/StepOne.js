@@ -83,7 +83,7 @@ const list = [
 		status: 'Applied',
 	},
 	{
-		name: 'Owned.eth',
+		name: 'kay.eth',
 		status: 'Available',
 	},
 	{
@@ -134,13 +134,13 @@ const StepOne = ({ handleStep }) => {
 
 			<Collapse in={isFocus}>
 				<PopoverList>
-					{list.map((item, index) => (
+					{list.map((item) => (
 						<PopoverListItem
 							key={item.name}
 							onClick={() => {
 								console.log(item.status, 'status');
 								if (item.status === 'Available') {
-									handleStep(1);
+									handleStep(1, item.name);
 								}
 							}}
 						>

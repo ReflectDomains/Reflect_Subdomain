@@ -1,12 +1,13 @@
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { Radio, Stack, Typography, styled, Box } from '@mui/material';
 import { HelpIcon } from '../../assets';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ProgressBar, Step } from 'react-step-progress-bar';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 import StepFour from './StepFour';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Title = styled(Typography)(() => ({
 	fontSize: '20px',
@@ -75,7 +76,7 @@ const ProgressDot = styled(Box)(({ theme, ...props }) => ({
 	width: '5px',
 	height: '5px',
 	borderRadius: '50px',
-	background: props.arrive ? 'white' : 'black',
+	background: props.arrive === 'true' ? 'white' : 'black',
 }));
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
@@ -86,18 +87,32 @@ const StepsWrapper = styled(Box)(({ theme }) => ({
 	padding: theme.spacing(2),
 }));
 
-const steps = ['Select domain', 'Settings', 'Update controller', 'Complete'];
+const steps = ['Select domain', 'Update operator', 'Settings', 'Complete'];
 const stepsPositions = [1, 33, 66, 99];
 
 const EarnDomain = () => {
 	// proxy or manual
 	const [modeValue, setModeValue] = useState('proxy');
+	const navigator = useNavigate();
+	const params = useParams();
+	console.log(params);
 
 	const [step, setStep] = useState(0);
+
+	const toNext = useCallback(
+		(step, ens) => {
+			navigator(`/domain/${step}${ens ? '/' + ens : ''}`);
+		},
+		[navigator]
+	);
 
 	const handleChangeMode = (event) => {
 		setModeValue(event.target.value);
 	};
+
+	useEffect(() => {
+		setStep(Number(params?.step ?? 0));
+	}, [params]);
 
 	return (
 		<CommonPage title="Earn by domain" back={-1}>
@@ -170,9 +185,7 @@ const EarnDomain = () => {
 										>
 											{item}
 										</ProgressLabel>
-										<ProgressDot arrive={accomplished}>
-											{accomplished}
-										</ProgressDot>
+										<ProgressDot arrive={accomplished.toString()} />
 									</Stack>
 								);
 							}}
@@ -183,12 +196,12 @@ const EarnDomain = () => {
 
 			{step === 0 && (
 				<StepsWrapper>
-					<StepOne handleStep={setStep} />
+					<StepOne handleStep={toNext} />
 				</StepsWrapper>
 			)}
-			{step === 1 && <StepTwo handleStep={setStep} />}
-			{step === 2 && <StepThree handleStep={setStep} />}
-			{step === 3 && <StepFour handleStep={setStep} />}
+			{step === 1 && <StepTwo handleStep={toNext} />}
+			{step === 2 && <StepThree handleStep={toNext} />}
+			{step === 3 && <StepFour handleStep={toNext} />}
 		</CommonPage>
 	);
 };

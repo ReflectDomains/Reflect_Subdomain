@@ -27,7 +27,7 @@ const routes = [
 				needConnected: true,
 			},
 			{
-				path: 'domain',
+				path: 'domain/:step?/:address',
 				element: <EarnDomain />,
 				needConnected: true,
 			},

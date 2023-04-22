@@ -52,7 +52,7 @@ const Home = () => {
 					<HomeButton
 						color="black"
 						onClick={() => {
-							navigate('/domain');
+							navigate('/domain/0');
 						}}
 					>
 						Earn By Subname
