@@ -31,7 +31,11 @@ const useWriteContract = ({
 			from: address,
 		},
 		onError: (error) => {
-			console.log(error?.error?.data?.message);
+			console.log([...args]);
+			console.log(
+				error?.error?.message || error?.error?.data?.message,
+				functionName
+			);
 		},
 	});
 	const { isLoading, data, write } = useContractWrite(config);
