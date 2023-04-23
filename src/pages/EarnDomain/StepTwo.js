@@ -2,7 +2,6 @@ import { Box, Button, Stack, Typography, styled } from '@mui/material';
 import { memo, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-	ENSRegistryWithFallbackContract,
 	NameWrapperContract,
 	proxyContract,
 	reflectContract,
@@ -10,9 +9,9 @@ import {
 import { useAccount, useContractRead } from 'wagmi';
 import useWriteContract from '../../hooks/useWriteContract';
 import { LoadingButton } from '@mui/lab';
-import { ENSRegistryWithFallback, NameWrapper } from '../../config/ABI';
-import { ethers } from 'ethers';
+import { NameWrapper } from '../../config/ABI';
 import moment from 'moment';
+import { ensHashName } from '../../utils';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -51,13 +50,7 @@ const StepTwo = ({ handleStep }) => {
 		abi: NameWrapper,
 		address: NameWrapperContract,
 		functionName: 'getData',
-		args: [ethers.utils.namehash(params?.address)],
-		onError: (error) => {
-			console.log(error, 'ye ye', ensData);
-		},
-		onSettled(data, error) {
-			console.log('Settled getData', { data, error });
-		},
+		args: [ensHashName(params?.address)],
 	});
 
 	const expiration = useMemo(
@@ -70,29 +63,16 @@ const StepTwo = ({ handleStep }) => {
 
 	// check account is set approval for all
 	const { data: isApprovedForAll } = useContractRead({
-		abi: ENSRegistryWithFallback,
-		address: ENSRegistryWithFallbackContract,
+		abi: NameWrapper,
+		address: NameWrapperContract,
 		functionName: 'isApprovedForAll',
 		args: [address, proxyContract],
-		onError: (error) => {
-			console.log(error, 'isApprovedForAll', isApprovedForAll);
-			console.log(
-				'args',
-				address,
-				proxyContract,
-				ENSRegistryWithFallbackContract
-			);
-		},
-		onSettled(data, error) {
-			console.log('Settled', { data, error });
-		},
 	});
-	console.log(isApprovedForAll, 'isApprovedForAll');
 
 	const { write, isLoading, isSuccess } = useWriteContract({
 		functionName: 'setApprovalForAll',
-		contractAddress: ENSRegistryWithFallbackContract,
-		ABIJSON: ENSRegistryWithFallback,
+		contractAddress: NameWrapperContract,
+		ABIJSON: NameWrapper,
 		args: [proxyContract, true],
 	});
 
@@ -110,7 +90,7 @@ const StepTwo = ({ handleStep }) => {
 					<Des>CONTROLLER: {reflectContract}</Des>
 					<Des>EXPIRATION DATE: {expiration} (UTC)</Des>
 
-					{isSuccess ? (
+					{isSuccess || isApprovedForAll ? (
 						<SuccessDes>Update operator successful</SuccessDes>
 					) : (
 						<LoadingButton
@@ -137,7 +117,7 @@ const StepTwo = ({ handleStep }) => {
 				</Button>
 				<Button
 					variant="contained"
-					disabled={!isSuccess || isApprovedForAll}
+					disabled={!isSuccess && !isApprovedForAll}
 					onClick={() => {
 						handleStep(2, params?.address);
 					}}

@@ -16,7 +16,6 @@ const useWriteContract = ({
 	contractAddress = '',
 	ABIJSON = null,
 }) => {
-	console.log([...args]);
 	const { address } = useAccount();
 	const successFn = useCallback(() => {
 		onSuccess && typeof onSuccess === 'function' && onSuccess();
@@ -32,7 +31,7 @@ const useWriteContract = ({
 			from: address,
 		},
 		onError: (error) => {
-			console.log(error?.error?.message);
+			console.log(error?.error?.data?.message);
 		},
 	});
 	const { isLoading, data, write } = useContractWrite(config);

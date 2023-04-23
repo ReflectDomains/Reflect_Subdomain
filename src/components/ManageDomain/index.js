@@ -25,7 +25,8 @@ import {
 	tokenSetDefault,
 } from '../../config/profilePageSetting';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { usdtAddress } from '../../config/contract';
+import { tokenContract } from '../../config/contract';
+import { parseUnitsWithDecimals } from '../../utils';
 
 const Cell = styled(TableCell)(({ theme }) => ({
 	width: '50px',
@@ -50,7 +51,7 @@ const Cell = styled(TableCell)(({ theme }) => ({
 
 const Label = styled(Typography)(() => ({}));
 
-const ManageDomain = ({ onClick, loading = false, isSuccess = false }) => {
+const ManageDomain = ({ onClick, loading = false, isSuccess = false, onChange }) => {
 	const { address } = useAccount();
 
 	const [checkList, setCheckList] = useState(tokenSetDefault);
@@ -140,16 +141,27 @@ const ManageDomain = ({ onClick, loading = false, isSuccess = false }) => {
 	}, [checkList, digitChecked, tokenPriceValue]);
 
 	const onConfirm = useCallback(() => {
+		onClick && typeof onClick === 'function' && onClick();
+	}, [onClick]);
+
+	const changeTokenList = useCallback(() => {
 		const p = tokenPriceList.get('USDT');
+		const pWithDec = p.map(item => {
+			return parseUnitsWithDecimals(item, 18)
+		})
 		const obj = [
 			{
 				mode: digitChecked ? 1 : 0,
-				token: usdtAddress,
-				prices: [...p],
+				token: tokenContract['USDT'],
+				prices: [...pWithDec],
 			},
 		];
-		onClick && typeof onClick === 'function' && onClick(obj);
-	}, [onClick, tokenPriceList, digitChecked]);
+		onChange && typeof onChange === 'function' && onChange(obj);
+	}, [onChange, tokenPriceList, digitChecked]);
+
+	useEffect(() => {
+		changeTokenList && changeTokenList()
+	}, [changeTokenList])
 
 	return (
 		<>

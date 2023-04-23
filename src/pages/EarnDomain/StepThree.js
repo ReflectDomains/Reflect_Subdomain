@@ -3,7 +3,10 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import ManageDomain from '../../components/ManageDomain';
 import useWriteContract from '../../hooks/useWriteContract';
 import { useParams } from 'react-router-dom';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractRead } from 'wagmi';
+import { subdomainABI } from '../../config/ABI';
+import { pricingHash } from '../../utils';
+import { reflectContract } from '../../config/contract';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -20,18 +23,32 @@ const StepThree = ({ handleStep }) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [priceArray, setPriceArray] = useState([]);
+
 	const labelStrig = useMemo(() => params?.address.split('.')[0], [params]);
+	const pricingHashRes = pricingHash(params?.address, '0x80258a9230383763E2A1ECa4B5675b49fdBEECbd')
+	console.log(pricingHashRes, 'hash res')
+
+	const { data: prices } = useContractRead({
+		abi: subdomainABI,
+		address: reflectContract,
+		functionName: 'getPricing',
+		args: [[pricingHashRes]]
+	})
+	console.log(prices)
+
 	const { write, isLoading, isSuccess } = useWriteContract({
 		functionName: 'openRegister',
 		args: [labelStrig, address, priceArray],
 		enabled: priceArray.length > 0,
 	});
+
+	const changePriceList = useCallback((list) => {
+		setPriceArray([...list])
+	}, [])
+
 	const confirmSetting = useCallback(
-		(priceArray) => {
-			setPriceArray(priceArray);
-			if (write) {
-				write();
-			}
+		() => {
+			write?.()
 		},
 		[write]
 	);
@@ -40,6 +57,7 @@ const StepThree = ({ handleStep }) => {
 			<StepsWrapper>
 				<ManageDomain
 					onClick={confirmSetting}
+					onChange={changePriceList}
 					loading={isLoading}
 					isSuccess={isSuccess}
 				/>
@@ -49,7 +67,7 @@ const StepThree = ({ handleStep }) => {
 				<Button
 					variant="outlined"
 					onClick={() => {
-						handleStep(0);
+						handleStep(1, params?.address);
 					}}
 				>
 					Back
@@ -57,7 +75,7 @@ const StepThree = ({ handleStep }) => {
 				<Button
 					variant="contained"
 					onClick={() => {
-						handleStep(2);
+						handleStep(3, params?.address);
 					}}
 				>
 					Next
