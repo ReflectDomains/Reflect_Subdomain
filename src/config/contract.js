@@ -1,8 +1,13 @@
 // export const usdtAddress = '0xC51FceEc013cD34aE2e95E6D64E9858F2aC28fFf';
 
 export const tokenContract = {
-	USDT: '0x80258a9230383763E2A1ECa4B5675b49fdBEECbd'
-}
+	USDT: '0x80258a9230383763E2A1ECa4B5675b49fdBEECbd',
+};
+
+export const contractForToken = {
+	'0x80258a9230383763E2A1ECa4B5675b49fdBEECbd': 'USDT',
+};
+
 export const reflectContract = '0xE34cBa16DA84B8167162972eB4460657cCDCB696';
 export const proxyContract = '0x3dED020313b2a22875cbeB57dEb55F3b6aa10914';
 // ens

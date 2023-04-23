@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useAccount, useContractRead } from 'wagmi';
 import { subdomainABI } from '../../config/ABI';
 import { pricingHash } from '../../utils';
-import { reflectContract } from '../../config/contract';
+import { reflectContract, tokenContract } from '../../config/contract';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -25,39 +25,37 @@ const StepThree = ({ handleStep }) => {
 	const [priceArray, setPriceArray] = useState([]);
 
 	const labelStrig = useMemo(() => params?.address.split('.')[0], [params]);
-	const pricingHashRes = pricingHash(params?.address, '0x80258a9230383763E2A1ECa4B5675b49fdBEECbd')
-	console.log(pricingHashRes, 'hash res')
+	const pricingHashRes = pricingHash(params?.address, tokenContract['USDT']);
 
 	const { data: prices } = useContractRead({
 		abi: subdomainABI,
 		address: reflectContract,
 		functionName: 'getPricing',
-		args: [[pricingHashRes]]
-	})
-	console.log(prices)
+		args: [[pricingHashRes]],
+	});
 
 	const { write, isLoading, isSuccess } = useWriteContract({
 		functionName: 'openRegister',
 		args: [labelStrig, address, priceArray],
-		enabled: priceArray.length > 0,
+		enabled: priceArray && priceArray.length > 0,
 	});
 
 	const changePriceList = useCallback((list) => {
-		setPriceArray([...list])
-	}, [])
+		setPriceArray([...list]);
+	}, []);
 
-	const confirmSetting = useCallback(
-		() => {
-			write?.()
-		},
-		[write]
-	);
+	const confirmSetting = useCallback(() => {
+		console.log(priceArray, 'priceArray');
+		write?.();
+	}, [write, priceArray]);
 	return (
 		<Box>
 			<StepsWrapper>
 				<ManageDomain
+					defaultValue={prices || []}
 					onClick={confirmSetting}
 					onChange={changePriceList}
+					onCheckedChange={changePriceList}
 					loading={isLoading}
 					isSuccess={isSuccess}
 				/>

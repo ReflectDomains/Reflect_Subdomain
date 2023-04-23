@@ -27,7 +27,9 @@ export const pricingHash = function (name, token) {
 	const hash = ethers.utils.keccak256(
 		ethers.utils.solidityPack(['bytes32', 'address'], [node, token])
 	);
-	console.log(hash, 'h');
 
 	return ethers.utils.hexlify(hash);
 };
+
+export const formatUnitsWitheDecimals = (n, dec) =>
+	ethers.utils.formatUnits(n, dec);
