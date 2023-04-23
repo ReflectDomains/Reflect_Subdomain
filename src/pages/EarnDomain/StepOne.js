@@ -1,5 +1,6 @@
 import {
 	Box,
+	CircularProgress,
 	Collapse,
 	Input,
 	List,
@@ -8,10 +9,15 @@ import {
 	Typography,
 	styled,
 } from '@mui/material';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { addENSNameSuffix, ensHashName } from '../../utils';
+import { useAccount, useContractRead } from 'wagmi';
+import { NameWrapper } from '../../config/ABI';
+import { NameWrapperContract } from '../../config/contract';
+import { isValidName } from 'ethers/lib/utils.js';
 
 const SearchWrapper = styled(Box)(() => ({
 	width: '400px',
@@ -46,11 +52,22 @@ const PopoverList = styled(List)(({ theme }) => ({
 	marginTop: theme.spacing(1),
 }));
 
-const PopoverListItem = styled(ListItem)(() => ({
+const PopoverListItem = styled(ListItem)(({ theme, ...props }) => ({
 	display: 'flex',
 	justifyContent: 'space-between',
 	alignItems: 'center',
 	cursor: 'pointer',
+	...(props.invalid && {
+		border: `1px solid ${theme.color.error}`,
+		backgroundColor: theme.color.error + '1a',
+		'.MuiTypography-root': {
+			color: theme.color.error,
+		},
+		':hover': {
+			border: `1px solid ${theme.color.error}1a`,
+			backgroundColor: theme.color.error + '1a',
+		},
+	}),
 }));
 
 const ListItemTitle = styled(Typography)(() => ({
@@ -60,41 +77,42 @@ const ListItemTitle = styled(Typography)(() => ({
 const RegisterStatus = styled(Box)(({ theme, ...props }) => ({
 	borderRadius: '50px',
 	backgroundColor:
-		props.status === 'Applied'
+		props.status === 'Available'
 			? theme.color.success + '1a'
-			: props.status === 'Available'
-			? theme.color.main + '1a'
 			: theme.color.error + '1a',
 
-	color:
-		props.status === 'Applied'
-			? theme.color.success
-			: props.status === 'Available'
-			? theme.color.main
-			: theme.color.error,
+	color: props.status === 'Available' ? theme.color.success : theme.color.error,
 	padding: theme.spacing(0.5, 1),
 	fontSize: '14px',
 	fontWeight: 700,
 }));
 
-const list = [
-	{
-		name: 'applied.eth',
-		status: 'Applied',
-	},
-	{
-		name: 'kay.eth',
-		status: 'Available',
-	},
-	{
-		name: 'nonOwner.eth',
-		status: 'nonOwner',
-	},
-];
-
 const StepOne = ({ handleStep }) => {
-	const [searchValue, setSearchValue] = useState();
+	const { address } = useAccount();
+	const [searchValue, setSearchValue] = useState('');
 	const [isFocus, setFocus] = useState(false);
+
+	const { data: ensData, isLoading } = useContractRead({
+		abi: NameWrapper,
+		address: NameWrapperContract,
+		functionName: 'getData',
+		args:
+			searchValue.length >= 3 && isValidName(searchValue.replace(/ /g, ''))
+				? [ensHashName(addENSNameSuffix(searchValue))]
+				: null,
+		enabled: searchValue.length >= 3,
+		onSettled(data, error) {
+			console.log('Settled', { data, error });
+		},
+	});
+
+	const invalidName = useMemo(() => {
+		return !isValidName(searchValue.replace(/ /g, ''));
+	}, [searchValue]);
+
+	const judgeOwnerStatus = useCallback(() => {
+		return ensData?.owner === address ? 'Available' : 'nonOwner';
+	}, [ensData, address]);
 
 	const handleChange = useCallback((e) => {
 		const value = e.target.value;
@@ -132,34 +150,41 @@ const StepOne = ({ handleStep }) => {
 				}}
 			/>
 
-			<Collapse in={isFocus}>
+			<Collapse in={isFocus && searchValue.length >= 3}>
 				<PopoverList>
-					{list.map((item) => (
-						<PopoverListItem
-							key={item.name}
-							onClick={() => {
-								console.log(item.status, 'status');
-								if (item.status === 'Available') {
-									handleStep(1, item.name);
-								}
-							}}
-						>
-							<ListItemTitle>{item.name}</ListItemTitle>
-							<Stack
-								direction="row"
-								alignItems="center"
-								justifyContent="center"
-								spacing={1}
-							>
-								<RegisterStatus status={item.status}>
-									{item.status}
-								</RegisterStatus>
-								<ChevronRightIcon
-									sx={(theme) => ({ color: theme.color.mentionColor })}
-								/>
-							</Stack>
-						</PopoverListItem>
-					))}
+					<PopoverListItem
+						invalid={invalidName}
+						onClick={() => {
+							if (judgeOwnerStatus() === 'Available') {
+								handleStep(1, addENSNameSuffix(searchValue));
+							}
+						}}
+					>
+						{!invalidName ? (
+							<>
+								<ListItemTitle>{addENSNameSuffix(searchValue)}</ListItemTitle>
+								<Stack
+									direction="row"
+									alignItems="center"
+									justifyContent="center"
+									spacing={1}
+								>
+									{!isLoading ? (
+										<RegisterStatus status={judgeOwnerStatus()}>
+											{judgeOwnerStatus()}
+										</RegisterStatus>
+									) : (
+										<CircularProgress size={14} thickness={7} />
+									)}
+									<ChevronRightIcon
+										sx={(theme) => ({ color: theme.color.mentionColor })}
+									/>
+								</Stack>
+							</>
+						) : (
+							<ListItemTitle>Invalid format for name</ListItemTitle>
+						)}
+					</PopoverListItem>
 				</PopoverList>
 			</Collapse>
 		</SearchWrapper>

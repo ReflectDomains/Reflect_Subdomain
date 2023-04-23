@@ -4,7 +4,7 @@ const { createTheme } = require('@mui/material');
 let theme = createTheme({
 	color: {
 		success: '#41BF82',
-		main: '#2A13AE',
+		main: '#0057FF',
 		error: '#D85C4B',
 		backColor: '#F2F4F5',
 		mentionColor: '#999',
@@ -13,12 +13,12 @@ let theme = createTheme({
 	},
 	palette: {
 		primary: {
-			main: '#2A13AE',
+			main: '#0057FF',
 			contrastText: '#FFFFFFE5',
 			hover: '#2A13EA',
 			active: '#2A1372',
 			disabled:
-				'linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), #2A13AE',
+				'linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), #0057FF',
 		},
 		secondary: {
 			main: '#F2F4F5',
@@ -208,7 +208,7 @@ theme = createTheme(theme, {
 					padding: theme.spacing(1),
 					transition: 'border-width .1s',
 					'&.Mui-focused': {
-						border: '2px solid #2A13AE66',
+						border: '2px solid #0057FF66',
 					},
 					':hover': {
 						borderWidth: '2px',
@@ -248,7 +248,7 @@ theme = createTheme(theme, {
 							border: '2px solid #00000033',
 						},
 						'&.Mui-focused fieldset': {
-							borderColor: '#2A13AE66',
+							borderColor: '#0057FF66',
 						},
 					},
 					input: {
