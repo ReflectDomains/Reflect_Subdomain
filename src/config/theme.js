@@ -15,8 +15,8 @@ let theme = createTheme({
 		primary: {
 			main: '#0057FF',
 			contrastText: '#FFFFFFE5',
-			hover: '#2A13EA',
-			active: '#2A1372',
+			hover: '#5D95FF',
+			active: '#0237A2',
 			disabled:
 				'linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), #0057FF',
 		},

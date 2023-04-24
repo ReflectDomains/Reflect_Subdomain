@@ -1,6 +1,5 @@
 import { Box, IconButton, Stack, Tab, Typography, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import avatar from '../../assets/images/avatar.png';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import CommonAvatar from '../../components/CommonAvatar';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -9,6 +8,9 @@ import { useState } from 'react';
 import SubNames from './SubNames';
 import Domains from './Domains';
 import Portfolio from './Portfolio';
+
+const avatar =
+	'https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?auto=format&w=384';
 
 const ProfileBackground = styled(Box)(() => ({
 	width: '100%',

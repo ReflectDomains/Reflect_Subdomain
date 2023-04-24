@@ -73,10 +73,33 @@ const Home = () => {
 				alignItems="center"
 				mt={5}
 			>
-				<PopularDomainCard avatar={avatar} name="jassen.eth" cup={'🥇'} />
-				<PopularDomainCard avatar={avatar} name="meta.eth" cup={'🥈'} />
-				<PopularDomainCard avatar={avatar} name="reflect.eth" cup={'🥉'} />
-				<PopularDomainCard avatar={avatar} name="sns.eth" />
+				<PopularDomainCard
+					avatar={
+						'https://i.seadn.io/gcs/files/bab6d943a2eac4918f18943324eb053e.png?auto=format&w=384'
+					}
+					name="jassen.eth"
+					cup={'🥇'}
+				/>
+				<PopularDomainCard
+					avatar={
+						'https://i.seadn.io/gcs/files/a215db6bdf7d4e8d89c521e93780087a.png?auto=format&w=384'
+					}
+					name="meta.eth"
+					cup={'🥈'}
+				/>
+				<PopularDomainCard
+					avatar={
+						'https://i.seadn.io/gcs/files/1619b033c453fe36c5d9e2ac451379a7.png?auto=format&w=384'
+					}
+					name="reflect.eth"
+					cup={'🥉'}
+				/>
+				<PopularDomainCard
+					avatar={
+						'https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?auto=format&w=384'
+					}
+					name="sns.eth"
+				/>
 			</Stack>
 		</>
 	);

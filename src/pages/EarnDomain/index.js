@@ -53,7 +53,7 @@ const ProgressWrapper = styled(Box)(({ theme }) => ({
 			position: 'relative',
 			content: '"😮"',
 			left: '100%',
-			top: '-10px',
+			top: '-6px',
 			zIndex: 999,
 			fontSize: '30px',
 			transform: 'translateX(-20px)',
@@ -149,9 +149,10 @@ const EarnDomain = () => {
 			<Title mt={3}>Process</Title>
 			<ProgressWrapper>
 				<ProgressBar
-					filledBackground="linear-gradient(90deg, #7D66FF 0.63%, #40BF82 100%)"
+					filledBackground="linear-gradient(90deg, #0057FF 0.63%, #77FFCE 100%)"
 					percent={[stepsPositions[step]]}
 					stepPositions={[1, 33, 66, 99]}
+					height={20}
 				>
 					{steps.map((item, index) => (
 						<Step key={index}>
