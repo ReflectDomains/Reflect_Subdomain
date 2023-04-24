@@ -25,7 +25,7 @@ const StepThree = ({ handleStep }) => {
 	const [priceArray, setPriceArray] = useState([]);
 	const [receivingAddress, setReceivingAddress] = useState('');
 
-	const labelStrig = useMemo(() => params?.address.split('.')[0], [params]);
+	const labelStrig = useMemo(() => params?.address.split('.eth')[0], [params]);
 	const pricingHashRes = pricingHash(params?.address, tokenContract['USDT']);
 
 	const { data: prices } = useContractRead({
