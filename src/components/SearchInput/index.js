@@ -81,7 +81,7 @@ const list = [
 		status: 'Registered',
 	},
 	{
-		name: 'Available.reflect.eth',
+		name: 'kay.eth',
 		status: 'Available',
 	},
 

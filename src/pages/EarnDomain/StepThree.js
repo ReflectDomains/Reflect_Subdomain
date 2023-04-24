@@ -7,6 +7,7 @@ import { useAccount, useContractRead } from 'wagmi';
 import { subdomainABI } from '../../config/ABI';
 import { pricingHash } from '../../utils';
 import { reflectContract, tokenContract } from '../../config/contract';
+import useGetPrice from '../../hooks/useGetPrice';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -26,14 +27,8 @@ const StepThree = ({ handleStep }) => {
 	const [receivingAddress, setReceivingAddress] = useState('');
 
 	const labelStrig = useMemo(() => params?.address.split('.eth')[0], [params]);
-	const pricingHashRes = pricingHash(params?.address, tokenContract['USDT']);
 
-	const { data: prices } = useContractRead({
-		abi: subdomainABI,
-		address: reflectContract,
-		functionName: 'getPricing',
-		args: [[pricingHashRes]],
-	});
+	const prices = useGetPrice(params?.address, [tokenContract['USDT']]);
 
 	const adr = useMemo(
 		() => receivingAddress || address,

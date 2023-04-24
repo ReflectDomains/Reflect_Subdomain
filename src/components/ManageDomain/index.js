@@ -193,6 +193,7 @@ const ManageDomain = ({
 
 	const changeReceivingAddressInput = useCallback(
 		(e) => {
+			setReceivingAddress(e.target.value);
 			changeReceivingAddress && changeReceivingAddress(e.target.value);
 		},
 		[changeReceivingAddress]

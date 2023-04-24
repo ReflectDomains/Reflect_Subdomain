@@ -17,7 +17,7 @@ export const addENSNameSuffix = (search) => {
 	}
 };
 
-export const ensHashName = (name) => namehash(name);
+export const ensHashName = (name = '') => namehash(name);
 
 export const parseUnitsWithDecimals = (n, dec = '') =>
 	ethers.utils.parseUnits((n || '').toString(), dec);
