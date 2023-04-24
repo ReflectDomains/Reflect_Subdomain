@@ -23,6 +23,7 @@ const StepThree = ({ handleStep }) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [priceArray, setPriceArray] = useState([]);
+	const [receivingAddress, setReceivingAddress] = useState('');
 
 	const labelStrig = useMemo(() => params?.address.split('.')[0], [params]);
 	const pricingHashRes = pricingHash(params?.address, tokenContract['USDT']);
@@ -33,21 +34,31 @@ const StepThree = ({ handleStep }) => {
 		functionName: 'getPricing',
 		args: [[pricingHashRes]],
 	});
+	console.log(prices?.[0]?.prices?.[0].toString(), 'ppp');
+
+	const adr = useMemo(
+		() => receivingAddress || address,
+		[receivingAddress, address]
+	);
 
 	const { write, isLoading, isSuccess } = useWriteContract({
 		functionName: 'openRegister',
-		args: [labelStrig, address, priceArray],
+		args: [labelStrig, adr, priceArray],
 		enabled: priceArray && priceArray.length > 0,
 	});
+
+	const changeReceivingAddress = useCallback((adr) => {
+		setReceivingAddress(adr);
+	}, []);
 
 	const changePriceList = useCallback((list) => {
 		setPriceArray([...list]);
 	}, []);
 
 	const confirmSetting = useCallback(() => {
-		console.log(priceArray, 'priceArray');
 		write?.();
-	}, [write, priceArray]);
+	}, [write]);
+
 	return (
 		<Box>
 			<StepsWrapper>
@@ -55,7 +66,7 @@ const StepThree = ({ handleStep }) => {
 					defaultValue={prices || []}
 					onClick={confirmSetting}
 					onChange={changePriceList}
-					onCheckedChange={changePriceList}
+					onChangeReceiving={changeReceivingAddress}
 					loading={isLoading}
 					isSuccess={isSuccess}
 				/>

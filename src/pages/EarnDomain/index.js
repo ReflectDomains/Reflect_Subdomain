@@ -1,5 +1,5 @@
 import CommonPage from '../../components/CommonUI/CommonPage';
-import { Radio, Stack, Typography, styled, Box } from '@mui/material';
+import { Stack, Typography, styled, Box } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { ProgressBar, Step } from 'react-step-progress-bar';
 import StepOne from './StepOne';
@@ -11,34 +11,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 const Title = styled(Typography)(() => ({
 	fontSize: '20px',
 	fontWeight: 800,
-}));
-
-const RadioItem = styled(Radio)(({ theme, ...props }) => ({
-	padding: '0px',
-	width: '100%',
-	height: '65px',
-	fontWeight: 800,
-	borderRadius: theme.spacing(1),
-	border: props.checked
-		? '1px solid transparent'
-		: `1px solid ${theme.color.text}`,
-	background: props.checked ? '#EAF1FB' : '#fff',
-	transition: 'border 0.5s ease',
-
-	':hover': {
-		border: 'none',
-	},
-
-	'&.Mui-disabled': {
-		fontWeight: 500,
-		color: theme.color.mentionColor,
-		border: `1px solid ${theme.color.disabled}`,
-	},
-}));
-
-const CheckBox = styled(Box)(() => ({
-	width: '100%',
-	textAlign: 'center',
 }));
 
 const ProgressWrapper = styled(Box)(({ theme }) => ({
@@ -91,7 +63,6 @@ const stepsPositions = [1, 33, 66, 99];
 
 const EarnDomain = () => {
 	// proxy or manual
-	const [modeValue, setModeValue] = useState('proxy');
 	const navigator = useNavigate();
 	const params = useParams();
 	console.log(params);
@@ -104,10 +75,6 @@ const EarnDomain = () => {
 		},
 		[navigator]
 	);
-
-	const handleChangeMode = (event) => {
-		setModeValue(event.target.value);
-	};
 
 	useEffect(() => {
 		setStep(Number(params?.step ?? 0));
