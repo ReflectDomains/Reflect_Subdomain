@@ -17,6 +17,10 @@ export const addENSNameSuffix = (search) => {
 	}
 };
 
+export const isSubdomainRegx = (str) => {
+	return /^[a-zA-Z0-9]{3,}\.[a-zA-Z0-9]+\.eth$/.test(str);
+};
+
 export const ensHashName = (name) => namehash(name);
 
 export const parseUnitsWithDecimals = (n, dec = '') =>
@@ -33,3 +37,16 @@ export const pricingHash = function (name, token) {
 
 export const formatUnitsWitheDecimals = (n, dec) =>
 	ethers.utils.formatUnits(n, dec);
+
+export const throttle = (fn, delay) => {
+	console.log('delay:', delay, fn);
+	let throttleTimer = null;
+	return function () {
+		if (throttleTimer) return;
+		throttleTimer = setTimeout(() => {
+			console.log('delay1:', delay);
+			fn.apply(this, arguments);
+			throttleTimer = null;
+		}, delay);
+	};
+};

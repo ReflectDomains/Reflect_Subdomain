@@ -7,12 +7,14 @@ import {
 	Stack,
 	Typography,
 	styled,
+	CircularProgress,
 } from '@mui/material';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useNavigate } from 'react-router-dom';
+import { isSubdomainRegx, throttle } from '../../utils';
 
 const SearchWrapper = styled(Box)(() => ({
 	width: '600px',
@@ -44,11 +46,22 @@ const PopoverList = styled(List)(({ theme }) => ({
 	marginTop: theme.spacing(1),
 }));
 
-const PopoverListItem = styled(ListItem)(() => ({
+const PopoverListItem = styled(ListItem)(({ theme, ...props }) => ({
 	display: 'flex',
 	justifyContent: 'space-between',
 	alignItems: 'center',
 	cursor: 'pointer',
+	...(props.valid === 'false' && {
+		border: `1px solid ${theme.color.error}`,
+		backgroundColor: theme.color.error + '1a',
+		'.MuiTypography-root': {
+			color: theme.color.error,
+		},
+		':hover': {
+			border: `1px solid ${theme.color.error}1a`,
+			backgroundColor: theme.color.error + '1a',
+		},
+	}),
 }));
 
 const ListItemTitle = styled(Typography)(() => ({
@@ -58,38 +71,15 @@ const ListItemTitle = styled(Typography)(() => ({
 const RegisterStatus = styled(Box)(({ theme, ...props }) => ({
 	borderRadius: '50px',
 	backgroundColor:
-		props.status === 'Registered'
+		props.status === 'Available'
 			? theme.color.success + '1a'
-			: props.status === 'Available'
-			? theme.color.main + '1a'
 			: theme.color.error + '1a',
 
-	color:
-		props.status === 'Registered'
-			? theme.color.success
-			: props.status === 'Available'
-			? theme.color.main
-			: theme.color.error,
+	color: props.status === 'Available' ? theme.color.success : theme.color.error,
 	padding: theme.spacing(0.5, 1),
 	fontSize: '14px',
 	fontWeight: 700,
 }));
-
-const list = [
-	{
-		name: 'Registered.reflect.eth',
-		status: 'Registered',
-	},
-	{
-		name: 'Available.reflect.eth',
-		status: 'Available',
-	},
-
-	{
-		name: 'Unsupported.reflect.eth',
-		status: 'Unsupported',
-	},
-];
 
 /** TODO:
  *
@@ -97,17 +87,32 @@ const list = [
 
 const SearchInput = () => {
 	const navigate = useNavigate();
-	const [searchValue, setSearchValue] = useState();
+	const [searchValue, setSearchValue] = useState('');
 	const [isFocus, setFocus] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleChange = useCallback((e) => {
+		setIsLoading(true);
 		const value = e.target.value;
 		setSearchValue(value);
 	}, []);
 
+	const validName = useMemo(() => {
+		return isSubdomainRegx(searchValue);
+	}, [searchValue]);
+
 	const clearSearchValue = useCallback(() => {
 		setSearchValue('');
 	}, []);
+
+	const callFn = useCallback(() => {
+		console.log('call:', searchValue);
+		setIsLoading(false);
+	}, [searchValue]);
+
+	useEffect(() => {
+		throttle(callFn, 500);
+	}, [callFn]);
 
 	return (
 		<SearchWrapper>
@@ -136,35 +141,43 @@ const SearchInput = () => {
 				}}
 			/>
 
-			<Collapse in={isFocus}>
+			<Collapse in={isFocus && searchValue.length > 3}>
 				<PopoverList>
-					{list.map((item, index) => (
-						<PopoverListItem
-							key={item.name}
-							onClick={() => {
-								console.log(item.status, 'status');
-								if (item.status === 'Available') {
-									console.log(item.status, 'navigate');
-									navigate(`/register/${item.name}`);
-								}
-							}}
-						>
-							<ListItemTitle>{item.name}</ListItemTitle>
-							<Stack
-								direction="row"
-								alignItems="center"
-								justifyContent="center"
-								spacing={1}
-							>
-								<RegisterStatus status={item.status}>
-									{item.status}
-								</RegisterStatus>
-								<ChevronRightIcon
-									sx={(theme) => ({ color: theme.color.mentionColor })}
-								/>
-							</Stack>
-						</PopoverListItem>
-					))}
+					<PopoverListItem
+						valid={validName.toString()}
+						onClick={() => {
+							if (validName) {
+								navigate(`/register/${searchValue}`);
+							}
+						}}
+					>
+						{validName ? (
+							<>
+								<ListItemTitle>{searchValue}</ListItemTitle>
+								<Stack
+									direction="row"
+									alignItems="center"
+									justifyContent="center"
+									spacing={1}
+								>
+									{!isLoading ? (
+										<RegisterStatus status="Available">
+											Available
+										</RegisterStatus>
+									) : (
+										<CircularProgress size={14} thickness={7} />
+									)}
+									<ChevronRightIcon
+										sx={(theme) => ({ color: theme.color.mentionColor })}
+									/>
+								</Stack>
+							</>
+						) : (
+							<ListItemTitle>
+								Invalid name(eg:your_name.parent.eth)
+							</ListItemTitle>
+						)}
+					</PopoverListItem>
 				</PopoverList>
 			</Collapse>
 		</SearchWrapper>
