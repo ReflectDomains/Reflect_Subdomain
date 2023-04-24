@@ -14,6 +14,8 @@ import {
 	TableContainer,
 	Box,
 	TableBody,
+	Button,
+	Link,
 } from '@mui/material';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -26,7 +28,11 @@ import {
 } from '../../config/profilePageSetting';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { contractForToken, tokenContract } from '../../config/contract';
-import { formatUnitsWitheDecimals, parseUnitsWithDecimals } from '../../utils';
+import {
+	formatUnitsWitheDecimals,
+	parseUnitsWithDecimals,
+	splitAddress,
+} from '../../utils';
 
 const Cell = styled(TableCell)(({ theme }) => ({
 	width: '50px',
@@ -63,8 +69,8 @@ const ManageDomain = ({
 
 	const [checkList, setCheckList] = useState(tokenSetDefault);
 	const [tokenPriceList, setTokenPriceList] = useState({});
-
 	const [digitChecked, setDightChecked] = useState(true);
+	const [updateAddrDisabled, setUpdateAddrDisabled] = useState(true);
 
 	const calCheckedCount = useMemo(() => {
 		const arr = Object.values(checkList);
@@ -258,7 +264,24 @@ const ManageDomain = ({
 			{/* Receiving adress */}
 			<Stack direction="row" alignItems="center" spacing={1}>
 				<Label>Receiving address:</Label>
-				<Input value={address} disableUnderline={true} />
+				{updateAddrDisabled ? (
+					<Label>{splitAddress(address)}</Label>
+				) : (
+					<Input value={address} disableUnderline={true} />
+				)}
+
+				<Link
+					underline="none"
+					onClick={() => {
+						setUpdateAddrDisabled(!updateAddrDisabled);
+					}}
+					sx={(theme) => ({
+						color: updateAddrDisabled ? theme.color.main : theme.color.success,
+						fontWeight: 800,
+					})}
+				>
+					{updateAddrDisabled ? 'Update Addr' : 'done'}
+				</Link>
 			</Stack>
 			{/* Pricing */}
 			<Stack direction="row" alignItems="center" spacing={1}>

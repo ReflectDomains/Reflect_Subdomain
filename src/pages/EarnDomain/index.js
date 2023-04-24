@@ -1,6 +1,5 @@
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { Radio, Stack, Typography, styled, Box } from '@mui/material';
-import { HelpIcon } from '../../assets';
 import { useCallback, useEffect, useState } from 'react';
 import { ProgressBar, Step } from 'react-step-progress-bar';
 import StepOne from './StepOne';
@@ -116,36 +115,6 @@ const EarnDomain = () => {
 
 	return (
 		<CommonPage title="Earn by domain" back={-1}>
-			<Stack
-				direction="row"
-				alignItems="center"
-				justifyContent="flex-start"
-				spacing={1}
-			>
-				<Title>Registration model</Title>
-				<HelpIcon />
-			</Stack>
-
-			<Stack direction="row" justifyContent="space-between" spacing={1} mt={1}>
-				<RadioItem
-					name="proxyMode"
-					value="proxy"
-					checked={modeValue === 'proxy'}
-					onChange={handleChangeMode}
-					icon={<CheckBox>Proxy registration</CheckBox>}
-					checkedIcon={<CheckBox checked={true}>Proxy registration</CheckBox>}
-				/>
-				<RadioItem
-					name="proxyMode"
-					value="manual"
-					disabled={true}
-					checked={modeValue === 'manual'}
-					onChange={handleChangeMode}
-					icon={<CheckBox>Manual registration</CheckBox>}
-					checkedIcon={<CheckBox checked={true}>Manual registration</CheckBox>}
-				/>
-			</Stack>
-
 			<Title mt={3}>Process</Title>
 			<ProgressWrapper>
 				<ProgressBar
