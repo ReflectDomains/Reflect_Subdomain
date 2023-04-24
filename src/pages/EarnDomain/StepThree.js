@@ -34,7 +34,6 @@ const StepThree = ({ handleStep }) => {
 		functionName: 'getPricing',
 		args: [[pricingHashRes]],
 	});
-	console.log(prices?.[0]?.prices?.[0].toString(), 'ppp');
 
 	const adr = useMemo(
 		() => receivingAddress || address,
