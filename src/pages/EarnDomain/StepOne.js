@@ -57,7 +57,7 @@ const PopoverListItem = styled(ListItem)(({ theme, ...props }) => ({
 	justifyContent: 'space-between',
 	alignItems: 'center',
 	cursor: 'pointer',
-	...(props.invalid && {
+	...(props.invalid === 'true' && {
 		border: `1px solid ${theme.color.error}`,
 		backgroundColor: theme.color.error + '1a',
 		'.MuiTypography-root': {
@@ -153,7 +153,7 @@ const StepOne = ({ handleStep }) => {
 			<Collapse in={isFocus && searchValue.length >= 3}>
 				<PopoverList>
 					<PopoverListItem
-						invalid={invalidName}
+						invalid={invalidName.toString()}
 						onClick={() => {
 							if (judgeOwnerStatus() === 'Available') {
 								handleStep(1, addENSNameSuffix(searchValue));
