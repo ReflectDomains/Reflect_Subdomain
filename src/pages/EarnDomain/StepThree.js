@@ -7,6 +7,7 @@ import { useAccount, useContractRead } from 'wagmi';
 import { subdomainABI } from '../../config/ABI';
 import { pricingHash } from '../../utils';
 import { reflectContract, tokenContract } from '../../config/contract';
+import useGetPrice from '../../hooks/useGetPrice';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -23,31 +24,35 @@ const StepThree = ({ handleStep }) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [priceArray, setPriceArray] = useState([]);
+	const [receivingAddress, setReceivingAddress] = useState('');
 
-	const labelStrig = useMemo(() => params?.address.split('.')[0], [params]);
-	const pricingHashRes = pricingHash(params?.address, tokenContract['USDT']);
+	const labelStrig = useMemo(() => params?.address.split('.eth')[0], [params]);
 
-	const { data: prices } = useContractRead({
-		abi: subdomainABI,
-		address: reflectContract,
-		functionName: 'getPricing',
-		args: [[pricingHashRes]],
-	});
+	const prices = useGetPrice(params?.address, [tokenContract['USDT']]);
+
+	const adr = useMemo(
+		() => receivingAddress || address,
+		[receivingAddress, address]
+	);
 
 	const { write, isLoading, isSuccess } = useWriteContract({
 		functionName: 'openRegister',
-		args: [labelStrig, address, priceArray],
+		args: [labelStrig, adr, priceArray],
 		enabled: priceArray && priceArray.length > 0,
 	});
+
+	const changeReceivingAddress = useCallback((adr) => {
+		setReceivingAddress(adr);
+	}, []);
 
 	const changePriceList = useCallback((list) => {
 		setPriceArray([...list]);
 	}, []);
 
 	const confirmSetting = useCallback(() => {
-		console.log(priceArray, 'priceArray');
 		write?.();
-	}, [write, priceArray]);
+	}, [write]);
+
 	return (
 		<Box>
 			<StepsWrapper>
@@ -55,7 +60,7 @@ const StepThree = ({ handleStep }) => {
 					defaultValue={prices || []}
 					onClick={confirmSetting}
 					onChange={changePriceList}
-					onCheckedChange={changePriceList}
+					onChangeReceiving={changeReceivingAddress}
 					loading={isLoading}
 					isSuccess={isSuccess}
 				/>

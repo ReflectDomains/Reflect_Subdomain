@@ -8,6 +8,7 @@ import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 import LastStep from './LastStep';
 import StepAndCircleProcess from './StepAndCircleProcess';
+import useDomainInfo from '../../hooks/useDomainInfo';
 
 export const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
 	fontSize: '20px',
@@ -33,6 +34,8 @@ const Register = () => {
 		}
 	}, [step]);
 
+	const { expiration, days } = useDomainInfo(params?.name);
+
 	const backToAfterStep = useCallback(() => {
 		if (step - 1 > 0) {
 			setStep(parseInt(step - 1));
@@ -47,7 +50,7 @@ const Register = () => {
 					Subname: {params?.name}
 				</TypographyInfo>
 				<TypographyInfo sx={{ mt: '10px' }}>
-					Expiry:until 2025.x.x (xx days)
+					Expiry:until {expiration} ({days} days)
 				</TypographyInfo>
 				<TypographySubtitle sx={{ marginTop: '30px' }}>
 					Process

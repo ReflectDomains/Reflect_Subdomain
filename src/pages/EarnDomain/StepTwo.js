@@ -12,6 +12,7 @@ import { LoadingButton } from '@mui/lab';
 import { NameWrapper } from '../../config/ABI';
 import moment from 'moment';
 import { ensHashName } from '../../utils';
+import useDomainInfo from '../../hooks/useDomainInfo';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -46,20 +47,7 @@ const StepTwo = ({ handleStep }) => {
 	const { address } = useAccount();
 	const params = useParams();
 
-	const { data: ensData } = useContractRead({
-		abi: NameWrapper,
-		address: NameWrapperContract,
-		functionName: 'getData',
-		args: [ensHashName(params?.address)],
-	});
-
-	const expiration = useMemo(
-		() =>
-			moment((ensData?.expiry?.toNumber() ?? 0) * 1000).format(
-				'YYYY-MM-DD HH:mm'
-			),
-		[ensData]
-	);
+	const { expiration } = useDomainInfo(params?.address);
 
 	// check account is set approval for all
 	const { data: isApprovedForAll } = useContractRead({

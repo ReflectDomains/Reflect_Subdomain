@@ -21,7 +21,7 @@ export const isSubdomainRegx = (str) => {
 	return /^[a-zA-Z0-9]{3,}\.[a-zA-Z0-9]+\.eth$/.test(str);
 };
 
-export const ensHashName = (name) => namehash(name);
+export const ensHashName = (name = '') => namehash(name);
 
 export const parseUnitsWithDecimals = (n, dec = '') =>
 	ethers.utils.parseUnits((n || '').toString(), dec);

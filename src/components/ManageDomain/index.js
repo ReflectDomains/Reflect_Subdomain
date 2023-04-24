@@ -14,7 +14,6 @@ import {
 	TableContainer,
 	Box,
 	TableBody,
-	Button,
 	Link,
 } from '@mui/material';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -62,7 +61,7 @@ const ManageDomain = ({
 	loading = false,
 	isSuccess = false,
 	onChange,
-	onCheckedChange,
+	changeReceivingAddress,
 	defaultValue = [],
 }) => {
 	const { address } = useAccount();
@@ -71,6 +70,7 @@ const ManageDomain = ({
 	const [tokenPriceList, setTokenPriceList] = useState({});
 	const [digitChecked, setDightChecked] = useState(true);
 	const [updateAddrDisabled, setUpdateAddrDisabled] = useState(true);
+	const [receivingAddress, setReceivingAddress] = useState(null);
 
 	const calCheckedCount = useMemo(() => {
 		const arr = Object.values(checkList);
@@ -191,15 +191,13 @@ const ManageDomain = ({
 		[tokenPriceList, saveTimeId, changeTokenList]
 	);
 
-	// const tokenPriceValue = useCallback(
-	// 	(token) => {
-	// 		if (!tokenPriceList.has(token)) {
-	// 			return [...digitsDifferentLengthToDefaultPrice];
-	// 		}
-	// 		return [...tokenPriceList.get(token)];
-	// 	},
-	// 	[tokenPriceList]
-	// );
+	const changeReceivingAddressInput = useCallback(
+		(e) => {
+			setReceivingAddress(e.target.value);
+			changeReceivingAddress && changeReceivingAddress(e.target.value);
+		},
+		[changeReceivingAddress]
+	);
 
 	const onConfirm = useCallback(() => {
 		onClick && typeof onClick === 'function' && onClick();
@@ -267,7 +265,11 @@ const ManageDomain = ({
 				{updateAddrDisabled ? (
 					<Label>{splitAddress(address)}</Label>
 				) : (
-					<Input value={address} disableUnderline={true} />
+					<Input
+						value={receivingAddress || address}
+						onChange={changeReceivingAddressInput}
+						disableUnderline={true}
+					/>
 				)}
 
 				<Link
@@ -314,6 +316,7 @@ const ManageDomain = ({
 										<Cell component="th" scope="row">
 											{value}
 										</Cell>
+										<Cell>{tokenPriceList[value]}</Cell>
 										{tokenPriceList[value] &&
 											tokenPriceList[value].map((price, index) => (
 												<Cell component="th" scope="row" key={index}>
@@ -346,10 +349,10 @@ const ManageDomain = ({
 									Price
 								</Cell>
 								{Object.keys(checkList).map((value) =>
-									checkList[value] ? (
+									tokenPriceList[value] ? (
 										<Cell component="th" scope="row" key={value}>
 											<input
-												defaultValue={digitDefault}
+												defaultValue={tokenPriceList[value]?.[0]}
 												onInput={(v) => changePrice(v, value, 0)}
 											/>
 										</Cell>
