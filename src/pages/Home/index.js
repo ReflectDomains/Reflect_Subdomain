@@ -1,7 +1,6 @@
 import { Button, Stack, Typography, styled } from '@mui/material';
 import { MentionIcon } from '../../assets';
 import PopularDomainCard from './PopularDomainCard';
-import avatar from '../../assets/images/avatar.png';
 import { useNavigate } from 'react-router-dom';
 
 const Title = styled(Typography)(() => ({
