@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography, styled } from '@mui/material';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
 	NameWrapperContract,
@@ -10,8 +10,6 @@ import { useAccount, useContractRead } from 'wagmi';
 import useWriteContract from '../../hooks/useWriteContract';
 import { LoadingButton } from '@mui/lab';
 import { NameWrapper } from '../../config/ABI';
-import moment from 'moment';
-import { ensHashName } from '../../utils';
 import useDomainInfo from '../../hooks/useDomainInfo';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({

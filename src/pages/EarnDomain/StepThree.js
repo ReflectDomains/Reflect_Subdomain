@@ -3,11 +3,10 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import ManageDomain from '../../components/ManageDomain';
 import useWriteContract from '../../hooks/useWriteContract';
 import { useParams } from 'react-router-dom';
-import { useAccount, useContractRead } from 'wagmi';
-import { subdomainABI } from '../../config/ABI';
-import { pricingHash } from '../../utils';
-import { reflectContract, tokenContract } from '../../config/contract';
+import { useAccount } from 'wagmi';
+import { tokenContract } from '../../config/contract';
 import useGetPrice from '../../hooks/useGetPrice';
+import { splitEth } from '../../utils';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -26,7 +25,7 @@ const StepThree = ({ handleStep }) => {
 	const [priceArray, setPriceArray] = useState([]);
 	const [receivingAddress, setReceivingAddress] = useState('');
 
-	const labelStrig = useMemo(() => params?.address.split('.eth')[0], [params]);
+	const labelStrig = useMemo(() => splitEth(params?.address), [params]);
 
 	const prices = useGetPrice(params?.address, [tokenContract['USDT']]);
 
