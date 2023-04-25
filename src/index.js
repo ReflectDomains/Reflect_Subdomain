@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiConfig } from 'wagmi';
 import { chains, wagmiClient } from './config/client';
+import { ToastContainer } from 'react-toastify';
 
 import './index.less';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -25,6 +26,7 @@ root.render(
 					<RainbowKitProvider chains={chains}>
 						<AuthRouter>
 							<App />
+							<ToastContainer />
 						</AuthRouter>
 					</RainbowKitProvider>
 				</WagmiConfig>

@@ -5,6 +5,7 @@ export const login = async (data) => {
 		url: '/api/v1/login',
 		data: {
 			...data,
+			source: 'ens-tool',
 		},
 		method: 'post',
 	});
