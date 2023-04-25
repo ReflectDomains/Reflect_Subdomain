@@ -38,6 +38,8 @@ export const pricingHash = function (name, token) {
 export const formatUnitsWitheDecimals = (n, dec) =>
 	ethers.utils.formatUnits(n, dec);
 
+export const splitEth = (name) => name?.split('.eth')[0];
+
 export const throttle = (fn, delay) => {
 	console.log('delay:', delay, fn);
 	let throttleTimer = null;

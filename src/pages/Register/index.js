@@ -27,6 +27,7 @@ export const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 const Register = () => {
 	const params = useParams();
 	const [step, setStep] = useState(1);
+	const [disabled, setDisabled] = useState(true);
 
 	const nextPage = useCallback(() => {
 		if (step + 1 <= 4) {
@@ -41,6 +42,10 @@ const Register = () => {
 			setStep(parseInt(step - 1));
 		}
 	}, [step]);
+
+	const changeToNextStep = useCallback((disabled) => {
+		setDisabled(disabled);
+	}, []);
 
 	return (
 		<Box>
@@ -73,7 +78,7 @@ const Register = () => {
 					}}
 				>
 					{step === 1 ? (
-						<StepOne />
+						<StepOne onChange={changeToNextStep} />
 					) : step === 2 ? (
 						<StepTwo />
 					) : step === 3 ? (
@@ -97,7 +102,11 @@ const Register = () => {
 								Back
 							</LoadingButton>
 						) : null}
-						<LoadingButton variant="contained" onClick={nextPage}>
+						<LoadingButton
+							disabled={disabled}
+							variant="contained"
+							onClick={nextPage}
+						>
 							Next
 						</LoadingButton>
 					</Stack>

@@ -57,5 +57,10 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"graphql": "^16.6.0",
+		"path": "^0.12.7",
+		"stream-browserify": "^3.0.0"
 	}
 }
