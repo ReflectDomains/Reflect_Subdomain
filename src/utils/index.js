@@ -1,6 +1,8 @@
 import { ethers } from 'ethers';
 import { namehash } from '@ensdomains/ensjs/utils/normalise';
 
+export const zeroAddress = '0x0000000000000000000000000000000000000000';
+
 export const splitAddress = (address, start = 5, end = -4) => {
 	return (
 		(address && address.slice(0, start) + '...' + address.slice(end)) || ''
@@ -42,15 +44,23 @@ export const formatUnitsWitheDecimals = (n, dec) =>
 export const splitEth = (name) => name?.split('.eth')[0];
 
 export const throttle = (fn, delay) => {
-	console.log(delay, 'in');
 	let throttleTimer = null;
 	return function () {
-		console.log(throttleTimer, 'throttleTimer');
 		if (throttleTimer) return;
 		throttleTimer = setTimeout(() => {
-			console.log('delay1:', delay);
 			fn.apply(this, arguments);
 			throttleTimer = null;
+		}, delay);
+	};
+};
+
+export const debounce = (fn, delay) => {
+	let debounceTimer = null;
+	return function () {
+		if (debounceTimer) clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			fn.apply(this, arguments);
+			debounceTimer = null;
 		}, delay);
 	};
 };

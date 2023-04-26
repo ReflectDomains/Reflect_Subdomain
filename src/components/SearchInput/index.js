@@ -9,18 +9,28 @@ import {
 	styled,
 	CircularProgress,
 } from '@mui/material';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useNavigate } from 'react-router-dom';
-import { isSubdomainRegx, throttle } from '../../utils';
+import {
+	addENSNameSuffix,
+	debounce,
+	ensHashName,
+	isSubdomainRegx,
+	zeroAddress,
+} from '../../utils';
+import { searchSubdomain } from '../../api/subdomain';
+import { useContractRead } from 'wagmi';
+import { NameWrapper } from '../../config/ABI';
+import { NameWrapperContract } from '../../config/contract';
 
 const SearchWrapper = styled(Box)(() => ({
 	width: '600px',
 }));
 
-const Search = styled(Input)(({ theme }) => ({
+const Search = styled(Input)(() => ({
 	width: '100%',
 	height: '44px',
 	border: 'none',
@@ -81,45 +91,80 @@ const RegisterStatus = styled(Box)(({ theme, ...props }) => ({
 	fontWeight: 700,
 }));
 
-/** TODO:
- *
- */
-
 const SearchInput = () => {
 	const navigate = useNavigate();
 	const [searchValue, setSearchValue] = useState('');
 	const [isFocus, setFocus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-
-	const [test, setTest] = useState(null);
-
-	const handleChange = useCallback(
-		(e) => {
-			setIsLoading(true);
-			const value = e.target.value;
-			setSearchValue(value);
-			console.log(12, test);
-			test?.fn();
-		},
-		[test]
-	);
+	const [isHost, setHost] = useState(false);
 
 	const validName = useMemo(() => {
 		return isSubdomainRegx(searchValue);
 	}, [searchValue]);
 
+	const { data: ensData } = useContractRead({
+		abi: NameWrapper,
+		address: NameWrapperContract,
+		functionName: 'getData',
+		args: validName ? [ensHashName(addENSNameSuffix(searchValue))] : null,
+		enabled: validName && isHost,
+		cacheOnBlock: true,
+		onSettled(data, error) {
+			console.log('Settled', { data, error });
+		},
+		onSuccess(data) {
+			console.log('Success', data);
+		},
+	});
+
+	const judgeOwnerStatus = useCallback(() => {
+		return !isHost
+			? 'UnSupport'
+			: ensData?.owner === zeroAddress
+			? 'Available'
+			: 'Registered';
+	}, [ensData, isHost]);
+
+	// Fix me
+	// eslint-disable-next-line
+	const handleSearchSubdomain = useCallback(
+		debounce(async (value) => {
+			setIsLoading(true);
+			try {
+				const searchTerm = value.split('.')[1];
+				if (isSubdomainRegx(value)) {
+					const resp = await searchSubdomain({ search_term: searchTerm });
+					if (
+						resp?.code === 0 &&
+						resp?.data?.ens_domains &&
+						resp?.data.ens_domains[0]?.domain.includes(searchTerm[1])
+					) {
+						setHost(true);
+					}
+				}
+			} catch (error) {
+				console.error('handleSearchSubdomain:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		}, 500),
+		[]
+	);
+
+	const handleChange = useCallback(
+		(e) => {
+			setIsLoading(true);
+			setHost(false);
+			const value = e.target.value;
+			setSearchValue(value);
+			handleSearchSubdomain(value);
+		},
+		[handleSearchSubdomain]
+	);
+
 	const clearSearchValue = useCallback(() => {
 		setSearchValue('');
 	}, []);
-
-	const callFn = useCallback(() => {
-		setIsLoading(false);
-	}, []);
-
-	useEffect(() => {
-		const fn = throttle(callFn, 500);
-		setTest({ fn: fn });
-	}, [callFn]);
 
 	return (
 		<SearchWrapper>
@@ -140,6 +185,9 @@ const SearchInput = () => {
 				onChange={handleChange}
 				onFocus={() => {
 					setFocus(true);
+					if (validName) {
+						handleSearchSubdomain(searchValue);
+					}
 				}}
 				onBlur={() => {
 					setTimeout(() => {
@@ -153,8 +201,11 @@ const SearchInput = () => {
 					<PopoverListItem
 						valid={validName.toString()}
 						onClick={() => {
-							if (validName) {
-								navigate(`/register/${searchValue}`);
+							if (judgeOwnerStatus() === 'Available') {
+								const domainPartList = searchValue.split('.');
+								navigate(
+									`/register/${domainPartList[0]}-${domainPartList[1]}.eth`
+								);
 							}
 						}}
 					>
@@ -168,8 +219,8 @@ const SearchInput = () => {
 									spacing={1}
 								>
 									{!isLoading ? (
-										<RegisterStatus status="Available">
-											Available
+										<RegisterStatus status={judgeOwnerStatus()}>
+											{judgeOwnerStatus()}
 										</RegisterStatus>
 									) : (
 										<CircularProgress size={14} thickness={7} />

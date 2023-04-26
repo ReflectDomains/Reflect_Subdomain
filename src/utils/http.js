@@ -14,11 +14,11 @@ const http = axios.create({
 http.interceptors.request.use(
 	(config) => {
 		// token
-		// if (store.getState().loginInfo.token) {
-		// 	config.headers.Authorization = `Bearer ${
-		// 		store.getState().loginInfo.token
-		// 	}`;
-		// }
+		if (store.getState().reflect_subdomain_loginInfo.token) {
+			config.headers.Authorization = `Bearer ${
+				store.getState().reflect_subdomain_loginInfo.token
+			}`;
+		}
 		return config;
 	},
 	(error) => {
@@ -32,7 +32,6 @@ http.interceptors.response.use(
 		// const { data, config } = response;
 		const { data } = response;
 		const { code, message } = data;
-		console.log('data:', data);
 
 		if (errorCode.includes(code)) {
 			toast.error(message);
