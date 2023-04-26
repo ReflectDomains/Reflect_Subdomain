@@ -91,11 +91,18 @@ const SearchInput = () => {
 	const [isFocus, setFocus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleChange = useCallback((e) => {
-		setIsLoading(true);
-		const value = e.target.value;
-		setSearchValue(value);
-	}, []);
+	const [test, setTest] = useState(null);
+
+	const handleChange = useCallback(
+		(e) => {
+			setIsLoading(true);
+			const value = e.target.value;
+			setSearchValue(value);
+			console.log(12, test);
+			test?.fn();
+		},
+		[test]
+	);
 
 	const validName = useMemo(() => {
 		return isSubdomainRegx(searchValue);
@@ -106,12 +113,12 @@ const SearchInput = () => {
 	}, []);
 
 	const callFn = useCallback(() => {
-		console.log('call:', searchValue);
 		setIsLoading(false);
-	}, [searchValue]);
+	}, []);
 
 	useEffect(() => {
-		throttle(callFn, 500);
+		const fn = throttle(callFn, 500);
+		setTest({ fn: fn });
 	}, [callFn]);
 
 	return (
