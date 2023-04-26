@@ -2,14 +2,12 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import {
 	Box,
-	Stack,
 	Typography,
 	styled,
 	FormControlLabel,
 	RadioGroup,
 	Radio,
 } from '@mui/material';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { TypographyInfo } from './index';
 import useGetPrice from '../../hooks/useGetPrice';
 import { useParams } from 'react-router';
@@ -17,16 +15,29 @@ import {
 	tokenContract,
 	contractForToken,
 	reflectContract,
+	NameWrapperContract,
+	contractForDec,
 } from '../../config/contract';
 import {
+	ensHashName,
 	formatUnitsWitheDecimals,
 	isSubdomainRegx,
+	splitEth,
 } from '../../utils';
-import { useContract, useProvider, useFeeData } from 'wagmi';
-import { subdomainABI } from '../../config/ABI';
+import {
+	useContract,
+	useProvider,
+	useFeeData,
+	useContractRead,
+	useBalance,
+	useAccount,
+} from 'wagmi';
+import { NameWrapper, subdomainABI } from '../../config/ABI';
 import useApprove from '../../hooks/useApprove';
 import useWriteApprove from '../../hooks/useWriteApprove';
 import useDomainInfo from '../../hooks/useDomainInfo';
+import useWriteContract from '../../hooks/useWriteContract';
+import { parseUnitsWithDecimals } from '../../utils';
 
 const TypographyDes = styled(Typography)(({ theme, sx }) => ({
 	color: theme.color.mentionColor,
@@ -60,10 +71,14 @@ const StyledFormControlLabel = styled((props) => (
 	},
 }));
 
-const StepOne = ({ onChange, domainInfo={} }) => {
+const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 	const params = useParams();
+	const { address } = useAccount();
 	const [checked, setChecked] = useState('usdt');
 	const [isPaid, setIsPaid] = useState(false);
+	const { data: ethBalance } = useBalance({
+		address: address,
+	});
 	const [fee, setFee] = useState(0);
 
 	const { isApprove, setIsApprove, readLoading } = useApprove([
@@ -87,11 +102,18 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 		() => params?.name.split('-')?.[0] || '',
 		[params.name]
 	);
-	const fatherDomain = useMemo(() => params?.name.split('-')[1] || '', [params.name]);
-
-	const { expiration: isAvailable } = useDomainInfo(
-		domainInfo?.makeUpFullDomain
+	const fatherDomain = useMemo(
+		() => params?.name.split('-')[1] || '',
+		[params.name]
 	);
+
+	const { data: domainOwnerAddress } = useContractRead({
+		abi: NameWrapper,
+		address: NameWrapperContract,
+		functionName: 'ownerOf',
+		args: [ensHashName(domainInfo?.makeUpFullDomain)],
+	});
+	console.log(domainOwnerAddress, 'domainOwnerAddress');
 
 	const isRightDomain = useMemo(
 		() => isSubdomainRegx(domainInfo?.makeUpFullDomain),
@@ -100,11 +122,12 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 
 	const { data: gasPrice } = useFeeData();
 	const estFee = useMemo(() => {
-		if (!gasPrice) return 0
+		if (!gasPrice) return 0;
 		const {
 			formatted: { gasPrice: price },
 		} = gasPrice;
-		return formatUnitsWitheDecimals(price* fee, 18);
+		const mul = price * fee;
+		return mul > 0 ? formatUnitsWitheDecimals(mul.toString(), 18) : 0;
 	}, [fee, gasPrice]);
 
 	const pricesArray = useGetPrice(fatherDomain, [tokenContract['USDT']]);
@@ -122,7 +145,7 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 			} else {
 				return {
 					symbol: contractForToken[item.token],
-					price: formatUnitsWitheDecimals(p?.[0], 18) || 10,
+					price: formatUnitsWitheDecimals(p?.[0], contractForDec['USDT']) || 10,
 				};
 			}
 		});
@@ -130,58 +153,98 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 
 	const showPriceText = useMemo(() => {
 		const checkedObj = pricesDisplay.find(
-			(v) => (v && v.symbol.toLowerCase() === checked)
+			(v) => v && v.symbol.toLowerCase() === checked
 		);
 		return checkedObj?.price || 10;
 	}, [checked, pricesDisplay]);
+
+	const totalAmount = useMemo(() => {
+		return Number(Number(showPriceText) + Number(estFee)).toFixed(8);
+	}, [showPriceText, estFee]);
 
 	const changeRadio = useCallback((e) => {
 		setChecked(e.target.value);
 	}, []);
 
-	const approveOrPay = useCallback(() => {
-		if (!isApprove) {
-			approve?.();
-		} else {
-			// paid
-			setIsPaid(true);
-		}
-	}, [isApprove, approve]);
+	const obj = useMemo(
+		() => [
+			splitEth(fatherDomain),
+			childDomain,
+			address,
+			'0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
+			0,
+			tokenContract['USDT'],
+			parseUnitsWithDecimals(Number(showPriceText), contractForDec['USDT']),
+		],
+		[childDomain, fatherDomain, showPriceText, address]
+	);
 
-	const getGas = useCallback(async () => {
-		try {
-			const estimateGas = await contract.estimateGas.registerSubdomain(
-				// splitEth(params?.name)
-				'kei',
-				'kay.eth',
-				'0x2810DF84b4e9210Df472528F773c2F9f48a43724',
-				'0xd7a4F6473f32aC2Af804B3686AE8F1932bC35750',
-				0,
-				'0x80258a9230383763E2A1ECa4B5675b49fdBEECbd',
-				'12' + '0'.repeat(18)
-			);
-			console.log(estimateGas, 'estimateGas');
-		} catch (error) {
-			console.log(error, 'gas');
-		}
-	}, [contract]);
+	const isInsufficient = useMemo(
+		() => Number(ethBalance?.formatted || 0) <= 0,
+		[ethBalance]
+	);
 
 	const btnDisabled = useMemo(() => {
-		return !isRightDomain || readLoading || isAvailable !== '0';
-	}, [isRightDomain, readLoading, isAvailable]);
+		return (
+			!isRightDomain ||
+			readLoading ||
+			domainOwnerAddress !== '0x0000000000000000000000000000000000000000' ||
+			isInsufficient
+		);
+	}, [isRightDomain, readLoading, domainOwnerAddress, isInsufficient]);
 
 	const btnLoading = useMemo(
 		() => loading || readLoading,
 		[loading, readLoading]
 	);
 
-	useEffect(() => {
-		onChange && onChange(!isApprove || btnDisabled);
-	}, [isApprove, btnDisabled, onChange]);
+	const { write, prepareSuccess, writeStartSuccess } = useWriteContract({
+		functionName: 'registerSubdomain',
+		args: [...obj],
+		enabled: !btnDisabled,
+	});
+
+	const registerAndPay = useCallback(() => {
+		write?.();
+	}, [write]);
+
+	const approveOrPay = useCallback(() => {
+		if (!isApprove) {
+			approve?.();
+		} else {
+			// paid
+			registerAndPay();
+		}
+	}, [isApprove, approve, registerAndPay]);
+
+	const getGas = useCallback(async () => {
+		try {
+			const estimateGas = await contract.estimateGas.registerSubdomain(...obj, {
+				from: address,
+			});
+			setFee(estimateGas.toString());
+			// console.log(estimateGas.toString(), 'estimateGas');
+		} catch (error) {
+			console.log(error, 'gas');
+		}
+	}, [contract, obj, address]);
 
 	useEffect(() => {
-		getGas();
-	}, [getGas]);
+		onChange && onChange(!isApprove || btnDisabled || !isPaid);
+	}, [isApprove, btnDisabled, onChange, isPaid]);
+
+	useEffect(() => {
+		if (prepareSuccess) {
+			getGas();
+		}
+	}, [getGas, prepareSuccess]);
+
+	useEffect(() => {
+		if (writeStartSuccess) {
+			setIsPaid(true);
+			onNext && onNext();
+		}
+	}, [writeStartSuccess, onNext]);
 
 	return (
 		<>
@@ -202,44 +265,26 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 			</TypographyDes>
 			<TypographyDes>-Est.network fee:{estFee}ETH </TypographyDes>
 			<TypographyDes>
-				-Estimated total:0.0437ETH+{estFee} {checked?.toUpperCase()}{' '}
+				-Estimated total:
+				{totalAmount}
+				{checked?.toUpperCase()}{' '}
 			</TypographyDes>
 			<TypographyDes sx={{ mb: '30px' }}>
 				-2.5%service fees is included
 			</TypographyDes>
-			{isPaid ? (
-				<Stack
-					direction="row"
-					alignItems="center"
-					justifyContent="center"
-					sx={(theme) => ({ mb: theme.spacing(2) })}
-				>
-					<TypographyInfo
-						sx={(theme) => ({
-							color: theme.color.success,
-							fontWeight: 800,
-							mr: theme.spacing(1),
-						})}
-					>
-						Paid
-					</TypographyInfo>
-					<CheckCircleRoundedIcon
-						sx={(theme) => ({
-							color: theme.color.success,
-							fontSize: '15px',
-						})}
-					/>
-				</Stack>
-			) : (
-				<LoadingButton
-					disabled={btnDisabled}
-					variant="contained"
-					onClick={approveOrPay}
-					loading={btnLoading}
-				>
-					{isApprove ? `pay ${showPriceText} ${checked}` : 'Approve'}
-				</LoadingButton>
-			)}
+
+			<LoadingButton
+				disabled={btnDisabled}
+				variant="contained"
+				onClick={approveOrPay}
+				loading={btnLoading}
+			>
+				{isInsufficient
+					? 'Insufficient Funds'
+					: isApprove
+					? `pay ${showPriceText} ${checked} & Register`
+					: 'Approve'}
+			</LoadingButton>
 		</>
 	);
 };

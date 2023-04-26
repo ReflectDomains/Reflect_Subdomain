@@ -1,6 +1,6 @@
 import { Box, Stack, Typography, styled } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useReducer, useState } from 'react';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { useParams } from 'react-router-dom';
 import StepOne from './StepOne';
@@ -29,9 +29,10 @@ const Register = () => {
 	const params = useParams();
 	const [step, setStep] = useState(1);
 	const [disabled, setDisabled] = useState(true);
+	// const [state, dispatch] = useReducer({})
 
 	const nextPage = useCallback(() => {
-		if (step + 1 <= 4) {
+		if (step + 1 <= 3) {
 			setStep(parseInt(step + 1));
 		}
 	}, [step]);
@@ -41,14 +42,18 @@ const Register = () => {
 		[params.name]
 	);
 
-	const fatherDomain = useMemo(() => params?.name.split('-')[1] || '', [params.name]);
+	const fatherDomain = useMemo(
+		() => params?.name.split('-')[1] || '',
+		[params.name]
+	);
 
-	const makeUpFullDomain = useMemo(() => childDomain && fatherDomain ? `${childDomain}.${fatherDomain}`: '', [childDomain, fatherDomain])
+	const makeUpFullDomain = useMemo(
+		() => (childDomain && fatherDomain ? `${childDomain}.${fatherDomain}` : ''),
+		[childDomain, fatherDomain]
+	);
 
 	// todo check domain is availabled
-	const { expiration: fatherExpiration, days} = useDomainInfo(fatherDomain)
-	
-
+	const { expiration: fatherExpiration, days } = useDomainInfo(fatherDomain);
 
 	const backToAfterStep = useCallback(() => {
 		if (step - 1 > 0) {
@@ -80,27 +85,29 @@ const Register = () => {
 						mt: '10px',
 					}}
 				>
-					{step < 4 ? <StepAndCircleProcess step={step} /> : <LastStep />}
+					{step < 3 ? <StepAndCircleProcess step={step} /> : <LastStep />}
 				</Stack>
 				<Box
 					sx={{
-						backgroundColor: step < 4 ? '#F7F7F7' : '#fff',
+						backgroundColor: step < 3 ? '#F7F7F7' : '#fff',
 						borderRadius: '10px',
 						width: '100%',
 						padding: '20px',
 					}}
 				>
 					{step === 1 ? (
-						<StepOne onChange={changeToNextStep} domainInfo={{
-							makeUpFullDomain,
-						}} />
+						<StepOne
+							onChange={changeToNextStep}
+							onNext={nextPage}
+							domainInfo={{
+								makeUpFullDomain,
+							}}
+						/>
 					) : step === 2 ? (
 						<StepTwo />
-					) : step === 3 ? (
-						<StepThree />
 					) : null}
 				</Box>
-				{step < 4 ? (
+				{step < 3 ? (
 					<Stack
 						flexDirection="row"
 						justifyContent="center"

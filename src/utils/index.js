@@ -45,7 +45,6 @@ export const throttle = (fn, delay) => {
 	console.log(delay, 'in');
 	let throttleTimer = null;
 	return function () {
-		console.log(throttleTimer, 'throttleTimer');
 		if (throttleTimer) return;
 		throttleTimer = setTimeout(() => {
 			console.log('delay1:', delay);
