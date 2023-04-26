@@ -32,7 +32,7 @@ const ContentBar = memo(({ leftText, rightText }) => {
 });
 
 const StepTwo = () => {
-	const [progess] = useState(100);
+	const [progess] = useState(50);
 	return (
 		<Stack direction="column" alignItems="center" justifyContent="center">
 			<TypographyInfo sx={{ fontWeight: 600, textAlign: 'center', mb: '15px' }}>

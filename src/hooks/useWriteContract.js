@@ -21,7 +21,7 @@ const useWriteContract = ({
 		onSuccess && typeof onSuccess === 'function' && onSuccess();
 	}, [onSuccess]);
 
-	const { config } = usePrepareContractWrite({
+	const { config, isSuccess: prepareSuccess } = usePrepareContractWrite({
 		address: contractAddress || reflectContract,
 		abi: ABIJSON || subdomainABI,
 		functionName: functionName,
@@ -38,7 +38,12 @@ const useWriteContract = ({
 			);
 		},
 	});
-	const { isLoading, data, write } = useContractWrite(config);
+	const {
+		isLoading,
+		data,
+		write,
+		isSuccess: writeStartSuccess,
+	} = useContractWrite(config);
 
 	const { isLoading: waitingLoading, isSuccess } = useWaitForTransaction({
 		hash: data?.hash,
@@ -52,6 +57,8 @@ const useWriteContract = ({
 
 	return {
 		isLoading: loadingContract,
+		prepareSuccess,
+		writeStartSuccess,
 		write,
 		isSuccess,
 	};

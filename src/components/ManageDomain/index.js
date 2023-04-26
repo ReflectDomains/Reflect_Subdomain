@@ -26,7 +26,11 @@ import {
 	tokenSetDefault,
 } from '../../config/profilePageSetting';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { contractForToken, tokenContract } from '../../config/contract';
+import {
+	contractForDec,
+	contractForToken,
+	tokenContract,
+} from '../../config/contract';
 import {
 	formatUnitsWitheDecimals,
 	parseUnitsWithDecimals,
@@ -122,7 +126,7 @@ const ManageDomain = ({
 			const pWithDec =
 				(p &&
 					p.map((item) => {
-						return parseUnitsWithDecimals(item, 18);
+						return parseUnitsWithDecimals(item, contractForDec['USDT']);
 					})) ||
 				[];
 			const obj =
@@ -213,7 +217,7 @@ const ManageDomain = ({
 				});
 				const prices = item.prices;
 				const pricesDisplay = prices.map((i) =>
-					formatUnitsWitheDecimals(i, 18)
+					formatUnitsWitheDecimals(i, contractForDec['USDT'])
 				);
 				setTokenPriceList((v) => {
 					return {
