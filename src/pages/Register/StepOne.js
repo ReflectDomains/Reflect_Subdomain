@@ -21,13 +21,11 @@ import {
 import {
 	formatUnitsWitheDecimals,
 	isSubdomainRegx,
-	splitEth,
 } from '../../utils';
 import { useContract, useProvider, useFeeData } from 'wagmi';
 import { subdomainABI } from '../../config/ABI';
 import useApprove from '../../hooks/useApprove';
 import useWriteApprove from '../../hooks/useWriteApprove';
-import useDomainInfo from '../../hooks/useDomainInfo';
 
 const TypographyDes = styled(Typography)(({ theme, sx }) => ({
 	color: theme.color.mentionColor,
@@ -61,7 +59,7 @@ const StyledFormControlLabel = styled((props) => (
 	},
 }));
 
-const StepOne = ({ onChange }) => {
+const StepOne = ({ onChange, domainInfo={} }) => {
 	const params = useParams();
 	const [checked, setChecked] = useState('usdt');
 	const [isPaid, setIsPaid] = useState(false);
@@ -85,33 +83,29 @@ const StepOne = ({ onChange }) => {
 	});
 
 	const childDomain = useMemo(
-		() => params?.name.split('-')?.[0],
+		() => params?.name.split('-')?.[0] || '',
 		[params.name]
 	);
-	const fatherDomain = useMemo(() => params?.name.split('-')[1], [params.name]);
-
-	// todo check domain is availabled
-	const { expiration: isAvailabled } = useDomainInfo(
-		`${childDomain}.${fatherDomain}`
-	);
+	const fatherDomain = useMemo(() => params?.name.split('-')[1] || '', [params.name]);
 
 	const isRightDomain = useMemo(
-		() => isSubdomainRegx(`${childDomain}.${fatherDomain}`),
-		[childDomain, fatherDomain]
+		() => isSubdomainRegx(domainInfo?.expiration),
+		[domainInfo]
 	);
 
 	const { data: gasPrice } = useFeeData();
 	const estFee = useMemo(() => {
+		if (!gasPrice) return 0
 		const {
 			formatted: { gasPrice: price },
 		} = gasPrice;
-		return formatUnitsWitheDecimals(price * fee, 18);
+		return formatUnitsWitheDecimals(price* fee, 18);
 	}, [fee, gasPrice]);
 
 	const pricesArray = useGetPrice(fatherDomain, [tokenContract['USDT']]);
 
 	const pricesDisplay = useMemo(() => {
-		return pricesArray.map((item) => {
+		return (pricesArray ?? []).map((item) => {
 			const p = item.prices;
 			if (item.mode) {
 				const len = childDomain.length;
@@ -131,7 +125,7 @@ const StepOne = ({ onChange }) => {
 
 	const showPriceText = useMemo(() => {
 		const checkedObj = pricesDisplay.find(
-			(v) => v.symbol.toLowerCase() === checked
+			(v) => (v && v.symbol.toLowerCase() === checked)
 		);
 		return checkedObj?.price || 10;
 	}, [checked, pricesDisplay]);
@@ -168,8 +162,8 @@ const StepOne = ({ onChange }) => {
 	}, [contract]);
 
 	const btnDiabled = useMemo(() => {
-		return !isRightDomain || readLoading || !!isAvailabled;
-	}, [isRightDomain, readLoading, isAvailabled]);
+		return !isRightDomain || readLoading || !!domainInfo.expiration;
+	}, [isRightDomain, readLoading, domainInfo]);
 
 	const btnLoading = useMemo(
 		() => loading || readLoading,

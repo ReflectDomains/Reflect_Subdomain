@@ -27,6 +27,7 @@ export const parseUnitsWithDecimals = (n, dec = '') =>
 	ethers.utils.parseUnits((n || '').toString(), dec);
 
 export const pricingHash = function (name, token) {
+	if (!name) return ''
 	const node = ensHashName(name);
 	const hash = ethers.utils.keccak256(
 		ethers.utils.solidityPack(['bytes32', 'address'], [node, token])
@@ -41,7 +42,6 @@ export const formatUnitsWitheDecimals = (n, dec) =>
 export const splitEth = (name) => name?.split('.eth')[0];
 
 export const throttle = (fn, delay) => {
-	console.log('delay:', delay, fn);
 	let throttleTimer = null;
 	return function () {
 		if (throttleTimer) return;
