@@ -26,6 +26,7 @@ import { useContract, useProvider, useFeeData } from 'wagmi';
 import { subdomainABI } from '../../config/ABI';
 import useApprove from '../../hooks/useApprove';
 import useWriteApprove from '../../hooks/useWriteApprove';
+import useDomainInfo from '../../hooks/useDomainInfo';
 
 const TypographyDes = styled(Typography)(({ theme, sx }) => ({
 	color: theme.color.mentionColor,
@@ -88,8 +89,12 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 	);
 	const fatherDomain = useMemo(() => params?.name.split('-')[1] || '', [params.name]);
 
+	const { expiration: isAvailable } = useDomainInfo(
+		domainInfo?.makeUpFullDomain
+	);
+
 	const isRightDomain = useMemo(
-		() => isSubdomainRegx(domainInfo?.expiration),
+		() => isSubdomainRegx(domainInfo?.makeUpFullDomain),
 		[domainInfo]
 	);
 
@@ -161,9 +166,9 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 		}
 	}, [contract]);
 
-	const btnDiabled = useMemo(() => {
-		return !isRightDomain || readLoading || !!domainInfo.expiration;
-	}, [isRightDomain, readLoading, domainInfo]);
+	const btnDisabled = useMemo(() => {
+		return !isRightDomain || readLoading || isAvailable !== '0';
+	}, [isRightDomain, readLoading, isAvailable]);
 
 	const btnLoading = useMemo(
 		() => loading || readLoading,
@@ -171,8 +176,8 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 	);
 
 	useEffect(() => {
-		onChange && onChange(!isApprove || btnDiabled);
-	}, [isApprove, btnDiabled, onChange]);
+		onChange && onChange(!isApprove || btnDisabled);
+	}, [isApprove, btnDisabled, onChange]);
 
 	useEffect(() => {
 		getGas();
@@ -227,7 +232,7 @@ const StepOne = ({ onChange, domainInfo={} }) => {
 				</Stack>
 			) : (
 				<LoadingButton
-					disabled={btnDiabled}
+					disabled={btnDisabled}
 					variant="contained"
 					onClick={approveOrPay}
 					loading={btnLoading}

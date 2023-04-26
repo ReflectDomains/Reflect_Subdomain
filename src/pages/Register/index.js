@@ -9,6 +9,7 @@ import StepThree from './StepThree';
 import LastStep from './LastStep';
 import StepAndCircleProcess from './StepAndCircleProcess';
 import useDomainInfo from '../../hooks/useDomainInfo';
+import { useMemo } from 'react';
 
 export const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
 	fontSize: '20px',
@@ -35,7 +36,19 @@ const Register = () => {
 		}
 	}, [step]);
 
-	const { expiration, days } = useDomainInfo(params?.name);
+	const childDomain = useMemo(
+		() => params?.name.split('-')?.[0] || '',
+		[params.name]
+	);
+
+	const fatherDomain = useMemo(() => params?.name.split('-')[1] || '', [params.name]);
+
+	const makeUpFullDomain = useMemo(() => childDomain && fatherDomain ? `${childDomain}.${fatherDomain}`: '', [childDomain, fatherDomain])
+
+	// todo check domain is availabled
+	const { expiration: fatherExpiration, days} = useDomainInfo(fatherDomain)
+	
+
 
 	const backToAfterStep = useCallback(() => {
 		if (step - 1 > 0) {
@@ -52,10 +65,10 @@ const Register = () => {
 			<CommonPage title="Registration">
 				<TypographySubtitle>Basic Info</TypographySubtitle>
 				<TypographyInfo sx={{ mt: '10px' }}>
-					Subname: {params?.name}
+					Subname: {makeUpFullDomain}
 				</TypographyInfo>
 				<TypographyInfo sx={{ mt: '10px' }}>
-					Expiry:until {expiration} ({days} days)
+					Expiry:until {fatherExpiration} ({days} days)
 				</TypographyInfo>
 				<TypographySubtitle sx={{ marginTop: '30px' }}>
 					Process
@@ -78,7 +91,9 @@ const Register = () => {
 					}}
 				>
 					{step === 1 ? (
-						<StepOne onChange={changeToNextStep} />
+						<StepOne onChange={changeToNextStep} domainInfo={{
+							makeUpFullDomain,
+						}} />
 					) : step === 2 ? (
 						<StepTwo />
 					) : step === 3 ? (
