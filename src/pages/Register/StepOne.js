@@ -7,7 +7,9 @@ import {
 	FormControlLabel,
 	RadioGroup,
 	Radio,
+	Stack,
 } from '@mui/material';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { TypographyInfo } from './index';
 import useGetPrice from '../../hooks/useGetPrice';
 import { useParams } from 'react-router';
@@ -35,7 +37,6 @@ import {
 import { NameWrapper, subdomainABI } from '../../config/ABI';
 import useApprove from '../../hooks/useApprove';
 import useWriteApprove from '../../hooks/useWriteApprove';
-import useWriteContract from '../../hooks/useWriteContract';
 import { parseUnitsWithDecimals } from '../../utils';
 
 const TypographyDes = styled(Typography)(({ theme, sx }) => ({
@@ -70,7 +71,12 @@ const StyledFormControlLabel = styled((props) => (
 	},
 }));
 
-const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
+const StepOne = ({
+	domainInfo = {},
+	dispatch,
+	prepareSuccess = false,
+	onConfirm,
+}) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [checked, setChecked] = useState('usdt');
@@ -122,14 +128,14 @@ const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 		[ethBalance]
 	);
 
+	const domainHasOwner = useMemo(
+		() => domainOwnerAddress !== '0x0000000000000000000000000000000000000000',
+		[domainOwnerAddress]
+	);
+
 	const btnDisabled = useMemo(() => {
-		return (
-			!isRightDomain ||
-			readLoading ||
-			domainOwnerAddress !== '0x0000000000000000000000000000000000000000' ||
-			isInsufficient
-		);
-	}, [isRightDomain, readLoading, domainOwnerAddress, isInsufficient]);
+		return !isRightDomain || readLoading || domainHasOwner || isInsufficient;
+	}, [isRightDomain, readLoading, domainHasOwner, isInsufficient]);
 
 	const { data: gasPrice } = useFeeData();
 
@@ -170,10 +176,6 @@ const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 		return checkedObj?.price || 10;
 	}, [checked, pricesDisplay]);
 
-	const totalAmount = useMemo(() => {
-		return Number(Number(showPriceText) + Number(estFee)).toFixed(8);
-	}, [showPriceText, estFee]);
-
 	const changeRadio = useCallback((e) => {
 		setChecked(e.target.value);
 	}, []);
@@ -196,23 +198,10 @@ const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 		[loading, readLoading]
 	);
 
-	const { write, prepareSuccess, writeStartSuccess, txHash } = useWriteContract({
-		functionName: 'registerSubdomain',
-		args: [...obj],
-		enabled: !btnDisabled,
-		onSuccess: () => {
-			dispatch({type: 'registerStatus', payload: 'success'})
-		},
-		onError: () => {
-			dispatch({type: 'registerStatus', payload: 'error'})
-		},
-	});
-
 	const registerAndPay = useCallback(() => {
-		dispatch({type: 'registerStatus', payload: 'pending'})
-		dispatch({type: 'registerHash', payload: txHash })
-		write?.();
-	}, [write, dispatch, txHash]);
+		dispatch({ type: 'registerStatus', payload: 'pending' });
+		onConfirm?.();
+	}, [onConfirm, dispatch]);
 
 	const approveOrPay = useCallback(() => {
 		if (!isApprove) {
@@ -229,7 +218,6 @@ const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 				from: address,
 			});
 			setFee(estimateGas.toString());
-			// console.log(estimateGas.toString(), 'estimateGas');
 		} catch (error) {
 			console.log(error, 'gas');
 		}
@@ -242,10 +230,10 @@ const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 	}, [getGas, prepareSuccess]);
 
 	useEffect(() => {
-		if (writeStartSuccess) {
-			onNext && onNext();
+		if (obj) {
+			dispatch({ type: 'registerArray', payload: obj });
 		}
-	}, [writeStartSuccess, onNext]);
+	}, [obj, dispatch]);
 
 	return (
 		<>
@@ -267,25 +255,50 @@ const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 			<TypographyDes>-Est.network fee:{estFee}ETH </TypographyDes>
 			<TypographyDes>
 				-Estimated total:
-				{totalAmount}
-				{checked?.toUpperCase()}{' '}
+				{estFee} ETH + {showPriceText}
+				{checked?.toUpperCase()}
 			</TypographyDes>
 			<TypographyDes sx={{ mb: '30px' }}>
 				-2.5%service fees is included
 			</TypographyDes>
 
-			<LoadingButton
-				disabled={btnDisabled}
-				variant="contained"
-				onClick={approveOrPay}
-				loading={btnLoading}
-			>
-				{isInsufficient
-					? 'Insufficient Funds'
-					: isApprove
-					? `pay ${showPriceText} ${checked} & Register`
-					: 'Approve'}
-			</LoadingButton>
+			{domainHasOwner ? (
+				<Stack
+					direction="row"
+					alignItems="center"
+					justifyContent="center"
+					sx={(theme) => ({ mb: theme.spacing(2) })}
+				>
+					<TypographyInfo
+						sx={(theme) => ({
+							color: theme.color.success,
+							fontWeight: 800,
+							mr: theme.spacing(1),
+						})}
+					>
+						Paid
+					</TypographyInfo>
+					<CheckCircleRoundedIcon
+						sx={(theme) => ({
+							color: theme.color.success,
+							fontSize: '15px',
+						})}
+					/>
+				</Stack>
+			) : (
+				<LoadingButton
+					disabled={btnDisabled}
+					variant="contained"
+					onClick={approveOrPay}
+					loading={btnLoading}
+				>
+					{isInsufficient
+						? 'Insufficient Funds'
+						: isApprove
+						? `pay ${showPriceText} ${checked} & Register`
+						: 'Approve'}
+				</LoadingButton>
+			)}
 		</>
 	);
 };

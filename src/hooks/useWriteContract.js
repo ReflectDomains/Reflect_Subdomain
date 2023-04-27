@@ -20,16 +20,18 @@ const useWriteContract = ({
 }) => {
 	const { address } = useAccount();
 	const successFn = useCallback(() => {
+		console.log('success');
 		onSuccess && typeof onSuccess === 'function' && onSuccess();
 	}, [onSuccess]);
 
 	const errorFn = useCallback(() => {
 		onError && typeof onError === 'function' && onError();
-	}, [onError])
+	}, [onError]);
 
 	const settledFn = useCallback(() => {
+		console.log('transaction');
 		onSetteled && typeof onSetteled === 'function' && onSetteled();
-	}, [onSetteled])
+	}, [onSetteled]);
 
 	const { config, isSuccess: prepareSuccess } = usePrepareContractWrite({
 		address: contractAddress || reflectContract,
@@ -57,9 +59,17 @@ const useWriteContract = ({
 
 	const { isLoading: waitingLoading, isSuccess } = useWaitForTransaction({
 		hash: data?.hash,
-		onSuccess: successFn,
-		onError: errorFn,
-		onSettled: settledFn
+		onSuccess() {
+			console.log('success');
+			successFn();
+		},
+		onError() {
+			errorFn();
+		},
+		onSettled() {
+			console.log('test');
+			settledFn();
+		},
 	});
 
 	const loadingContract = useMemo(
@@ -73,7 +83,7 @@ const useWriteContract = ({
 		writeStartSuccess,
 		write,
 		isSuccess,
-		txHash: data?.hash
+		txHash: data?.hash,
 	};
 };
 

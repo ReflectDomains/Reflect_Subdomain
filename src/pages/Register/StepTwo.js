@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { toScan } from '../../utils';
 
-const ContentBar = memo(({ leftText, rightText, isError=false }) => {
+const ContentBar = memo(({ leftText, rightText, isError = false }) => {
 	return (
 		<Stack
 			direction="row"
@@ -29,27 +29,38 @@ const ContentBar = memo(({ leftText, rightText, isError=false }) => {
 			>
 				{leftText}
 			</TypographyInfo>
-			{
-				isError ? <HighlightOffIcon sx={(theme) => {return {color: theme.color.error}}} />: null
-			}
-			<TypographyInfo sx={{marginLeft: 'auto'}}>{rightText}</TypographyInfo>
+			{isError ? (
+				<HighlightOffIcon
+					sx={(theme) => {
+						return { color: theme.color.error };
+					}}
+				/>
+			) : null}
+			<TypographyInfo sx={{ marginLeft: 'auto' }}>{rightText}</TypographyInfo>
 		</Stack>
 	);
 });
 
-const StepTwo = ({ state }) => {
-	const progess = useMemo(() => state.registerStep, [state.registerStep])
-	const transactionStatus = useMemo(() => state.registerStatus, [state.registerStatus])
-	const isError = useMemo(() => transactionStatus === 'error', [transactionStatus])
+const StepTwo = ({ state, txHash = '' }) => {
+	const progess = useMemo(() => state.registerStep, [state.registerStep]);
+	const transactionStatus = useMemo(
+		() => state.registerStatus,
+		[state.registerStatus]
+	);
+	const isError = useMemo(
+		() => transactionStatus === 'error',
+		[transactionStatus]
+	);
 	return (
 		<Stack direction="column" alignItems="center" justifyContent="center">
 			<TypographyInfo sx={{ fontWeight: 600, textAlign: 'center', mb: '15px' }}>
 				{progess === 100
 					? 'All Transactions Complete'
-						:isError  ? 'Payment Transcations Error'
+					: isError
+					? 'Payment Transcations Error'
 					: 'Payment Transcations Sent'}
 			</TypographyInfo>
-			<SimpleProgess progess={progess}  isError={isError} />
+			<SimpleProgess progess={progess} transactionStatus={transactionStatus} />
 			<Typography
 				sx={(theme) => ({
 					fontSize: '12px',
@@ -69,8 +80,15 @@ const StepTwo = ({ state }) => {
 				leftText="Action1"
 				rightText="Register subname by reflect contract"
 			/>
-			<ContentBar isError={isError} leftText="Action2" rightText="Pay token to domain owner" />
-			<TypographyInfo onClick={toScan(state?.txHash)} sx={(theme) => ({ color: theme.color.main })}>
+			<ContentBar
+				isError={isError}
+				leftText="Action2"
+				rightText="Pay token to domain owner"
+			/>
+			<TypographyInfo
+				onClick={toScan.bind(this, txHash)}
+				sx={(theme) => ({ color: theme.color.main })}
+			>
 				View on Etherscan(Goerli Testnet)
 			</TypographyInfo>
 		</Stack>
