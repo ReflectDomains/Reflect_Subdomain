@@ -8,12 +8,17 @@ import AvatarInput from '../../components/CommonUI/AvatarInput';
 import { LoadingButton } from '@mui/lab';
 import { getProfile, setProfile } from '../../api/profile';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 
 const LabelText = { fontSize: '20px', fontWeight: 600 };
 
 const Setting = () => {
-	const { handleSubmit, control } = useForm({
-		defaultValues: () => handleGetProfile(),
+	const dispatch = useDispatch();
+	const { initialProfile } = useSelector((state) => ({
+		initialProfile: state.reflect_subdomain_loginInfo,
+	}));
+	const { handleSubmit, control, reset } = useForm({
+		defaultValues: initialProfile,
 	});
 	const [avatar, setAvatar] = useState();
 	const [saveLoading, setSaveLoading] = useState(false);
@@ -23,6 +28,7 @@ const Setting = () => {
 		const resp = await setProfile(data);
 		if (resp?.code === 0) {
 			toast.success(resp.msg);
+			dispatch({ type: 'SET_PROFILE', value: data });
 		}
 		setSaveLoading(false);
 	};
@@ -143,7 +149,7 @@ const Setting = () => {
 							// loading={true}
 							loadingPosition="start"
 							onClick={() => {
-								handleGetProfile();
+								reset();
 							}}
 						>
 							Reset

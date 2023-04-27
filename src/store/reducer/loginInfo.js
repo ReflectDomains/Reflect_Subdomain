@@ -1,6 +1,12 @@
 const initialLoginState = {
 	token: null,
 	preAccount: '',
+	avatar: '',
+	medium: '',
+	telegram: '',
+	discord: '',
+	twitter: '',
+	slogan: '',
 };
 
 const LoginReducer = (state = initialLoginState, action) => {
@@ -9,6 +15,10 @@ const LoginReducer = (state = initialLoginState, action) => {
 			return { ...state, token: action.value };
 		case 'SET_PRE_ACCOUNT': {
 			return { ...state, preAccount: action.value };
+		}
+		case 'SET_PROFILE': {
+			console.log('value:', action.value);
+			return { ...state, ...action.value };
 		}
 		case 'LOGOUT':
 			return { ...initialLoginState };
