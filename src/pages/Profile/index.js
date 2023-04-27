@@ -8,14 +8,13 @@ import { useState } from 'react';
 import SubNames from './SubNames';
 import Domains from './Domains';
 import Portfolio from './Portfolio';
+import { useAccount } from 'wagmi';
+import { AvatarGenerator } from 'random-avatar-generator';
 
-const avatar =
-	'https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?auto=format&w=384';
-
-const ProfileBackground = styled(Box)(() => ({
+const ProfileBackground = styled(Box)(({ ...props }) => ({
 	width: '100%',
 	height: '120px',
-	background: `url(${avatar})`,
+	background: `url(${props.img})`,
 	borderRadius: '20px',
 	backgroundPosition: 'center',
 	backgroundRepeat: 'no-repeat',
@@ -47,6 +46,10 @@ const ProfileTab = styled(Tab)(({ theme }) => ({
 
 const Profile = () => {
 	const navigate = useNavigate();
+	const { address } = useAccount();
+
+	const generator = new AvatarGenerator();
+	let addrAvatar = generator.generateRandomAvatar(address);
 	// portfolio | subNames | domains
 	const [tabValue, setTabValue] = useState('portfolio');
 
@@ -57,7 +60,7 @@ const Profile = () => {
 	return (
 		<CommonPage title="Profile" sx={(theme) => ({ padding: '0' })}>
 			{/* background image */}
-			<ProfileBackground>
+			<ProfileBackground img={addrAvatar}>
 				<Box
 					sx={{
 						width: '100%',
@@ -79,7 +82,7 @@ const Profile = () => {
 				})}
 			>
 				<UserBasicInfo>
-					<CommonAvatar avatar={avatar} scope={100} />
+					<CommonAvatar address={address} scope={100} />
 					<Box>
 						<Name>Jassen</Name>
 						<Bio>This is a Web3 Reflect domain</Bio>

@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import LabelInput from '../../components/CommonUI/LabelInput';
 import { useCallback, useState } from 'react';
@@ -6,17 +6,30 @@ import MultipleInput from '../../components/CommonUI/MultipleInput';
 import { InputLabel, Stack } from '@mui/material';
 import AvatarInput from '../../components/CommonUI/AvatarInput';
 import { LoadingButton } from '@mui/lab';
+import { getProfile, setProfile } from '../../api/profile';
+import { toast } from 'react-toastify';
 
 const LabelText = { fontSize: '20px', fontWeight: 600 };
 
 const Setting = () => {
-	const { handleSubmit } = useForm();
+	const { handleSubmit, control } = useForm({
+		defaultValues: () => handleGetProfile(),
+	});
 	const [avatar, setAvatar] = useState();
-	const [inpVal, setInpVal] = useState();
+	const [saveLoading, setSaveLoading] = useState(false);
 
-	const handleChange = (e) => {
-		const value = e.target.value;
-		setInpVal(value);
+	const handleSetProfile = async (data) => {
+		setSaveLoading(true);
+		const resp = await setProfile(data);
+		if (resp?.code === 0) {
+			toast.success(resp.msg);
+		}
+		setSaveLoading(false);
+	};
+
+	const handleGetProfile = async () => {
+		const resp = await getProfile();
+		console.log('resp:', resp);
 	};
 
 	const handleUploadAvatarSuccess = useCallback((inputRef, img) => {
@@ -31,7 +44,7 @@ const Setting = () => {
 
 	return (
 		<CommonPage title="Settings">
-			<form onSubmit={handleSubmit(console.log)}>
+			<form onSubmit={handleSubmit(handleSetProfile)}>
 				<Stack direction="column" spacing={3}>
 					<AvatarInput
 						label="Avatar"
@@ -39,28 +52,83 @@ const Setting = () => {
 						labelSx={LabelText}
 						onSuccess={handleUploadAvatarSuccess}
 						onError={handleUploadAvatarError}
+						ref={null}
 					/>
-					<MultipleInput
-						value={inpVal}
-						label="Slogan"
-						labelSx={LabelText}
-						multiline
-						rows={4}
-						minRows={4}
-						maxcounts={100}
-						onChange={handleChange}
+					<Controller
+						name="slogan"
+						control={control}
+						defaultValue=""
+						render={({ field }) => (
+							<MultipleInput
+								{...field}
+								label="Slogan"
+								labelSx={LabelText}
+								multiline
+								rows={4}
+								minRows={4}
+								maxcounts={100}
+								ref={null}
+							/>
+						)}
 					/>
 
 					{/* Social Media */}
 					<Stack direction="column" spacing={2}>
 						<InputLabel sx={{ ...LabelText }}>Social Media</InputLabel>
 
-						<LabelInput label="-Twitter" placeholder="@" />
+						<Controller
+							name="twitter"
+							control={control}
+							defaultValue=""
+							render={({ field, ref = null }) => (
+								<LabelInput
+									label="-Twitter"
+									placeholder="@"
+									{...field}
+									ref={null}
+								/>
+							)}
+						/>
 
-						<LabelInput label="-Discord" placeholder="https:" />
-
-						<LabelInput label="-Medium" placeholder="https:" />
-						<LabelInput label="-Telegram" placeholder="@" />
+						<Controller
+							name="discord"
+							control={control}
+							defaultValue=""
+							render={({ field }) => (
+								<LabelInput
+									label="-Discord"
+									placeholder="https:"
+									{...field}
+									ref={null}
+								/>
+							)}
+						/>
+						<Controller
+							name="medium"
+							control={control}
+							defaultValue=""
+							render={({ field }) => (
+								<LabelInput
+									label="-Medium"
+									placeholder="https:"
+									{...field}
+									ref={null}
+								/>
+							)}
+						/>
+						<Controller
+							name="telegram"
+							control={control}
+							defaultValue=""
+							render={({ field }) => (
+								<LabelInput
+									label="-Telegram"
+									placeholder="@"
+									{...field}
+									ref={null}
+								/>
+							)}
+						/>
 					</Stack>
 
 					<Stack
@@ -71,15 +139,22 @@ const Setting = () => {
 							padding: theme.spacing(2, 0, 2, 0),
 						})}
 					>
-						<LoadingButton loading={true} loadingPosition="start">
+						<LoadingButton
+							// loading={true}
+							loadingPosition="start"
+							onClick={() => {
+								handleGetProfile();
+							}}
+						>
 							Reset
 						</LoadingButton>
 						<LoadingButton
-							loading={true}
+							type="submit"
+							loading={saveLoading}
 							variant="contained"
 							loadingPosition="start"
 							onClick={() => {
-								handleSubmit(console.log);
+								handleSubmit(handleSetProfile);
 							}}
 						>
 							Save

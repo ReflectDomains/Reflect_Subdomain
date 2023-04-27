@@ -7,7 +7,7 @@ import { ProfileIcon, ExitIcon } from '../../assets';
 import { ListItemText, Menu, MenuItem, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CommonAvatar from '../CommonAvatar';
-import { login } from '../../api/profile';
+import { login } from '../../api/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
