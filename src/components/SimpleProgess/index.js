@@ -1,28 +1,36 @@
 import { styled, LinearProgress, Box } from '@mui/material';
 import { memo } from 'react';
-const CustomLinearProgressOut = styled(LinearProgress)(({ value }) => ({
-	width: '508px',
-	height: '40px',
-	borderRadius: '30px',
-	background: 'transparent',
-	'.MuiLinearProgress-bar': {
-		borderRadius: '30px',
+const CustomLinearProgressOut = styled(LinearProgress)(
+	({ value, transaction }) => ({
+		width: '508px',
+		// height: '40px',
+		// windows
+		height: '60px',
+		// top: '-4px',
+		// windows
+		top: '-1px',
+		borderRadius: '20px',
 		background: 'transparent',
-		'&::after': {
-			position: 'absolute',
-			content: value === 100 ? '"☺️"' : '"😃"',
-			right: '-2px',
-			top: '-5px',
-			background: `transparent`,
-			width: '40px',
-			height: '60px',
-			zIndex: 1,
-			fontSize: '40px',
+		'.MuiLinearProgress-bar': {
+			borderRadius: '30px',
+			background: 'transparent',
+			'&::after': {
+				position: 'absolute',
+				content:
+					value === 100 ? '"☺️"' : transaction === 'error' ? '"😓"' : '"😃"',
+				right: '-2px',
+				top: '-5px',
+				background: `transparent`,
+				width: '40px',
+				height: '60px',
+				zIndex: 1,
+				fontSize: '40px',
+			},
 		},
-	},
-}));
+	})
+);
 
-const CustomLinearProgressInner = styled(LinearProgress)((theme) => ({
+const CustomLinearProgressInner = styled(LinearProgress)(() => ({
 	position: 'absolute',
 	top: '3px',
 	left: '4px',
@@ -37,8 +45,8 @@ const CustomLinearProgressInner = styled(LinearProgress)((theme) => ({
 		'&::after': {
 			position: 'absolute',
 			content: '""',
-			right: '-10px',
-			top: '-5px',
+			right: '-6px',
+			top: '-1px',
 			background: `transparent`,
 			width: '40px',
 			height: '40px',
@@ -47,7 +55,7 @@ const CustomLinearProgressInner = styled(LinearProgress)((theme) => ({
 	},
 }));
 
-const SimpleProgess = ({ progess }) => {
+const SimpleProgess = ({ progess, transactionStatus }) => {
 	return (
 		<Box
 			sx={{
@@ -61,6 +69,7 @@ const SimpleProgess = ({ progess }) => {
 			<CustomLinearProgressOut
 				value={Number(progess) <= 0 ? 7 : Number(progess)}
 				variant="determinate"
+				transaction={transactionStatus}
 			/>
 		</Box>
 	);

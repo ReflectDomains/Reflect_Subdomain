@@ -64,3 +64,7 @@ export const debounce = (fn, delay) => {
 		}, delay);
 	};
 };
+
+export const toScan = (hash) => {
+	window.open(`https://goerli.etherscan.io/tx/${hash}`)
+}

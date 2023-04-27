@@ -1,14 +1,14 @@
 import { Box, Stack, Typography, styled } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { memo, useCallback, useReducer, useState } from 'react';
+import { memo, useCallback, useEffect, useReducer, useState } from 'react';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { useParams } from 'react-router-dom';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
-import StepThree from './StepThree';
 import LastStep from './LastStep';
 import StepAndCircleProcess from './StepAndCircleProcess';
 import useDomainInfo from '../../hooks/useDomainInfo';
+import useWriteContract from '../../hooks/useWriteContract';
 import { useMemo } from 'react';
 
 export const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
@@ -25,15 +25,43 @@ export const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 	...sx,
 }));
 
+const initState = {
+	registerStatus: null,
+	registerStep: 50,
+	txHash: '',
+	registerArray: [],
+};
+
+const reducer = (state, action) => {
+	console.log(state, action, 'reducer');
+	switch (action.type) {
+		case 'registerStatus':
+			return {
+				...state,
+				registerStatus: action.payload,
+				registerStep: action.payload === 'success' ? 100 : 50,
+			};
+		case 'registerHash':
+			return { ...state, txHash: action.payload };
+		case 'registerArray':
+			return { ...state, registerArray: action.payload };
+		default:
+			return { ...state };
+	}
+};
+
 const Register = () => {
 	const params = useParams();
 	const [step, setStep] = useState(1);
-	const [disabled, setDisabled] = useState(true);
-	// const [state, dispatch] = useReducer({})
+	const [state, dispatch] = useReducer(reducer, { ...initState });
 
-	const nextPage = useCallback(() => {
-		if (step + 1 <= 3) {
-			setStep(parseInt(step + 1));
+	const nextPage = useCallback((s) => {
+		setStep(s);
+	}, []);
+
+	const backToAfterStep = useCallback(() => {
+		if (step > 0) {
+			setStep(step - 1);
 		}
 	}, [step]);
 
@@ -55,15 +83,25 @@ const Register = () => {
 	// todo check domain is availabled
 	const { expiration: fatherExpiration, days } = useDomainInfo(fatherDomain);
 
-	const backToAfterStep = useCallback(() => {
-		if (step - 1 > 0) {
-			setStep(parseInt(step - 1));
+	const { write, prepareSuccess, writeStartSuccess, txHash } = useWriteContract(
+		{
+			functionName: 'registerSubdomain',
+			args: [...state.registerArray],
+			enabled: state.registerArray.length > 0,
+			onSuccess: () => {
+				dispatch({ type: 'registerStatus', payload: 'success' });
+			},
+			onError: () => {
+				dispatch({ type: 'registerStatus', payload: 'error' });
+			},
 		}
-	}, [step]);
+	);
 
-	const changeToNextStep = useCallback((disabled) => {
-		setDisabled(disabled);
-	}, []);
+	useEffect(() => {
+		if (writeStartSuccess) {
+			nextPage(2);
+		}
+	}, [writeStartSuccess, nextPage]);
 
 	return (
 		<Box>
@@ -97,14 +135,16 @@ const Register = () => {
 				>
 					{step === 1 ? (
 						<StepOne
-							onChange={changeToNextStep}
-							onNext={nextPage}
 							domainInfo={{
 								makeUpFullDomain,
 							}}
+							dispatch={dispatch}
+							state={state}
+							onConfirm={write}
+							prepareSuccess={prepareSuccess}
 						/>
 					) : step === 2 ? (
-						<StepTwo />
+						<StepTwo dispatch={dispatch} state={state} txHash={txHash} />
 					) : null}
 				</Box>
 				{step < 3 ? (
@@ -124,13 +164,15 @@ const Register = () => {
 								Back
 							</LoadingButton>
 						) : null}
-						<LoadingButton
-							disabled={disabled}
-							variant="contained"
-							onClick={nextPage}
-						>
-							Next
-						</LoadingButton>
+						{step === 2 ? (
+							<LoadingButton
+								disabled={state.registerStatus !== 'success'}
+								variant="contained"
+								onClick={nextPage.bind(this, 3)}
+							>
+								Next
+							</LoadingButton>
+						) : null}
 					</Stack>
 				) : null}
 			</CommonPage>

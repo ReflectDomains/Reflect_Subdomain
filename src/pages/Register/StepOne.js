@@ -7,7 +7,9 @@ import {
 	FormControlLabel,
 	RadioGroup,
 	Radio,
+	Stack,
 } from '@mui/material';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import { TypographyInfo } from './index';
 import useGetPrice from '../../hooks/useGetPrice';
 import { useParams } from 'react-router';
@@ -35,8 +37,6 @@ import {
 import { NameWrapper, subdomainABI } from '../../config/ABI';
 import useApprove from '../../hooks/useApprove';
 import useWriteApprove from '../../hooks/useWriteApprove';
-import useDomainInfo from '../../hooks/useDomainInfo';
-import useWriteContract from '../../hooks/useWriteContract';
 import { parseUnitsWithDecimals } from '../../utils';
 
 const TypographyDes = styled(Typography)(({ theme, sx }) => ({
@@ -71,11 +71,15 @@ const StyledFormControlLabel = styled((props) => (
 	},
 }));
 
-const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
+const StepOne = ({
+	domainInfo = {},
+	dispatch,
+	prepareSuccess = false,
+	onConfirm,
+}) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [checked, setChecked] = useState('usdt');
-	const [isPaid, setIsPaid] = useState(false);
 	const { data: ethBalance } = useBalance({
 		address: address,
 	});
@@ -113,14 +117,28 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 		functionName: 'ownerOf',
 		args: [ensHashName(domainInfo?.makeUpFullDomain)],
 	});
-	console.log(domainOwnerAddress, 'domainOwnerAddress');
 
 	const isRightDomain = useMemo(
 		() => isSubdomainRegx(domainInfo?.makeUpFullDomain),
 		[domainInfo]
 	);
 
+	const isInsufficient = useMemo(
+		() => Number(ethBalance?.formatted || 0) <= 0,
+		[ethBalance]
+	);
+
+	const domainHasOwner = useMemo(
+		() => domainOwnerAddress !== '0x0000000000000000000000000000000000000000',
+		[domainOwnerAddress]
+	);
+
+	const btnDisabled = useMemo(() => {
+		return !isRightDomain || readLoading || domainHasOwner || isInsufficient;
+	}, [isRightDomain, readLoading, domainHasOwner, isInsufficient]);
+
 	const { data: gasPrice } = useFeeData();
+
 	const estFee = useMemo(() => {
 		if (!gasPrice) return 0;
 		const {
@@ -158,10 +176,6 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 		return checkedObj?.price || 10;
 	}, [checked, pricesDisplay]);
 
-	const totalAmount = useMemo(() => {
-		return Number(Number(showPriceText) + Number(estFee)).toFixed(8);
-	}, [showPriceText, estFee]);
-
 	const changeRadio = useCallback((e) => {
 		setChecked(e.target.value);
 	}, []);
@@ -179,34 +193,15 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 		[childDomain, fatherDomain, showPriceText, address]
 	);
 
-	const isInsufficient = useMemo(
-		() => Number(ethBalance?.formatted || 0) <= 0,
-		[ethBalance]
-	);
-
-	const btnDisabled = useMemo(() => {
-		return (
-			!isRightDomain ||
-			readLoading ||
-			domainOwnerAddress !== '0x0000000000000000000000000000000000000000' ||
-			isInsufficient
-		);
-	}, [isRightDomain, readLoading, domainOwnerAddress, isInsufficient]);
-
 	const btnLoading = useMemo(
 		() => loading || readLoading,
 		[loading, readLoading]
 	);
 
-	const { write, prepareSuccess, writeStartSuccess } = useWriteContract({
-		functionName: 'registerSubdomain',
-		args: [...obj],
-		enabled: !btnDisabled,
-	});
-
 	const registerAndPay = useCallback(() => {
-		write?.();
-	}, [write]);
+		dispatch({ type: 'registerStatus', payload: 'pending' });
+		onConfirm?.();
+	}, [onConfirm, dispatch]);
 
 	const approveOrPay = useCallback(() => {
 		if (!isApprove) {
@@ -223,15 +218,10 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 				from: address,
 			});
 			setFee(estimateGas.toString());
-			// console.log(estimateGas.toString(), 'estimateGas');
 		} catch (error) {
 			console.log(error, 'gas');
 		}
 	}, [contract, obj, address]);
-
-	useEffect(() => {
-		onChange && onChange(!isApprove || btnDisabled || !isPaid);
-	}, [isApprove, btnDisabled, onChange, isPaid]);
 
 	useEffect(() => {
 		if (prepareSuccess) {
@@ -240,11 +230,10 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 	}, [getGas, prepareSuccess]);
 
 	useEffect(() => {
-		if (writeStartSuccess) {
-			setIsPaid(true);
-			onNext && onNext();
+		if (obj) {
+			dispatch({ type: 'registerArray', payload: obj });
 		}
-	}, [writeStartSuccess, onNext]);
+	}, [obj, dispatch]);
 
 	return (
 		<>
@@ -266,25 +255,50 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 			<TypographyDes>-Est.network fee:{estFee}ETH </TypographyDes>
 			<TypographyDes>
 				-Estimated total:
-				{totalAmount}
-				{checked?.toUpperCase()}{' '}
+				{estFee} ETH + {showPriceText}
+				{checked?.toUpperCase()}
 			</TypographyDes>
 			<TypographyDes sx={{ mb: '30px' }}>
 				-2.5%service fees is included
 			</TypographyDes>
 
-			<LoadingButton
-				disabled={btnDisabled}
-				variant="contained"
-				onClick={approveOrPay}
-				loading={btnLoading}
-			>
-				{isInsufficient
-					? 'Insufficient Funds'
-					: isApprove
-					? `pay ${showPriceText} ${checked} & Register`
-					: 'Approve'}
-			</LoadingButton>
+			{domainHasOwner ? (
+				<Stack
+					direction="row"
+					alignItems="center"
+					justifyContent="center"
+					sx={(theme) => ({ mb: theme.spacing(2) })}
+				>
+					<TypographyInfo
+						sx={(theme) => ({
+							color: theme.color.success,
+							fontWeight: 800,
+							mr: theme.spacing(1),
+						})}
+					>
+						Paid
+					</TypographyInfo>
+					<CheckCircleRoundedIcon
+						sx={(theme) => ({
+							color: theme.color.success,
+							fontSize: '15px',
+						})}
+					/>
+				</Stack>
+			) : (
+				<LoadingButton
+					disabled={btnDisabled}
+					variant="contained"
+					onClick={approveOrPay}
+					loading={btnLoading}
+				>
+					{isInsufficient
+						? 'Insufficient Funds'
+						: isApprove
+						? `pay ${showPriceText} ${checked} & Register`
+						: 'Approve'}
+				</LoadingButton>
+			)}
 		</>
 	);
 };

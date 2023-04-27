@@ -12,6 +12,7 @@ const Wrapper = styled(Box)(() => ({
   backgroundSize: "cover",
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center",
+  overflowX: 'hidden'
 }));
 
 const Layout = () => {
