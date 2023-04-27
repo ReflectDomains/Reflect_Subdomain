@@ -9,6 +9,7 @@ import { LoadingButton } from '@mui/lab';
 import { getProfile, setProfile } from '../../api/profile';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const LabelText = { fontSize: '20px', fontWeight: 600 };
 
@@ -17,6 +18,7 @@ const Setting = () => {
 	const { initialProfile } = useSelector((state) => ({
 		initialProfile: state.reflect_subdomain_loginInfo,
 	}));
+	const navigate = useNavigate();
 	const { handleSubmit, control, reset } = useForm({
 		defaultValues: initialProfile,
 	});
@@ -28,6 +30,7 @@ const Setting = () => {
 		const resp = await setProfile(data);
 		if (resp?.code === 0) {
 			toast.success(resp.msg);
+			navigate('/profile');
 			dispatch({ type: 'SET_PROFILE', value: data });
 		}
 		setSaveLoading(false);
@@ -52,6 +55,19 @@ const Setting = () => {
 		<CommonPage title="Settings">
 			<form onSubmit={handleSubmit(handleSetProfile)}>
 				<Stack direction="column" spacing={3}>
+					<Controller
+						name="nickname"
+						control={control}
+						defaultValue=""
+						render={({ field }) => (
+							<LabelInput
+								label="Nickname"
+								placeholder="your name"
+								{...field}
+								ref={null}
+							/>
+						)}
+					/>
 					<AvatarInput
 						label="Avatar"
 						avatar={avatar}
@@ -86,7 +102,7 @@ const Setting = () => {
 							name="twitter"
 							control={control}
 							defaultValue=""
-							render={({ field, ref = null }) => (
+							render={({ field }) => (
 								<LabelInput
 									label="-Twitter"
 									placeholder="@"
@@ -146,8 +162,6 @@ const Setting = () => {
 						})}
 					>
 						<LoadingButton
-							// loading={true}
-							loadingPosition="start"
 							onClick={() => {
 								reset();
 							}}

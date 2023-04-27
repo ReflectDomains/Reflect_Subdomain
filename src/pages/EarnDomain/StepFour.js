@@ -1,6 +1,6 @@
 import { Box, Button, Link, Stack, Typography, styled } from '@mui/material';
 import { memo } from 'react';
-import { Discord, Twitter } from '../../assets';
+import { DiscordIcon, TwitterIcon } from '../../assets';
 import { useNavigate } from 'react-router-dom';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
@@ -57,12 +57,12 @@ const StepFour = ({ handleStep }) => {
 					</Des>
 					<Stack direction="row" mt={5} justifyContent="center" spacing={4}>
 						<LinkButton component="button" underline="none">
-							<Discord />
+							<DiscordIcon />
 							Discord
 						</LinkButton>
 
 						<LinkButton component="button" underline="none">
-							<Twitter />
+							<TwitterIcon />
 							Twitter
 						</LinkButton>
 					</Stack>

@@ -10,6 +10,9 @@ import Domains from './Domains';
 import Portfolio from './Portfolio';
 import { useAccount } from 'wagmi';
 import { AvatarGenerator } from 'random-avatar-generator';
+import { useSelector } from 'react-redux';
+import { splitAddress } from '../../utils';
+import SocialMedia from '../../components/SocialMedia';
 
 const ProfileBackground = styled(Box)(({ ...props }) => ({
 	width: '100%',
@@ -47,6 +50,9 @@ const ProfileTab = styled(Tab)(({ theme }) => ({
 const Profile = () => {
 	const navigate = useNavigate();
 	const { address } = useAccount();
+	const { profileInfo } = useSelector((state) => ({
+		profileInfo: state.reflect_subdomain_loginInfo,
+	}));
 
 	const generator = new AvatarGenerator();
 	let addrAvatar = generator.generateRandomAvatar(address);
@@ -84,8 +90,11 @@ const Profile = () => {
 				<UserBasicInfo>
 					<CommonAvatar address={address} scope={100} />
 					<Box>
-						<Name>Jassen</Name>
-						<Bio>This is a Web3 Reflect domain</Bio>
+						<Stack direction="row" alignItems="center" spacing={3}>
+							<Name>{profileInfo.nickname || splitAddress(address)}</Name>
+							<SocialMedia list={profileInfo} />
+						</Stack>
+						<Bio>{profileInfo.slogan || '-'}</Bio>
 					</Box>
 				</UserBasicInfo>
 				<IconButton
