@@ -35,7 +35,6 @@ import {
 import { NameWrapper, subdomainABI } from '../../config/ABI';
 import useApprove from '../../hooks/useApprove';
 import useWriteApprove from '../../hooks/useWriteApprove';
-import useDomainInfo from '../../hooks/useDomainInfo';
 import useWriteContract from '../../hooks/useWriteContract';
 import { parseUnitsWithDecimals } from '../../utils';
 
@@ -71,11 +70,10 @@ const StyledFormControlLabel = styled((props) => (
 	},
 }));
 
-const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
+const StepOne = ({ onNext, domainInfo = {}, dispatch }) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [checked, setChecked] = useState('usdt');
-	const [isPaid, setIsPaid] = useState(false);
 	const { data: ethBalance } = useBalance({
 		address: address,
 	});
@@ -113,14 +111,28 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 		functionName: 'ownerOf',
 		args: [ensHashName(domainInfo?.makeUpFullDomain)],
 	});
-	console.log(domainOwnerAddress, 'domainOwnerAddress');
 
 	const isRightDomain = useMemo(
 		() => isSubdomainRegx(domainInfo?.makeUpFullDomain),
 		[domainInfo]
 	);
 
+	const isInsufficient = useMemo(
+		() => Number(ethBalance?.formatted || 0) <= 0,
+		[ethBalance]
+	);
+
+	const btnDisabled = useMemo(() => {
+		return (
+			!isRightDomain ||
+			readLoading ||
+			domainOwnerAddress !== '0x0000000000000000000000000000000000000000' ||
+			isInsufficient
+		);
+	}, [isRightDomain, readLoading, domainOwnerAddress, isInsufficient]);
+
 	const { data: gasPrice } = useFeeData();
+
 	const estFee = useMemo(() => {
 		if (!gasPrice) return 0;
 		const {
@@ -179,34 +191,28 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 		[childDomain, fatherDomain, showPriceText, address]
 	);
 
-	const isInsufficient = useMemo(
-		() => Number(ethBalance?.formatted || 0) <= 0,
-		[ethBalance]
-	);
-
-	const btnDisabled = useMemo(() => {
-		return (
-			!isRightDomain ||
-			readLoading ||
-			domainOwnerAddress !== '0x0000000000000000000000000000000000000000' ||
-			isInsufficient
-		);
-	}, [isRightDomain, readLoading, domainOwnerAddress, isInsufficient]);
-
 	const btnLoading = useMemo(
 		() => loading || readLoading,
 		[loading, readLoading]
 	);
 
-	const { write, prepareSuccess, writeStartSuccess } = useWriteContract({
+	const { write, prepareSuccess, writeStartSuccess, txHash } = useWriteContract({
 		functionName: 'registerSubdomain',
 		args: [...obj],
 		enabled: !btnDisabled,
+		onSuccess: () => {
+			dispatch({type: 'registerStatus', payload: 'success'})
+		},
+		onError: () => {
+			dispatch({type: 'registerStatus', payload: 'error'})
+		},
 	});
 
 	const registerAndPay = useCallback(() => {
+		dispatch({type: 'registerStatus', payload: 'pending'})
+		dispatch({type: 'registerHash', payload: txHash })
 		write?.();
-	}, [write]);
+	}, [write, dispatch, txHash]);
 
 	const approveOrPay = useCallback(() => {
 		if (!isApprove) {
@@ -230,10 +236,6 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 	}, [contract, obj, address]);
 
 	useEffect(() => {
-		onChange && onChange(!isApprove || btnDisabled || !isPaid);
-	}, [isApprove, btnDisabled, onChange, isPaid]);
-
-	useEffect(() => {
 		if (prepareSuccess) {
 			getGas();
 		}
@@ -241,7 +243,6 @@ const StepOne = ({ onChange, onNext, domainInfo = {} }) => {
 
 	useEffect(() => {
 		if (writeStartSuccess) {
-			setIsPaid(true);
 			onNext && onNext();
 		}
 	}, [writeStartSuccess, onNext]);

@@ -5,7 +5,6 @@ import CommonPage from '../../components/CommonUI/CommonPage';
 import { useParams } from 'react-router-dom';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
-import StepThree from './StepThree';
 import LastStep from './LastStep';
 import StepAndCircleProcess from './StepAndCircleProcess';
 import useDomainInfo from '../../hooks/useDomainInfo';
@@ -25,11 +24,27 @@ export const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 	...sx,
 }));
 
+const initState = {
+	registerStatus: null,
+	registerStep: 50,
+	txHash: ''
+}
+
+const reducer = (state, action) => {
+	switch (action.type) {
+		case "registerStatus":
+			return {...state, registerStatus: action.payload, registerStep: action.payload === 'success'? 100: 50 }
+		case "registerHash":
+			return {...state, txHash: action.payload}
+		default:
+			return {...state}
+	}
+}
+
 const Register = () => {
 	const params = useParams();
-	const [step, setStep] = useState(1);
-	const [disabled, setDisabled] = useState(true);
-	// const [state, dispatch] = useReducer({})
+	const [step, setStep] = useState(2);
+	const [state, dispatch] = useReducer(reducer, {...initState})
 
 	const nextPage = useCallback(() => {
 		if (step + 1 <= 3) {
@@ -56,14 +71,10 @@ const Register = () => {
 	const { expiration: fatherExpiration, days } = useDomainInfo(fatherDomain);
 
 	const backToAfterStep = useCallback(() => {
-		if (step - 1 > 0) {
-			setStep(parseInt(step - 1));
+		if (step > 0) {
+			setStep(step - 1)
 		}
-	}, [step]);
-
-	const changeToNextStep = useCallback((disabled) => {
-		setDisabled(disabled);
-	}, []);
+	}, [step])
 
 	return (
 		<Box>
@@ -97,14 +108,15 @@ const Register = () => {
 				>
 					{step === 1 ? (
 						<StepOne
-							onChange={changeToNextStep}
 							onNext={nextPage}
 							domainInfo={{
 								makeUpFullDomain,
 							}}
+							dispatch={dispatch}
+							state={state}
 						/>
 					) : step === 2 ? (
-						<StepTwo />
+						<StepTwo dispatch={dispatch} state={state} />
 					) : null}
 				</Box>
 				{step < 3 ? (
@@ -124,13 +136,17 @@ const Register = () => {
 								Back
 							</LoadingButton>
 						) : null}
-						<LoadingButton
-							disabled={disabled}
-							variant="contained"
-							onClick={nextPage}
-						>
-							Next
-						</LoadingButton>
+						{
+							step === 2 ? (
+								<LoadingButton
+								disabled={state.registerStep==='success'}
+								variant="contained"
+								onClick={nextPage}
+								>
+									Next
+								</LoadingButton>
+							): null
+						}
 					</Stack>
 				) : null}
 			</CommonPage>

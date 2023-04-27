@@ -1,8 +1,12 @@
 import { styled, LinearProgress, Box } from '@mui/material';
 import { memo } from 'react';
-const CustomLinearProgressOut = styled(LinearProgress)(({ value }) => ({
+const CustomLinearProgressOut = styled(LinearProgress)(({ value, isError=false }) => ({
 	width: '508px',
-	height: '40px',
+	// height: '40px',
+	// windows
+	height: '60px',
+	top:"-4px",
+	// windows
 	borderRadius: '30px',
 	background: 'transparent',
 	'.MuiLinearProgress-bar': {
@@ -10,7 +14,7 @@ const CustomLinearProgressOut = styled(LinearProgress)(({ value }) => ({
 		background: 'transparent',
 		'&::after': {
 			position: 'absolute',
-			content: value === 100 ? '"☺️"' : '"😃"',
+			content: value === 100 ? '"☺️"' : isError? '"ErrorEmoj"' : '"😃"',
 			right: '-2px',
 			top: '-5px',
 			background: `transparent`,
@@ -22,7 +26,7 @@ const CustomLinearProgressOut = styled(LinearProgress)(({ value }) => ({
 	},
 }));
 
-const CustomLinearProgressInner = styled(LinearProgress)((theme) => ({
+const CustomLinearProgressInner = styled(LinearProgress)(() => ({
 	position: 'absolute',
 	top: '3px',
 	left: '4px',
@@ -47,7 +51,7 @@ const CustomLinearProgressInner = styled(LinearProgress)((theme) => ({
 	},
 }));
 
-const SimpleProgess = ({ progess }) => {
+const SimpleProgess = ({ progess, isError }) => {
 	return (
 		<Box
 			sx={{
@@ -61,6 +65,7 @@ const SimpleProgess = ({ progess }) => {
 			<CustomLinearProgressOut
 				value={Number(progess) <= 0 ? 7 : Number(progess)}
 				variant="determinate"
+				isError={isError}
 			/>
 		</Box>
 	);

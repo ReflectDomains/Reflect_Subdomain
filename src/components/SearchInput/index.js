@@ -109,12 +109,6 @@ const SearchInput = () => {
 		args: validName ? [ensHashName(addENSNameSuffix(searchValue))] : null,
 		enabled: validName && isHost,
 		cacheOnBlock: true,
-		onSettled(data, error) {
-			console.log('Settled', { data, error });
-		},
-		onSuccess(data) {
-			console.log('Success', data);
-		},
 	});
 
 	const judgeOwnerStatus = useCallback(() => {
