@@ -18,7 +18,7 @@ const StepAndCircleProcess = ({ step }) => {
 	};
 	return (
 		<>
-			<CircleStep step={step} total={3} />
+			<CircleStep step={step} total={2} />
 			<Stack
 				direction="row"
 				alignItems="center"
@@ -35,9 +35,7 @@ const StepAndCircleProcess = ({ step }) => {
 				>
 					{step === 1
 						? 'Payment Token'
-						: step === 2
-						? 'Pending registration by reflect contract'
-						: 'Setting Profile of Subname(Optional)'}
+						: 'Pending registration by reflect contract'}
 				</TypographySubtitle>
 				{step === 2 ? (
 					<ErrorOutlineIcon

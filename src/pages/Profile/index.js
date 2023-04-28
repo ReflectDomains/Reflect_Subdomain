@@ -1,6 +1,5 @@
 import { Box, IconButton, Stack, Tab, Typography, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import avatar from '../../assets/images/avatar.png';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import CommonAvatar from '../../components/CommonAvatar';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -9,11 +8,16 @@ import { useState } from 'react';
 import SubNames from './SubNames';
 import Domains from './Domains';
 import Portfolio from './Portfolio';
+import { useAccount } from 'wagmi';
+import { AvatarGenerator } from 'random-avatar-generator';
+import { useSelector } from 'react-redux';
+import { splitAddress } from '../../utils';
+import SocialMedia from '../../components/SocialMedia';
 
-const ProfileBackground = styled(Box)(() => ({
+const ProfileBackground = styled(Box)(({ ...props }) => ({
 	width: '100%',
 	height: '120px',
-	background: `url(${avatar})`,
+	background: `url(${props.img})`,
 	borderRadius: '20px',
 	backgroundPosition: 'center',
 	backgroundRepeat: 'no-repeat',
@@ -45,6 +49,13 @@ const ProfileTab = styled(Tab)(({ theme }) => ({
 
 const Profile = () => {
 	const navigate = useNavigate();
+	const { address } = useAccount();
+	const { profileInfo } = useSelector((state) => ({
+		profileInfo: state.reflect_subdomain_loginInfo,
+	}));
+
+	const generator = new AvatarGenerator();
+	let addrAvatar = generator.generateRandomAvatar(address);
 	// portfolio | subNames | domains
 	const [tabValue, setTabValue] = useState('portfolio');
 
@@ -55,7 +66,7 @@ const Profile = () => {
 	return (
 		<CommonPage title="Profile" sx={(theme) => ({ padding: '0' })}>
 			{/* background image */}
-			<ProfileBackground>
+			<ProfileBackground img={addrAvatar}>
 				<Box
 					sx={{
 						width: '100%',
@@ -77,10 +88,13 @@ const Profile = () => {
 				})}
 			>
 				<UserBasicInfo>
-					<CommonAvatar avatar={avatar} scope={100} />
+					<CommonAvatar address={address} scope={100} />
 					<Box>
-						<Name>Jassen</Name>
-						<Bio>This is a Web3 Reflect domain</Bio>
+						<Stack direction="row" alignItems="center" spacing={3}>
+							<Name>{profileInfo.nickname || splitAddress(address)}</Name>
+							<SocialMedia list={profileInfo} />
+						</Stack>
+						<Bio>{profileInfo.slogan || '-'}</Bio>
 					</Box>
 				</UserBasicInfo>
 				<IconButton

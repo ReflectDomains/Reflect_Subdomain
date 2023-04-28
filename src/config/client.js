@@ -11,12 +11,13 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { BitKeepWallet } from "./customWallets";
 
-import { alchemyProvider } from "wagmi/providers/alchemy";
+// import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, provider } = configureChains(
   [goerli],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
+  // [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
+  [publicProvider()]
 );
 
 const connectors = connectorsForWallets([

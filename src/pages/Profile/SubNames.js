@@ -14,7 +14,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
 import { memo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { DelIcon, EditIcon, SellIcon, SetPrimaryNameIcon } from '../../assets';
+import { DelIcon, EditIcon, SetPrimaryNameIcon } from '../../assets';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,

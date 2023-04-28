@@ -1,13 +1,15 @@
 import { Box, Stack, Typography, styled } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useReducer, useState } from 'react';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import { useParams } from 'react-router-dom';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
-import StepThree from './StepThree';
 import LastStep from './LastStep';
 import StepAndCircleProcess from './StepAndCircleProcess';
+import useDomainInfo from '../../hooks/useDomainInfo';
+import useWriteContract from '../../hooks/useWriteContract';
+import { useMemo } from 'react';
 
 export const TypographySubtitle = styled(Typography)(({ theme, sx }) => ({
 	fontSize: '20px',
@@ -23,31 +25,93 @@ export const TypographyInfo = styled(Typography)(({ theme, sx }) => ({
 	...sx,
 }));
 
+const initState = {
+	registerStatus: null,
+	registerStep: 50,
+	txHash: '',
+	registerArray: [],
+};
+
+const reducer = (state, action) => {
+	console.log(state, action, 'reducer');
+	switch (action.type) {
+		case 'registerStatus':
+			return {
+				...state,
+				registerStatus: action.payload,
+				registerStep: action.payload === 'success' ? 100 : 50,
+			};
+		case 'registerHash':
+			return { ...state, txHash: action.payload };
+		case 'registerArray':
+			return { ...state, registerArray: action.payload };
+		default:
+			return { ...state };
+	}
+};
+
 const Register = () => {
 	const params = useParams();
 	const [step, setStep] = useState(1);
+	const [state, dispatch] = useReducer(reducer, { ...initState });
 
-	const nextPage = useCallback(() => {
-		if (step + 1 <= 4) {
-			setStep(parseInt(step + 1));
-		}
-	}, [step]);
+	const nextPage = useCallback((s) => {
+		setStep(s);
+	}, []);
 
 	const backToAfterStep = useCallback(() => {
-		if (step - 1 > 0) {
-			setStep(parseInt(step - 1));
+		if (step > 0) {
+			setStep(step - 1);
 		}
 	}, [step]);
+
+	const childDomain = useMemo(
+		() => params?.name.split('-')?.[0] || '',
+		[params.name]
+	);
+
+	const fatherDomain = useMemo(
+		() => params?.name.split('-')[1] || '',
+		[params.name]
+	);
+
+	const makeUpFullDomain = useMemo(
+		() => (childDomain && fatherDomain ? `${childDomain}.${fatherDomain}` : ''),
+		[childDomain, fatherDomain]
+	);
+
+	// todo check domain is availabled
+	const { expiration: fatherExpiration, days } = useDomainInfo(fatherDomain);
+
+	const { write, prepareSuccess, writeStartSuccess, txHash } = useWriteContract(
+		{
+			functionName: 'registerSubdomain',
+			args: [...state.registerArray],
+			enabled: state.registerArray.length > 0,
+			onSuccess: () => {
+				dispatch({ type: 'registerStatus', payload: 'success' });
+			},
+			onError: () => {
+				dispatch({ type: 'registerStatus', payload: 'error' });
+			},
+		}
+	);
+
+	useEffect(() => {
+		if (writeStartSuccess) {
+			nextPage(2);
+		}
+	}, [writeStartSuccess, nextPage]);
 
 	return (
 		<Box>
 			<CommonPage title="Registration">
 				<TypographySubtitle>Basic Info</TypographySubtitle>
 				<TypographyInfo sx={{ mt: '10px' }}>
-					Subname: {params?.name}
+					Subname: {makeUpFullDomain}
 				</TypographyInfo>
 				<TypographyInfo sx={{ mt: '10px' }}>
-					Expiry:until 2025.x.x (xx days)
+					Expiry:until {fatherExpiration} ({days} days)
 				</TypographyInfo>
 				<TypographySubtitle sx={{ marginTop: '30px' }}>
 					Process
@@ -59,25 +123,31 @@ const Register = () => {
 						mt: '10px',
 					}}
 				>
-					{step < 4 ? <StepAndCircleProcess step={step} /> : <LastStep />}
+					{step < 3 ? <StepAndCircleProcess step={step} /> : <LastStep />}
 				</Stack>
 				<Box
 					sx={{
-						backgroundColor: step < 4 ? '#F7F7F7' : '#fff',
+						backgroundColor: step < 3 ? '#F7F7F7' : '#fff',
 						borderRadius: '10px',
 						width: '100%',
 						padding: '20px',
 					}}
 				>
 					{step === 1 ? (
-						<StepOne />
+						<StepOne
+							domainInfo={{
+								makeUpFullDomain,
+							}}
+							dispatch={dispatch}
+							state={state}
+							onConfirm={write}
+							prepareSuccess={prepareSuccess}
+						/>
 					) : step === 2 ? (
-						<StepTwo />
-					) : step === 3 ? (
-						<StepThree />
+						<StepTwo dispatch={dispatch} state={state} txHash={txHash} />
 					) : null}
 				</Box>
-				{step < 4 ? (
+				{step < 3 ? (
 					<Stack
 						flexDirection="row"
 						justifyContent="center"
@@ -94,9 +164,15 @@ const Register = () => {
 								Back
 							</LoadingButton>
 						) : null}
-						<LoadingButton variant="contained" onClick={nextPage}>
-							Next
-						</LoadingButton>
+						{step === 2 ? (
+							<LoadingButton
+								disabled={state.registerStatus !== 'success'}
+								variant="contained"
+								onClick={nextPage.bind(this, 3)}
+							>
+								Next
+							</LoadingButton>
+						) : null}
 					</Stack>
 				) : null}
 			</CommonPage>

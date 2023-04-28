@@ -4,6 +4,9 @@ import ManageDomain from '../../components/ManageDomain';
 import useWriteContract from '../../hooks/useWriteContract';
 import { useParams } from 'react-router-dom';
 import { useAccount } from 'wagmi';
+import { tokenContract } from '../../config/contract';
+import useGetPrice from '../../hooks/useGetPrice';
+import { splitEth } from '../../utils';
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -20,26 +23,43 @@ const StepThree = ({ handleStep }) => {
 	const params = useParams();
 	const { address } = useAccount();
 	const [priceArray, setPriceArray] = useState([]);
-	const labelStrig = useMemo(() => params?.address.split('.')[0], [params]);
+	const [receivingAddress, setReceivingAddress] = useState('');
+
+	const labelStrig = useMemo(() => splitEth(params?.address), [params]);
+
+	const prices = useGetPrice(params?.address, [tokenContract['USDT']]);
+
+	const adr = useMemo(
+		() => receivingAddress || address,
+		[receivingAddress, address]
+	);
+
 	const { write, isLoading, isSuccess } = useWriteContract({
 		functionName: 'openRegister',
-		args: [labelStrig, address, priceArray],
-		enabled: priceArray.length > 0,
+		args: [labelStrig, adr, priceArray],
+		enabled: priceArray && priceArray.length > 0,
 	});
-	const confirmSetting = useCallback(
-		(priceArray) => {
-			setPriceArray(priceArray);
-			if (write) {
-				write();
-			}
-		},
-		[write]
-	);
+
+	const changeReceivingAddress = useCallback((adr) => {
+		setReceivingAddress(adr);
+	}, []);
+
+	const changePriceList = useCallback((list) => {
+		setPriceArray([...list]);
+	}, []);
+
+	const confirmSetting = useCallback(() => {
+		write?.();
+	}, [write]);
+
 	return (
 		<Box>
 			<StepsWrapper>
 				<ManageDomain
+					defaultValue={prices || []}
 					onClick={confirmSetting}
+					onChange={changePriceList}
+					onChangeReceiving={changeReceivingAddress}
 					loading={isLoading}
 					isSuccess={isSuccess}
 				/>
@@ -49,7 +69,7 @@ const StepThree = ({ handleStep }) => {
 				<Button
 					variant="outlined"
 					onClick={() => {
-						handleStep(0);
+						handleStep(1, params?.address);
 					}}
 				>
 					Back
@@ -57,7 +77,7 @@ const StepThree = ({ handleStep }) => {
 				<Button
 					variant="contained"
 					onClick={() => {
-						handleStep(2);
+						handleStep(3, params?.address);
 					}}
 				>
 					Next
