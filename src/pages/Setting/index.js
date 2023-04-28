@@ -1,7 +1,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import CommonPage from '../../components/CommonUI/CommonPage';
 import LabelInput from '../../components/CommonUI/LabelInput';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import MultipleInput from '../../components/CommonUI/MultipleInput';
 import { InputLabel, Stack } from '@mui/material';
 import AvatarInput from '../../components/CommonUI/AvatarInput';
@@ -49,6 +49,10 @@ const Setting = () => {
 	const handleUploadAvatarError = useCallback((inputRef) => {
 		console.log('upload avatar failed');
 		inputRef.current.value = '';
+	}, []);
+
+	useEffect(() => {
+		handleGetProfile();
 	}, []);
 
 	return (
