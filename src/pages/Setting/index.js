@@ -10,6 +10,7 @@ import { getProfile, setProfile } from '../../api/profile';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const LabelText = { fontSize: '20px', fontWeight: 600 };
 
@@ -50,6 +51,10 @@ const Setting = () => {
 		console.log('upload avatar failed');
 		inputRef.current.value = '';
 	}, []);
+
+	useEffect(() => {
+		handleGetProfile()
+	}, [])
 
 	return (
 		<CommonPage title="Settings">

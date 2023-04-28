@@ -5,7 +5,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.10.6",
 		"@emotion/styled": "^11.10.6",
-		"@ensdomains/ensjs": "^3.0.0-alpha.61",
+		"@ensdomains/ensjs": "^3.0.0-alpha.62",
 		"@mui/icons-material": "^5.11.16",
 		"@mui/lab": "^5.0.0-alpha.125",
 		"@mui/material": "^5.11.16",
@@ -65,8 +65,8 @@
 		]
 	},
 	"devDependencies": {
+		"buffer": "^6.0.3",
 		"graphql": "^16.6.0",
-		"path": "^0.12.7",
 		"stream-browserify": "^3.0.0"
 	}
 }
