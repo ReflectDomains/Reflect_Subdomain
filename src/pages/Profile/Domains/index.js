@@ -9,10 +9,11 @@ import {
 	AccordionDetails,
 	styled,
 } from '@mui/material';
-import { memo, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ManageDomain from '../../../components/ManageDomain';
+import { useENSJS } from '../../../provider/EnsjsProdiver';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
@@ -25,52 +26,59 @@ const ExpiryDate = styled(Typography)(({ theme }) => ({
 	fontSize: theme.typography.fontSize,
 }));
 
-const list = [
-	{
-		name: 'Jassen.eth',
-		type: 'Management',
-		digit: true,
-		tokens: {
-			USDT: true,
-			USDC: false,
-			ETH: false,
-			DAI: false,
-		},
-	},
-	{
-		name: 'meta.eth',
-		type: 'earn',
-		digit: false,
-		tokens: {
-			USDT: true,
-			USDC: false,
-			ETH: false,
-			DAI: false,
-		},
-	},
-	{
-		name: 'hash.eth',
-		type: 'Management',
-		digit: false,
-		tokens: {
-			USDT: true,
-			USDC: false,
-			ETH: false,
-			DAI: false,
-		},
-	},
-];
+// const list = [
+// 	{
+// 		name: 'Jassen.eth',
+// 		type: 'Management',
+// 		digit: true,
+// 		tokens: {
+// 			USDT: true,
+// 			USDC: false,
+// 			ETH: false,
+// 			DAI: false,
+// 		},
+// 	},
+// 	{
+// 		name: 'meta.eth',
+// 		type: 'earn',
+// 		digit: false,
+// 		tokens: {
+// 			USDT: true,
+// 			USDC: false,
+// 			ETH: false,
+// 			DAI: false,
+// 		},
+// 	},
+// 	{
+// 		name: 'hash.eth',
+// 		type: 'Management',
+// 		digit: false,
+// 		tokens: {
+// 			USDT: true,
+// 			USDC: false,
+// 			ETH: false,
+// 			DAI: false,
+// 		},
+// 	},
+// ];
 
 const Domains = () => {
 	const [expanded, setExpanded] = useState('panel0');
+	const { getNames, childrenList, fatherList } = useENSJS();
+	console.log(childrenList, fatherList, 'list');
 
-	const [domainList] = useState(list);
+	const [domainList] = useState([]);
 
 	const handleChange = (type, panel) => (event, isExpanded) => {
 		if (type === 'Management') {
 			setExpanded(isExpanded ? panel : false);
 		}
 	};
+
+	useEffect(() => {
+		getNames();
+	}, [getNames]);
+
 	return (
 		<>
 			{/* Search Input */}

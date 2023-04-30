@@ -10,15 +10,28 @@ const EnsjsProdiver = ({ children }) => {
 	const provider = useProvider();
 	const { address } = useAccount();
 	const [ENSInstance, setENSInstance] = useState(null);
+	const [childrenList, setChildrenList] = useState([]);
+	const [fatherList, setFatherList] = useState([]);
 
 	const getNames = useCallback(async () => {
 		if (address) {
 			// all , resolvedAddress, owner, wrappedOwner
-			const res = await ENSInstance.getNames({
-				address: address,
-				type: 'all',
-			});
-			return res;
+			try {
+				const res = await ENSInstance.getNames({
+					address: address,
+					type: 'all',
+				});
+
+				res.forEach((item) => {
+					if (item.type === 'wrappedDomain') {
+						if (item.parent?.name === 'eth') {
+							setFatherList((v) => [...v, item]);
+						} else if (item.parent?.name.match('.eth')) {
+							setChildrenList((v) => [...v, item]);
+						}
+					}
+				});
+			} catch (error) {}
 		}
 	}, [address, ENSInstance]);
 
@@ -37,7 +50,10 @@ const EnsjsProdiver = ({ children }) => {
 		<EnsjsContent.Provider
 			value={{
 				ENSInstance,
+				setENSInstance: ensSetProvider,
 				getNames,
+				fatherList,
+				childrenList,
 			}}
 		>
 			{children}
