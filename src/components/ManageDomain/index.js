@@ -179,7 +179,6 @@ const ManageDomain = ({
 					: [...digitsDifferentLengthToDefaultPrice];
 				const newPrice = v.target.value;
 				oldTokenPrice.splice(pricePlace, 1, newPrice);
-				console.log(oldTokenPrice, 'old ');
 				setTokenPriceList((v) => {
 					return {
 						...v,
@@ -320,7 +319,7 @@ const ManageDomain = ({
 										<Cell component="th" scope="row">
 											{value}
 										</Cell>
-										<Cell>{tokenPriceList[value]}</Cell>
+										{/* <Cell>{tokenPriceList[value]}</Cell> */}
 										{tokenPriceList[value] &&
 											tokenPriceList[value].map((price, index) => (
 												<Cell component="th" scope="row" key={index}>

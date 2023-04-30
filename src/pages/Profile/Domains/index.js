@@ -155,6 +155,7 @@ const Domains = () => {
 								Expiry: 2025.02.21(XX days)
 							</ExpiryDate>
 						</AccordionSummary>
+
 						<AccordionDetails
 							sx={(theme) => ({
 								paddingTop: theme.spacing(5),
@@ -163,7 +164,14 @@ const Domains = () => {
 								gap: theme.spacing(2),
 							})}
 						>
-							<ManageDomain />
+							<ManageDomain
+								defaultValue={[]}
+								onClick={() => {}}
+								onChange={() => {}}
+								onChangeReceiving={() => {}}
+								loading={false}
+								isSuccess={false}
+							/>
 						</AccordionDetails>
 					</Accordion>
 				))}

@@ -65,7 +65,6 @@ const EarnDomain = () => {
 	// proxy or manual
 	const navigator = useNavigate();
 	const params = useParams();
-	console.log(params);
 
 	const [step, setStep] = useState(0);
 
