@@ -62,7 +62,9 @@ const StepThree = ({ handleStep }) => {
 		<Box>
 			<StepsWrapper>
 				<ManageDomain
-					defaultValue={prices || []}
+					defaultValue={
+						prices || [parseUnitsWithDecimals('10', contractForDec['USDT'])]
+					}
 					onClick={confirmSetting}
 					onChange={changePriceList}
 					onChangeReceiving={changeReceivingAddress}
