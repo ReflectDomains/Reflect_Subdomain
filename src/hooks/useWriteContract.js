@@ -33,7 +33,11 @@ const useWriteContract = ({
 		onSetteled && typeof onSetteled === 'function' && onSetteled();
 	}, [onSetteled]);
 
-	const { config, isSuccess: prepareSuccess } = usePrepareContractWrite({
+	const {
+		config,
+		isSuccess: prepareSuccess,
+		refetch,
+	} = usePrepareContractWrite({
 		address: contractAddress || reflectContract,
 		abi: ABIJSON || subdomainABI,
 		functionName: functionName,
@@ -84,6 +88,7 @@ const useWriteContract = ({
 		write,
 		isSuccess,
 		txHash: data?.hash,
+		refetch,
 	};
 };
 
