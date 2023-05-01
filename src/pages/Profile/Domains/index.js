@@ -9,11 +9,15 @@ import {
 	AccordionDetails,
 	styled,
 } from '@mui/material';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ManageDomain from '../../../components/ManageDomain';
 import { useENSJS } from '../../../provider/EnsjsProdiver';
+import moment from 'moment';
+import useGetPrice from '../../../hooks/useGetPrice';
+import { useAccount } from 'wagmi';
+import { tokenContract } from '../../../config/contract';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
@@ -26,54 +30,76 @@ const ExpiryDate = styled(Typography)(({ theme }) => ({
 	fontSize: theme.typography.fontSize,
 }));
 
-// const list = [
-// 	{
-// 		name: 'Jassen.eth',
-// 		type: 'Management',
-// 		digit: true,
-// 		tokens: {
-// 			USDT: true,
-// 			USDC: false,
-// 			ETH: false,
-// 			DAI: false,
-// 		},
-// 	},
-// 	{
-// 		name: 'meta.eth',
-// 		type: 'earn',
-// 		digit: false,
-// 		tokens: {
-// 			USDT: true,
-// 			USDC: false,
-// 			ETH: false,
-// 			DAI: false,
-// 		},
-// 	},
-// 	{
-// 		name: 'hash.eth',
-// 		type: 'Management',
-// 		digit: false,
-// 		tokens: {
-// 			USDT: true,
-// 			USDC: false,
-// 			ETH: false,
-// 			DAI: false,
-// 		},
-// 	},
-// ];
+const list = [
+	{
+		name: 'Jassen.eth',
+		type: 'Management',
+		digit: true,
+		tokens: {
+			USDT: true,
+			USDC: false,
+			ETH: false,
+			DAI: false,
+		},
+	},
+	{
+		name: 'meta.eth',
+		type: 'earn',
+		digit: false,
+		tokens: {
+			USDT: true,
+			USDC: false,
+			ETH: false,
+			DAI: false,
+		},
+	},
+	{
+		name: 'hash.eth',
+		type: 'Management',
+		digit: false,
+		tokens: {
+			USDT: true,
+			USDC: false,
+			ETH: false,
+			DAI: false,
+		},
+	},
+];
 
 const Domains = () => {
-	const [expanded, setExpanded] = useState('panel0');
-	const { getNames, childrenList, fatherList } = useENSJS();
-	console.log(childrenList, fatherList, 'list');
-
-	const [domainList] = useState([]);
+	const { address } = useAccount();
+	const [expanded, setExpanded] = useState();
+	const { getNames, fatherList } = useENSJS();
+	const [searchVal, setSearchVal] = useState('');
 
 	const handleChange = (type, panel) => (event, isExpanded) => {
-		if (type === 'Management') {
-			setExpanded(isExpanded ? panel : false);
-		}
+		// if (type === 'Management') {
+		// 	setExpanded(isExpanded ? panel : false);
+		// }
+		console.log(isExpanded, 'isExpand', panel);
+		setExpanded(isExpanded ? panel : false);
 	};
+
+	const getExpiry = useCallback((expiryDate) => {
+		const expiryDateFormat = moment(expiryDate).format('YYYY-MM-DD HH:mm');
+		const diffDays = moment(expiryDate).diff(moment(), 'days');
+		return expiryDateFormat + '(' + diffDays + ' days) ';
+	}, []);
+
+	const prices = useGetPrice(address, [tokenContract['USDT']]);
+
+	const changeSearchInput = useCallback((e) => {
+		setSearchVal(e.target.value);
+	}, []);
+
+	const listMatch = useMemo(() => {
+		if (!searchVal) {
+			return fatherList;
+		}
+		return fatherList.filter((item) => item.name.indexOf(searchVal) >= 0);
+	}, [searchVal, fatherList]);
+
+	const searchDomains = useCallback(() => {}, []);
 
 	useEffect(() => {
 		getNames();
@@ -92,6 +118,7 @@ const Domains = () => {
 					variant="filled"
 					disableUnderline={true}
 					placeholder="Search for subdomain"
+					onChange={changeSearchInput}
 					endAdornment={
 						<Button
 							sx={{
@@ -103,6 +130,7 @@ const Domains = () => {
 						>
 							<SearchIcon
 								sx={(theme) => ({ color: theme.palette.primary.main })}
+								onClick={searchDomains}
 							/>
 						</Button>
 					}
@@ -111,12 +139,10 @@ const Domains = () => {
 
 			{/* domain list */}
 			<Stack spacing={1} pt={2}>
-				{domainList.map((item, index) => (
+				{listMatch.map((item, index) => (
 					<Accordion
 						key={index}
-						expanded={
-							expanded === `panel${index}` && item.type === 'Management'
-						}
+						expanded={expanded === `panel${index}`}
 						onChange={handleChange(item.type, `panel${index}`)}
 					>
 						<AccordionSummary
@@ -130,7 +156,7 @@ const Domains = () => {
 											background: 'transparent',
 										})}
 									>
-										{item.type === 'Management' ? 'Management' : 'Earn'}
+										Management
 									</Button>
 								)
 							}
@@ -158,9 +184,9 @@ const Domains = () => {
 								},
 							})}
 						>
-							<Title className="title">reflect.eth</Title>
+							<Title className="title">{item.name}</Title>
 							<ExpiryDate className="des">
-								Expiry: 2025.02.21(XX days)
+								Expiry: {getExpiry(item.expiryDate)}
 							</ExpiryDate>
 						</AccordionSummary>
 
@@ -173,7 +199,7 @@ const Domains = () => {
 							})}
 						>
 							<ManageDomain
-								defaultValue={[]}
+								defaultValue={prices || []}
 								onClick={() => {}}
 								onChange={() => {}}
 								onChangeReceiving={() => {}}
