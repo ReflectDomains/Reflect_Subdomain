@@ -83,8 +83,8 @@ const Register = () => {
 	// todo check domain is availabled
 	const { expiration: fatherExpiration, days } = useDomainInfo(fatherDomain);
 
-	const { write, prepareSuccess, writeStartSuccess, txHash } = useWriteContract(
-		{
+	const { write, prepareSuccess, writeStartSuccess, txHash, refetch } =
+		useWriteContract({
 			functionName: 'registerSubdomain',
 			args: [...state.registerArray],
 			enabled: state.registerArray.length > 0,
@@ -94,8 +94,7 @@ const Register = () => {
 			onError: () => {
 				dispatch({ type: 'registerStatus', payload: 'error' });
 			},
-		}
-	);
+		});
 
 	useEffect(() => {
 		if (writeStartSuccess) {
@@ -141,6 +140,7 @@ const Register = () => {
 							dispatch={dispatch}
 							state={state}
 							onConfirm={write}
+							refetch={refetch}
 							prepareSuccess={prepareSuccess}
 						/>
 					) : step === 2 ? (

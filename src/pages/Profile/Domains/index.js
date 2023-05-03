@@ -69,7 +69,8 @@ const list = [
 const Domains = () => {
 	const { address } = useAccount();
 	const [expanded, setExpanded] = useState();
-	const { getNames, fatherList } = useENSJS();
+	const { fatherList } = useENSJS();
+	const [searchInputTemp, setSearchInputTemp] = useState('');
 	const [searchVal, setSearchVal] = useState('');
 
 	const handleChange = (type, panel) => (event, isExpanded) => {
@@ -89,7 +90,7 @@ const Domains = () => {
 	const prices = useGetPrice(address, [tokenContract['USDT']]);
 
 	const changeSearchInput = useCallback((e) => {
-		setSearchVal(e.target.value);
+		setSearchInputTemp(e.target.value);
 	}, []);
 
 	const listMatch = useMemo(() => {
@@ -99,11 +100,9 @@ const Domains = () => {
 		return fatherList.filter((item) => item.name.indexOf(searchVal) >= 0);
 	}, [searchVal, fatherList]);
 
-	const searchDomains = useCallback(() => {}, []);
-
-	useEffect(() => {
-		getNames();
-	}, [getNames]);
+	const searchDomains = useCallback(() => {
+		setSearchVal(searchInputTemp);
+	}, [searchInputTemp]);
 
 	return (
 		<>

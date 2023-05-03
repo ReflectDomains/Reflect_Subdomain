@@ -76,6 +76,7 @@ const StepOne = ({
 	dispatch,
 	prepareSuccess = false,
 	onConfirm,
+	refetch,
 }) => {
 	console.log(onConfirm, 'onConfirm');
 	const params = useParams();
@@ -239,6 +240,12 @@ const StepOne = ({
 			dispatch({ type: 'registerArray', payload: obj });
 		}
 	}, [obj, dispatch]);
+
+	useEffect(() => {
+		if (isApprove && !onConfirm) {
+			refetch?.();
+		}
+	}, [isApprove, onConfirm, refetch]);
 
 	return (
 		<>

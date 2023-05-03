@@ -4,7 +4,7 @@ import CommonPage from '../../components/CommonUI/CommonPage';
 import CommonAvatar from '../../components/CommonAvatar';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { TabContext, TabList } from '@mui/lab';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SubNames from './SubNames';
 import Domains from './Domains';
 import Portfolio from './Portfolio';
@@ -13,6 +13,7 @@ import { AvatarGenerator } from 'random-avatar-generator';
 import { useSelector } from 'react-redux';
 import { splitAddress } from '../../utils';
 import SocialMedia from '../../components/SocialMedia';
+import { useENSJS } from '../../provider/EnsjsProdiver';
 
 const ProfileBackground = styled(Box)(({ ...props }) => ({
 	width: '100%',
@@ -50,6 +51,7 @@ const ProfileTab = styled(Tab)(({ theme }) => ({
 const Profile = () => {
 	const navigate = useNavigate();
 	const { address } = useAccount();
+	const { getNames } = useENSJS();
 	const { profileInfo } = useSelector((state) => ({
 		profileInfo: state.reflect_subdomain_loginInfo,
 	}));
@@ -62,6 +64,10 @@ const Profile = () => {
 	const handleChangeTab = (_, newValue) => {
 		setTabValue(newValue);
 	};
+
+	useEffect(() => {
+		getNames();
+	}, [getNames]);
 
 	return (
 		<CommonPage title="Profile" sx={(theme) => ({ padding: '0' })}>
