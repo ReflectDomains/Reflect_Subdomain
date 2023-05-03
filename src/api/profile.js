@@ -17,3 +17,12 @@ export const setProfile = async (data) => {
 	});
 	return res;
 };
+
+export const earnChartList = async (data) => {
+	const res = await http({
+		url: '/api/v1/account/chart/earn',
+		data: data,
+		method: 'post',
+	});
+	return res;
+};
