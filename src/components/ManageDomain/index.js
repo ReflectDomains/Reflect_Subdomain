@@ -35,6 +35,7 @@ import {
 	formatUnitsWitheDecimals,
 	parseUnitsWithDecimals,
 	splitAddress,
+	zeroAddress,
 } from '../../utils';
 
 const Cell = styled(TableCell)(({ theme }) => ({
@@ -207,7 +208,7 @@ const ManageDomain = ({
 	}, [onClick]);
 
 	useEffect(() => {
-		if (defaultValue.length > 0) {
+		if (defaultValue > 0 && defaultValue[0]?.token === zeroAddress) {
 			defaultValue.forEach((item) => {
 				setDightChecked(!!item.mode);
 				const symbolToken = contractForToken[item.token];
