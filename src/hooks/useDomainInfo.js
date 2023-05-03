@@ -13,21 +13,24 @@ const useDomainInfo = (name) => {
 		args: [ensHashName(name)],
 	});
 
-	const expiryNumber = useMemo(() => ensData?.expiry?.toString() ?? 0, [ensData])
+	const expiryNumber = useMemo(
+		() => ensData?.expiry?.toString() ?? 0,
+		[ensData]
+	);
 
 	const expiration = useMemo(
 		() =>
 			!Number(expiryNumber)
 				? '0'
-				: moment(expiryNumber * 1000).format(
-						'YYYY-MM-DD HH:mm'
-				  ),
+				: moment(expiryNumber * 1000).format('YYYY-MM-DD HH:mm'),
 		[expiryNumber]
 	);
 
 	const days = useMemo(
 		() =>
-			!Number(expiryNumber) ? '0': moment(expiryNumber * 1000).diff(moment(), 'days'),
+			!Number(expiryNumber)
+				? '0'
+				: moment(expiryNumber * 1000).diff(moment(), 'days'),
 		[expiryNumber]
 	);
 
