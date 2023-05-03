@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { namehash } from '@ensdomains/ensjs/utils/normalise';
+import moment from 'moment';
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000';
 
@@ -66,5 +67,11 @@ export const debounce = (fn, delay) => {
 };
 
 export const toScan = (hash) => {
-	window.open(`https://goerli.etherscan.io/tx/${hash}`)
-}
+	window.open(`https://goerli.etherscan.io/tx/${hash}`);
+};
+
+export const getExpiry = (expiryDate) => {
+	const expiryDateFormat = moment(expiryDate).format('YYYY-MM-DD HH:mm');
+	const diffDays = moment(expiryDate).diff(moment(), 'days');
+	return `${expiryDateFormat} (${diffDays}) days`;
+};

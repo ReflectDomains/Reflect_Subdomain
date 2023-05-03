@@ -169,7 +169,6 @@ const StepOne = ({
 						p.length <= 0
 							? '10'
 							: formatUnitsWitheDecimals(p?.[0], contractForDec['USDT']) || 10,
-					price: 10,
 				};
 			}
 		});

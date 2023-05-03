@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCallback } from 'react';
 import { createContext, useContext } from 'react';
 import { useAccount, useProvider } from 'wagmi';
+import { getExpiry } from '../utils';
 const ENSInstanceDefault = new ENS();
 const EnsjsContent = createContext();
 
@@ -22,12 +23,25 @@ const EnsjsProdiver = ({ children }) => {
 					type: 'all',
 				});
 
+				console.log('res:', res);
+
 				res.forEach((item) => {
 					if (item.type === 'wrappedDomain') {
 						if (item.parent?.name === 'eth') {
 							setFatherList((v) => [...v, item]);
 						} else if (item.parent?.name.match('.eth')) {
-							setChildrenList((v) => [...v, item]);
+							ENSInstance.getExpiry(item.parent?.name).then((expiryTime) => {
+								console.log('expiryTime:', expiryTime);
+								setChildrenList((v) => [
+									...v,
+									{
+										...item,
+										expiryDate: expiryTime?.expiry
+											? getExpiry(expiryTime?.expiry)
+											: null,
+									},
+								]);
+							});
 						}
 					}
 				});

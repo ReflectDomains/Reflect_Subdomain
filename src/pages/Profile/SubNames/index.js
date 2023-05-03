@@ -14,7 +14,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
 import { memo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { DelIcon, EditIcon, SetPrimaryNameIcon } from '../../assets';
+import { DelIcon, EditIcon, SetPrimaryNameIcon } from '../../../assets';
+import { useENSJS } from '../../../provider/EnsjsProdiver';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
@@ -44,15 +45,14 @@ const DomainCard = styled(Box)(({ theme, ...props }) => ({
 	},
 }));
 
-const list = [0, 1, 2, 3];
-
 const SubNames = () => {
 	const [expanded, setExpanded] = useState('panel0');
+
+	const { childrenList } = useENSJS();
 
 	const handleChange = (panel) => (_, newExpanded) => {
 		setExpanded(newExpanded ? panel : false);
 	};
-
 	return (
 		<>
 			{/* Search Input */}
@@ -85,8 +85,9 @@ const SubNames = () => {
 
 			{/* SubNames list */}
 			<Stack spacing={1} pt={2}>
-				{list.map((item, index) => (
+				{childrenList.map((item, index) => (
 					<Accordion
+						key={index}
 						expanded={expanded === `panel${index}`}
 						onChange={handleChange(`panel${index}`)}
 					>
@@ -100,26 +101,24 @@ const SubNames = () => {
 									gap: '100px',
 									alignItems: 'center',
 									justifyContent: 'flex-start',
-									transition: 'all 0.3s',
+									transition: 'all 0.1s linear',
 								},
 								'& .MuiAccordionSummary-content.Mui-expanded': {
 									flexDirection: 'column',
 									alignItems: 'flex-start',
 									gap: theme.spacing(1),
 									paddingTop: '40px',
-									transition: 'font 0.3s ease',
+									transition: 'font 0.1s linear',
 									'.title': {
-										transition: 'font 0.3s ease',
+										transition: 'font 0.1s linear',
 										fontSize: '26px !important',
 									},
 									'.des': { color: theme.typography.subtitle1.color },
 								},
 							})}
 						>
-							<Title className="title">reflect.metabown.eth</Title>
-							<ExpiryDate className="des">
-								Expiry: 2025.02.21(XX days)
-							</ExpiryDate>
+							<Title className="title">{item.truncatedName}</Title>
+							<ExpiryDate className="des">Expiry: {item.expiryDate}</ExpiryDate>
 						</AccordionSummary>
 						<AccordionDetails
 							sx={(theme) => ({
@@ -130,13 +129,13 @@ const SubNames = () => {
 							<Stack direction="row" spacing={1} pt={1}>
 								<DomainCard type="parent">
 									<span className="role">parent</span>
-									<span className="name">metabowen.eth</span>
+									<span className="name">{item?.parent.name}</span>
 								</DomainCard>
 
-								<DomainCard>
+								{/* <DomainCard>
 									<span className="role">manager</span>
-									<span className="name">metabowen.eth</span>
-								</DomainCard>
+									<span className="name">{item?.parent.name}</span>
+								</DomainCard> */}
 							</Stack>
 
 							<Divider
