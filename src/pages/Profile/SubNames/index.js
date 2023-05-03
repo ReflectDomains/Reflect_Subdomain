@@ -53,6 +53,11 @@ const SubNames = () => {
 	const handleChange = (panel) => (_, newExpanded) => {
 		setExpanded(newExpanded ? panel : false);
 	};
+
+	const jumpToENSProfile = (name) => {
+		window.open(`https://app.ens.domains/${name}`);
+	};
+
 	return (
 		<>
 			{/* Search Input */}
@@ -146,14 +151,30 @@ const SubNames = () => {
 							/>
 
 							<Stack direction="row" justifyContent="space-between">
-								<LoadingButton startIcon={<DelIcon />} sx={{ mr: 1 }}>
+								<LoadingButton
+									startIcon={<DelIcon />}
+									sx={{ mr: 1 }}
+									onClick={() => {
+										jumpToENSProfile(item.truncatedName);
+									}}
+								>
 									Delete subname
 								</LoadingButton>
 								<Stack direction="row" spacing={0.5}>
-									<LoadingButton startIcon={<SetPrimaryNameIcon />}>
+									<LoadingButton
+										startIcon={<SetPrimaryNameIcon />}
+										onClick={() => {
+											jumpToENSProfile(item.truncatedName);
+										}}
+									>
 										Set as primary name
 									</LoadingButton>
-									<LoadingButton startIcon={<EditIcon />}>
+									<LoadingButton
+										startIcon={<EditIcon />}
+										onClick={() => {
+											jumpToENSProfile(item.truncatedName);
+										}}
+									>
 										Edit profile
 									</LoadingButton>
 									{/* <LoadingButton startIcon={<SellIcon />} variant="contained">
