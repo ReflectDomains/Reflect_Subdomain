@@ -26,3 +26,21 @@ export const earnDomainsList = async (data) => {
 	});
 	return res;
 };
+
+export const earnChat = async (data) => {
+	const res = await http({
+		url: '/api/v1/account/chart/earn',
+		data: data,
+		method: 'post',
+	});
+	return res;
+};
+
+export const buyChat = async (data) => {
+	const res = await http({
+		url: '/api/v1/account/chart/buy',
+		data: data,
+		method: 'post',
+	});
+	return res;
+};

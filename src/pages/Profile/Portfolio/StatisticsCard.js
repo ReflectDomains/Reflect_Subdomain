@@ -1,5 +1,6 @@
 import { Box, Paper, Typography, styled } from '@mui/material';
 import { memo } from 'react';
+import { formatUnitsWitheDecimals } from '../../../utils/index';
 
 const Wrapper = styled(Paper)(({ theme }) => ({
 	borderRadius: '',
@@ -31,14 +32,14 @@ const DataWrapper = styled(Box)(({ theme }) => ({
 	gap: theme.spacing(1),
 }));
 
-const StatisticsCard = ({ type }) => {
+const StatisticsCard = ({ type, data }) => {
 	return (
 		<Wrapper>
 			<Title>{type === 'domain' ? 'Earn By Subname' : 'Buy Subnames'}</Title>
 
 			<DataWrapper spacing={1}>
 				<Box>
-					<Price>$836.54 USD</Price>
+					<Price>${formatUnitsWitheDecimals(data.total_amount || 0)} USD</Price>
 					<Des>
 						{type === 'domain'
 							? 'Total registration fee revenue'
@@ -46,7 +47,7 @@ const StatisticsCard = ({ type }) => {
 					</Des>
 				</Box>
 				<Box>
-					<Price>156</Price>
+					<Price>{data.total_subdomain_count || '-'}</Price>
 					<Des>
 						{type === 'domain'
 							? 'Total subnames sold'
