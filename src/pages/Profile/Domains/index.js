@@ -9,7 +9,7 @@ import {
 	AccordionDetails,
 	styled,
 } from '@mui/material';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ManageDomain from '../../../components/ManageDomain';
@@ -18,6 +18,7 @@ import moment from 'moment';
 import useGetPrice from '../../../hooks/useGetPrice';
 import { useAccount } from 'wagmi';
 import { tokenContract } from '../../../config/contract';
+import { earnDomainsList } from '../../../api/profile';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
@@ -72,13 +73,13 @@ const Domains = () => {
 	const { fatherList } = useENSJS();
 	const [searchInputTemp, setSearchInputTemp] = useState('');
 	const [searchVal, setSearchVal] = useState('');
+	const [earnList, setEarnList] = useState([]);
+	console.log(fatherList, 'fatherList');
 
 	const handleChange = (type, panel) => (event, isExpanded) => {
-		// if (type === 'Management') {
-		// 	setExpanded(isExpanded ? panel : false);
-		// }
-		console.log(isExpanded, 'isExpand', panel);
-		setExpanded(isExpanded ? panel : false);
+		if (type === 'Management') {
+			setExpanded(isExpanded ? panel : false);
+		}
 	};
 
 	const getExpiry = useCallback((expiryDate) => {
@@ -93,16 +94,40 @@ const Domains = () => {
 		setSearchInputTemp(e.target.value);
 	}, []);
 
+	const filtersFatherList = useMemo(() => {
+		return fatherList.map((item) => {
+			if (earnList.indexOf(item.name) >= 0) {
+				return { ...item, type: 'Management' };
+			} else {
+				return { ...item, type: 'Earn' };
+			}
+		});
+	}, [fatherList, earnList]);
+
 	const listMatch = useMemo(() => {
 		if (!searchVal) {
-			return fatherList;
+			return filtersFatherList;
 		}
-		return fatherList.filter((item) => item.name.indexOf(searchVal) >= 0);
-	}, [searchVal, fatherList]);
+		return filtersFatherList.filter(
+			(item) => item.name.indexOf(searchVal) >= 0
+		);
+	}, [searchVal, filtersFatherList]);
 
 	const searchDomains = useCallback(() => {
 		setSearchVal(searchInputTemp);
 	}, [searchInputTemp]);
+
+	// Authorized domain list
+	const getAuthorizedList = useCallback(async () => {
+		const res = await earnDomainsList({
+			start_time: '2023-01-01T00:00:00Z',
+			end_time: '2023-05-03T15:30:00Z',
+		});
+	}, []);
+
+	useEffect(() => {
+		getAuthorizedList();
+	}, [getAuthorizedList]);
 
 	return (
 		<>
@@ -155,7 +180,7 @@ const Domains = () => {
 											background: 'transparent',
 										})}
 									>
-										Management
+										{item.type === 'Management' ? 'Management' : 'Earn'}
 									</Button>
 								)
 							}

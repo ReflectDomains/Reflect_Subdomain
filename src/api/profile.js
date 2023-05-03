@@ -18,11 +18,11 @@ export const setProfile = async (data) => {
 	return res;
 };
 
-export const earnChartList = async (data) => {
+export const earnDomainsList = async (data) => {
 	const res = await http({
-		url: '/api/v1/account/chart/earn',
-		data: data,
-		method: 'post',
+		url: '/api/v1/account/domains',
+		method: 'get',
+		params: {},
 	});
 	return res;
 };
