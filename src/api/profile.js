@@ -44,3 +44,12 @@ export const buyChat = async (data) => {
 	});
 	return res;
 };
+
+export const overview = async () => {
+	const res = await http({
+		url: '/api/v1/account/chart/overview',
+		method: 'get',
+		params: {},
+	});
+	return res;
+};

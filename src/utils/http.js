@@ -23,8 +23,6 @@ http.interceptors.request.use(
 		if (config.method === 'get') {
 			config.data = {};
 		}
-
-		console.log(config, 'config');
 		return config;
 	},
 	(error) => {

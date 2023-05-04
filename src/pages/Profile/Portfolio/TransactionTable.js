@@ -8,6 +8,8 @@ import {
 	Pagination,
 } from '@mui/material';
 import { memo } from 'react';
+import { formatUnitsWitheDecimals } from '../../../utils';
+import { splitAddress } from '../../../utils';
 
 const HeadCell = styled(TableCell)(({ theme }) => ({
 	padding: theme.spacing(1, 1, 0, 1),
@@ -25,34 +27,7 @@ const Cell = styled(TableCell)(({ theme }) => ({
 	fontSize: '16px',
 }));
 
-const list = [
-	{
-		subname: 'abc.bayc.eth',
-		price: '200 USDC',
-		txHash: '0x3568..ddf126',
-		txTime: '2023/03/2617:50:42',
-	},
-	{
-		subname: 'abc.bayc.eth',
-		price: '200 USDC',
-		txHash: '0x3568..ddf126',
-		txTime: '2023/03/2617:50:42',
-	},
-	{
-		subname: 'abc.bayc.eth',
-		price: '200 USDC',
-		txHash: '0x3568..ddf126',
-		txTime: '2023/03/2617:50:42',
-	},
-	{
-		subname: 'abc.bayc.eth',
-		price: '200 USDC',
-		txHash: '0x3568..ddf126',
-		txTime: '2023/03/2617:50:42',
-	},
-];
-
-const TransactionTable = () => {
+const TransactionTable = ({ data = [] }) => {
 	return (
 		<>
 			<Table>
@@ -65,19 +40,19 @@ const TransactionTable = () => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{list.map((item, index) => (
+					{data.map((item, index) => (
 						<TableRow key={index}>
 							<Cell component="th" scope="row">
-								{item.subname}
+								{item.domain}
 							</Cell>
 							<Cell component="th" scope="row">
-								{item.price}
+								{formatUnitsWitheDecimals(item.amount, 18)}
 							</Cell>
 							<Cell component="th" scope="row">
-								{item.txHash}
+								{splitAddress(item.tx_hash)}
 							</Cell>
 							<Cell component="th" scope="row">
-								{item.txTime}
+								{item.block_time}
 							</Cell>
 						</TableRow>
 					))}
