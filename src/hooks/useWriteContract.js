@@ -29,7 +29,6 @@ const useWriteContract = ({
 	}, [onError]);
 
 	const settledFn = useCallback(() => {
-		console.log('transaction');
 		onSetteled && typeof onSetteled === 'function' && onSetteled();
 	}, [onSetteled]);
 

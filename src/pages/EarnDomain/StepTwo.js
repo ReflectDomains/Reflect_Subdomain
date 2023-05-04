@@ -96,7 +96,7 @@ const StepTwo = ({ handleStep }) => {
 				<Button
 					variant="outlined"
 					onClick={() => {
-						handleStep(0);
+						handleStep(-1);
 					}}
 				>
 					Back

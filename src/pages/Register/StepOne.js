@@ -25,6 +25,7 @@ import {
 	formatUnitsWitheDecimals,
 	isSubdomainRegx,
 	splitEth,
+	zeroAddress,
 } from '../../utils';
 import {
 	useContract,
@@ -131,7 +132,7 @@ const StepOne = ({
 	);
 
 	const domainHasOwner = useMemo(
-		() => domainOwnerAddress !== '0x0000000000000000000000000000000000000000',
+		() => domainOwnerAddress !== zeroAddress,
 		[domainOwnerAddress]
 	);
 

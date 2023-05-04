@@ -69,7 +69,7 @@ const Portfolio = () => {
 	useEffect(() => {
 		getEarnChartData();
 		getBuyChartData();
-	}, []);
+	}, [getEarnChartData, getBuyChartData]);
 
 	return (
 		<>

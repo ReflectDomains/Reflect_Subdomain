@@ -13,18 +13,17 @@ const http = axios.create({
 
 http.interceptors.request.use(
 	(config) => {
-		config.headers['Content-Type'] = 'application/json';
 		// token
 		if (store.getState().reflect_subdomain_loginInfo.token) {
 			config.headers.Authorization = `Bearer ${
 				store.getState().reflect_subdomain_loginInfo.token
 			}`;
 		}
+		// config.headers.Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBZGRyZXNzIjoiMHhkNTVkNDMwMjIyZTY2ZDY4MDIwMTViNjYwNjc0NWYxOTk3NDA1ODFjIiwiU291cmNlIjoiZW5zLXRvb2wiLCJTdGFuZGFyZENsYWltcyI6eyJleHAiOjE2ODc4MzYwMzgsImlzcyI6InJlZmxlY3QifX0.WFDbKQJkppjgf8LXeFC5ut8gqqeGzcLzdOqLpSMIu48"
 		if (config.method === 'get') {
 			config.data = {};
 		}
 
-		console.log(config, 'config');
 		return config;
 	},
 	(error) => {
