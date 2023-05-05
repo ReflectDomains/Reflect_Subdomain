@@ -2,6 +2,8 @@ import { Button, Stack, Typography, styled } from '@mui/material';
 import { MentionIcon } from '../../assets';
 import PopularDomainCard from './PopularDomainCard';
 import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { popularList } from '../../api/subdomain';
 
 const Title = styled(Typography)(() => ({
 	fontSize: '36px',
@@ -28,6 +30,19 @@ const PopularDomainsText = styled(Typography)(({ theme }) => ({
 
 const Home = () => {
 	const navigate = useNavigate();
+
+	const [popularArr, setPopularArr] = useState([]);
+
+	const getPopularList = async () => {
+		const resp = await popularList();
+		if (resp?.code === 0 && resp?.data?.ens_domains) {
+			setPopularArr(resp?.data?.ens_domains);
+		}
+	};
+
+	useEffect(() => {
+		getPopularList();
+	}, []);
 
 	return (
 		<>
@@ -72,33 +87,15 @@ const Home = () => {
 				alignItems="center"
 				mt={5}
 			>
-				<PopularDomainCard
-					avatar={
-						'https://i.seadn.io/gcs/files/bab6d943a2eac4918f18943324eb053e.png?auto=format&w=384'
-					}
-					name="jassen.eth"
-					cup={'🥇'}
-				/>
-				<PopularDomainCard
-					avatar={
-						'https://i.seadn.io/gcs/files/a215db6bdf7d4e8d89c521e93780087a.png?auto=format&w=384'
-					}
-					name="meta.eth"
-					cup={'🥈'}
-				/>
-				<PopularDomainCard
-					avatar={
-						'https://i.seadn.io/gcs/files/1619b033c453fe36c5d9e2ac451379a7.png?auto=format&w=384'
-					}
-					name="reflect.eth"
-					cup={'🥉'}
-				/>
-				<PopularDomainCard
-					avatar={
-						'https://i.seadn.io/gae/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ?auto=format&w=384'
-					}
-					name="sns.eth"
-				/>
+				{popularArr.map((item, index) => (
+					<PopularDomainCard
+						key={index}
+						info={item}
+						cup={
+							index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : ''
+						}
+					/>
+				))}
 			</Stack>
 		</>
 	);

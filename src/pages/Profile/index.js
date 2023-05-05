@@ -58,8 +58,6 @@ const Profile = () => {
 		profileInfo: state.reflect_subdomain_loginInfo,
 	}));
 
-	console.log('profileInfo:', profileInfo);
-
 	const generator = new AvatarGenerator();
 	let addrAvatar = generator.generateRandomAvatar(address);
 	// portfolio | subNames | domains

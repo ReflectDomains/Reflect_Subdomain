@@ -1,7 +1,33 @@
 import ReactEcharts from 'echarts-for-react';
-import { memo } from 'react';
+import moment from 'moment';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { formatUnitsWitheDecimals } from '../../../utils';
 
-const LineBarChart = () => {
+const LineBarChart = ({ data, type }) => {
+	const [growthData, setGrowthData] = useState([]);
+	const [usdtData, setUSDTData] = useState([]);
+	const [xData, setXData] = useState([]);
+
+	const handleData = useCallback(() => {
+		let growList = [];
+		let usdtList = [];
+		let xList = [];
+		data.map((item) => {
+			xList.push(moment(item.timestamp * 1000).format('MM-DD'));
+			growList.push(formatUnitsWitheDecimals(item.amount.toString(), 18));
+			usdtList.push(formatUnitsWitheDecimals(item.amount.toString(), 18));
+			// growList.push(item.growth);
+			// usdtList.push(item.growth);
+		});
+		setGrowthData(growList);
+		setUSDTData(usdtList);
+		setXData(xList);
+	}, [data]);
+
+	useEffect(() => {
+		handleData();
+	}, [handleData]);
+
 	const colors = ['#EE6666', '#5470C6', '#91CC75'];
 	const option = {
 		color: colors,
@@ -18,6 +44,12 @@ const LineBarChart = () => {
 		legend: {
 			data: ['Growth ratio', 'USDT', 'USDC'],
 		},
+		dataZoom: [
+			{
+				type: 'inside',
+				throttle: 50,
+			},
+		],
 		xAxis: [
 			{
 				type: 'category',
@@ -25,7 +57,7 @@ const LineBarChart = () => {
 					alignWithLabel: true,
 				},
 				// prettier-ignore
-				data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+				data: type === 'weekly' ? ['Mon','Tues','Wed','Thur','Fri','Sat','Sun'] :xData,
 			},
 		],
 		yAxis: [
@@ -81,17 +113,14 @@ const LineBarChart = () => {
 				name: 'Growth ratio',
 				type: 'line',
 				yAxisIndex: 0,
-				data: [
-					2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2,
-				],
+				// data: [0, 10, 20, 30, 40, 50, 60, 70, 80, 80, 100],
+				data: growthData,
 			},
 			{
 				name: 'USDT',
 				type: 'bar',
 				yAxisIndex: 1,
-				data: [
-					2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3,
-				],
+				data: usdtData,
 			},
 			// {
 			// 	name: 'USDC',

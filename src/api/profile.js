@@ -51,25 +51,43 @@ export const uploadAvatar = async ({ url, file }) => {
 
 export const earnDomainsList = async (data) => {
 	const res = await http({
-		url: '/api/v1/account/domains',
+		url: '/api/v1/account/list/domain',
 		method: 'get',
 		params: data,
 	});
 	return res;
 };
 
-export const earnChat = async (data) => {
+export const earnChart = async (data) => {
 	const res = await http({
-		url: '/api/v1/account/chart/earn',
+		url: '/api/v1/account/chart/sale',
 		data: data,
 		method: 'post',
 	});
 	return res;
 };
 
-export const buyChat = async (data) => {
+export const buyChart = async (data) => {
 	const res = await http({
 		url: '/api/v1/account/chart/buy',
+		data: data,
+		method: 'post',
+	});
+	return res;
+};
+
+export const earnList = async (data) => {
+	const res = await http({
+		url: '/api/v1/account/list/sale',
+		data: data,
+		method: 'post',
+	});
+	return res;
+};
+
+export const buyList = async (data) => {
+	const res = await http({
+		url: '/api/v1/account/list/buy',
 		data: data,
 		method: 'post',
 	});
