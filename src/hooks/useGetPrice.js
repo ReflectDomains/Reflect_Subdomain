@@ -5,8 +5,9 @@ import { pricingHash } from '../utils';
 import { useMemo } from 'react';
 
 const useGetPrice = (name = '', tokenArray = []) => {
+
 	const pricingArray = useMemo(() => {
-		return tokenArray.map((item) => pricingHash(name, item));
+		return !name ? '': tokenArray.map((item) => pricingHash(name, item));
 	}, [tokenArray, name]);
 
 	const { data: prices } = useContractRead({

@@ -208,8 +208,10 @@ const ManageDomain = ({
 	}, [onClick]);
 
 	useEffect(() => {
-		if (defaultValue > 0 && defaultValue[0]?.token === zeroAddress) {
+		console.log(defaultValue, defaultValue.length, defaultValue[0]?.token)
+		if (defaultValue.length > 0 && defaultValue[0]?.token !== zeroAddress) {
 			defaultValue.forEach((item) => {
+				console.log(item.mode, 'mode', !!item.mode)
 				setDightChecked(!!item.mode);
 				const symbolToken = contractForToken[item.token];
 				setCheckList((v) => {
@@ -320,7 +322,6 @@ const ManageDomain = ({
 										<Cell component="th" scope="row">
 											{value}
 										</Cell>
-										{/* <Cell>{tokenPriceList[value]}</Cell> */}
 										{tokenPriceList[value] &&
 											tokenPriceList[value].map((price, index) => (
 												<Cell component="th" scope="row" key={index}>

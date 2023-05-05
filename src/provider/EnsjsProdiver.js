@@ -21,17 +21,15 @@ const EnsjsProdiver = ({ children }) => {
 				const res = await ENSInstance.getNames({
 					address: address,
 					type: 'all',
-				});
-
-				console.log('res:', res);
-
+        });
+        
+        let list = [];
 				res.forEach((item) => {
 					if (item.type === 'wrappedDomain') {
 						if (item.parent?.name === 'eth') {
-							setFatherList((v) => [...v, item]);
+              list.push(item)
 						} else if (item.parent?.name.match('.eth')) {
 							ENSInstance.getExpiry(item.parent?.name).then((expiryTime) => {
-								console.log('expiryTime:', expiryTime);
 								setChildrenList((v) => [
 									...v,
 									{
@@ -45,6 +43,8 @@ const EnsjsProdiver = ({ children }) => {
 						}
 					}
 				});
+        
+				setFatherList((v) => [...list]);
 			} catch (error) {}
 		}
 	}, [address, ENSInstance]);

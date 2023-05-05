@@ -19,6 +19,10 @@ import useGetPrice from '../../../hooks/useGetPrice';
 import { useAccount } from 'wagmi';
 import { tokenContract } from '../../../config/contract';
 import { earnDomainsList } from '../../../api/profile';
+import { useNavigate } from 'react-router-dom';
+import { splitEth } from '../../../utils';
+import useWriteContract from '../../../hooks/useWriteContract';
+import { LoadingButton } from '@mui/lab';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
@@ -38,13 +42,9 @@ const Domains = () => {
 	const [searchInputTemp, setSearchInputTemp] = useState('');
 	const [searchVal, setSearchVal] = useState('');
 	const [earnList, setEarnList] = useState([]);
-	console.log(fatherList, 'fatherList');
+	const [labelStrig, setLabelStrig] = useState('')
+	const navigate = useNavigate()
 
-	const handleChange = (type, panel) => (event, isExpanded) => {
-		if (type === 'Management') {
-			setExpanded(isExpanded ? panel : false);
-		}
-	};
 
 	const getExpiry = useCallback((expiryDate) => {
 		const expiryDateFormat = moment(expiryDate).format('YYYY-MM-DD HH:mm');
@@ -52,7 +52,6 @@ const Domains = () => {
 		return expiryDateFormat + '(' + diffDays + ' days) ';
 	}, []);
 
-	const prices = useGetPrice(address, [tokenContract['USDT']]);
 
 	const changeSearchInput = useCallback((e) => {
 		setSearchInputTemp(e.target.value);
@@ -87,11 +86,58 @@ const Domains = () => {
 			start_time: '2023-01-01T00:00:00Z',
 			end_time: '2023-05-03T15:30:00Z',
 		});
+		if (res.code === 0) {
+			const { data: {ens_domains} } = res;
+			setEarnList([...ens_domains])
+		}
 	}, []);
+
+	const [receivingAddress, setReceivingAddress] = useState('');
+	const adr = useMemo(
+		() => receivingAddress || address,
+		[receivingAddress, address]
+	);
+
+	const prices = useGetPrice((labelStrig? `${labelStrig}.eth`: ''), [tokenContract['USDT']]);
+
+	const [priceArray, setPriceArray] = useState([]);
+	const { write, isLoading, isSuccess } = useWriteContract({
+		functionName: 'openRegister',
+		args: [labelStrig, adr, priceArray],
+		enabled: priceArray && priceArray.length > 0 && labelStrig,
+	});
+
+	const handleChange = (item, panel) => (_, isExpanded) => {
+		if (!item.type) return
+		if (item.type === 'Management') {
+			setLabelStrig(splitEth(item.name))
+			setExpanded(isExpanded ? panel : false);
+		} else {
+			navigate(`/domain/1/${item.name}`)
+		}
+	};
+
+	const changeReceivingAddress = useCallback((adr) => {
+		setReceivingAddress(adr);
+	}, []);
+
+	const changePriceList = useCallback((list) => {
+		setPriceArray([...list]);
+	}, []);
+
+	const confirmSetting = useCallback(() => {
+		write?.();
+	}, [write]);
 
 	useEffect(() => {
 		getAuthorizedList();
 	}, [getAuthorizedList]);
+
+	useEffect(() => {
+		if (prices) {
+			setPriceArray([...prices])
+		}
+	}, [prices])
 
 	return (
 		<>
@@ -131,21 +177,21 @@ const Domains = () => {
 					<Accordion
 						key={index}
 						expanded={expanded === `panel${index}`}
-						onChange={handleChange(item.type, `panel${index}`)}
+						onChange={handleChange(item, `panel${index}`)}
 					>
 						<AccordionSummary
 							expandIcon={
 								expanded === `panel${index}` ? (
 									<ExpandMoreIcon />
 								) : (
-									<Button
+									<LoadingButton
 										sx={(theme) => ({
 											color: theme.palette.primary.main,
 											background: 'transparent',
 										})}
 									>
-										{item.type === 'Management' ? 'Management' : 'Earn'}
-									</Button>
+										{item.type}
+									</LoadingButton>
 								)
 							}
 							aria-controls={`panel${index}-controls`}
@@ -187,12 +233,12 @@ const Domains = () => {
 							})}
 						>
 							<ManageDomain
-								defaultValue={prices || []}
-								onClick={() => {}}
-								onChange={() => {}}
-								onChangeReceiving={() => {}}
-								loading={false}
-								isSuccess={false}
+								defaultValue={prices}
+								onClick={confirmSetting}
+								onChange={changePriceList}
+								onChangeReceiving={changeReceivingAddress}
+								loading={isLoading}
+								isSuccess={isSuccess}
 							/>
 						</AccordionDetails>
 					</Accordion>

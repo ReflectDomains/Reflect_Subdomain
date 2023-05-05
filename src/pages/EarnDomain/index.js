@@ -70,7 +70,11 @@ const EarnDomain = () => {
 
 	const toNext = useCallback(
 		(step, ens) => {
-			navigator(`/domain/${step}${ens ? '/' + ens : ''}`);
+			if (step < 0) {
+				navigator(-1)
+			} else {
+				navigator(`/domain/${step}${ens ? '/' + ens : ''}`);
+			}
 		},
 		[navigator]
 	);
@@ -91,21 +95,7 @@ const EarnDomain = () => {
 				>
 					{steps.map((item, index) => (
 						<Step key={index}>
-							{({ accomplished, position, index }) => {
-								console.log(
-									'position:location',
-									position,
-									':',
-									stepsPositions[index]
-								);
-								console.log(
-									'status:',
-									!accomplished
-										? 'pending'
-										: position > stepsPositions[index]
-										? 'done'
-										: 'arrive'
-								);
+							{({ accomplished, _, index }) => {
 								return (
 									<Stack>
 										<ProgressLabel
