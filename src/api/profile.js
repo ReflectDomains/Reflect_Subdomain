@@ -28,13 +28,12 @@ export const getUploadOSSUrl = async (data) => {
 };
 
 export const uploadAvatar = async ({ url, file }) => {
+	console.log(file, 'file' ,url)
 	const res = await http({
 		url,
-		file,
+		data: file,
 		method: 'put',
-		headers: {
-			'Content-Type': file.type,
-		},
+		contentType: file.type,
 		withCredentials: false,
 		auth: false,
 	});

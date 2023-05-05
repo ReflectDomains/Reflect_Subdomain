@@ -13,7 +13,6 @@ const http = axios.create({
 
 http.interceptors.request.use(
 	(config) => {
-		console.log('config:', config);
 		// token
 		if (store.getState().reflect_subdomain_loginInfo.token) {
 			config.headers.Authorization = `Bearer ${
@@ -22,12 +21,16 @@ http.interceptors.request.use(
 		}
 
 		if (config.url.includes('s3.amazonaws.com')) {
+			console.log('in----')
+			config.headers['Content-Type'] = config.contentType??'image/png';
 			delete config.headers.Authorization;
 		}
 
 		if (config.method === 'get') {
 			config.data = {};
 		}
+
+		console.log('config:', config);
 
 		return config;
 	},
