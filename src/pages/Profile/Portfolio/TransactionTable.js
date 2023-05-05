@@ -40,22 +40,24 @@ const TransactionTable = ({ data = [] }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data.map((item, index) => (
-						<TableRow key={index}>
-							<Cell component="th" scope="row">
-								{item.domain}
-							</Cell>
-							<Cell component="th" scope="row">
-								{formatUnitsWitheDecimals(item.amount, 18)}
-							</Cell>
-							<Cell component="th" scope="row">
-								{splitAddress(item.tx_hash)}
-							</Cell>
-							<Cell component="th" scope="row">
-								{item.block_time}
-							</Cell>
-						</TableRow>
-					))}
+					{data &&
+						data.length > 0 &&
+						data.map((item, index) => (
+							<TableRow key={index}>
+								<Cell component="th" scope="row">
+									{item.domain}
+								</Cell>
+								<Cell component="th" scope="row">
+									{formatUnitsWitheDecimals(item.amount, 18)}
+								</Cell>
+								<Cell component="th" scope="row">
+									{splitAddress(item.tx_hash)}
+								</Cell>
+								<Cell component="th" scope="row">
+									{item.block_time}
+								</Cell>
+							</TableRow>
+						))}
 				</TableBody>
 			</Table>
 

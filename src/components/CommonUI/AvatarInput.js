@@ -1,74 +1,87 @@
-import { useAccount } from "wagmi";
-import CommonAvatar from "../CommonAvatar";
-import { LoadingButton } from "@mui/lab";
-import { Box, InputLabel, Stack } from "@mui/material";
-import { useCallback, useRef, useState } from "react";
+import { useAccount } from 'wagmi';
+import CommonAvatar from '../CommonAvatar';
+import { LoadingButton } from '@mui/lab';
+import { Box, InputLabel, Stack } from '@mui/material';
+import { useCallback, useRef, useState } from 'react';
+import { getUploadOSSUrl, uploadAvatar } from '../../api/profile';
+import { toast } from 'react-toastify';
 
 const AvatarInput = ({
-  label,
-  labelSx,
-  avatar,
-  onSuccess,
-  onError,
-  ...props
+	label,
+	labelSx,
+	avatar,
+	onSuccess,
+	onError,
+	...props
 }) => {
-  const { address } = useAccount();
-  const inputRef = useRef(null);
-  const [uploading, setUploading] = useState(false);
+	const { address } = useAccount();
+	const inputRef = useRef(null);
+	const [uploading, setUploading] = useState(false);
 
-  const onFileChange = useCallback(
-    async (event) => {
-      const file = event.target.files[0];
+	const handleUpload = useCallback(async ({ file, type }) => {
+		const ossResp = await getUploadOSSUrl({ content_type: type });
+		if (ossResp?.code === 0 && ossResp?.data) {
+			const resp = await uploadAvatar({ url: ossResp.data.url, file });
+			console.log('resp:', resp);
+		}
+	}, []);
 
-      if (file) {
-        // upload file
-        const size = file.size;
-        if (size / (1024 * 1024) > 2) {
-          // exceed image size
-          return;
-        }
-        setUploading(true);
-        const type = file.type;
-        const URL = window.URL || window.webkitURL;
-        const imgURL = URL.createObjectURL(file);
+	const onFileChange = useCallback(
+		async (event) => {
+			const file = event.target.files[0];
 
-        console.log("imgURL:", imgURL);
-        console.log("type:", type);
-        //upload image
-        // const res = await uploadToIpfs(file, type, false);
+			if (file) {
+				// upload file
+				const size = file.size;
+				if (size / (1024 * 1024) > 2) {
+					// exceed image size
+					return;
+				}
+				setUploading(true);
+				const type = file.type;
+				const URL = window.URL || window.webkitURL;
+				const imgURL = URL.createObjectURL(file);
 
-        if (imgURL) {
-          onSuccess(inputRef, imgURL);
-        } else {
-          onError(inputRef);
-        }
-        setUploading(false);
-      }
-      setUploading(false);
-    },
-    [onSuccess, onError]
-  );
+				try {
+					//upload image
+					const res = await handleUpload({ file, type });
+					console.log('avatarRes:', res);
 
-  return (
-    <Box>
-      <InputLabel sx={labelSx}>{label}</InputLabel>
-      <Stack direction="row" alignItems="center" spacing={2} mt={1}>
-        <CommonAvatar scope={100} address={address} />
-        <LoadingButton component="label" loading={uploading}>
-          Replace
-          <input
-            hidden
-            accept="image/*"
-            type="file"
-            name="avatar"
-            id="icon-button-file"
-            ref={inputRef}
-            onChange={onFileChange}
-          />
-        </LoadingButton>
-      </Stack>
-    </Box>
-  );
+					if (res) {
+						onSuccess(inputRef, imgURL, file);
+					}
+				} catch (error) {
+					toast.error('upload fail');
+					onError(inputRef);
+					setUploading(false);
+				} finally {
+					setUploading(false);
+				}
+			}
+		},
+		[onSuccess, onError]
+	);
+
+	return (
+		<Box>
+			<InputLabel sx={labelSx}>{label}</InputLabel>
+			<Stack direction="row" alignItems="center" spacing={2} mt={1}>
+				<CommonAvatar scope={100} address={address} />
+				<LoadingButton component="label" loading={uploading}>
+					Replace
+					<input
+						hidden
+						accept="image/jpeg,image/png"
+						type="file"
+						name="avatar"
+						id="icon-button-file"
+						ref={inputRef}
+						onChange={onFileChange}
+					/>
+				</LoadingButton>
+			</Stack>
+		</Box>
+	);
 };
 
 export default AvatarInput;

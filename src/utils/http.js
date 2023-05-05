@@ -13,16 +13,22 @@ const http = axios.create({
 
 http.interceptors.request.use(
 	(config) => {
-		config.headers['Content-Type'] = 'application/json';
+		console.log('config:', config);
 		// token
 		if (store.getState().reflect_subdomain_loginInfo.token) {
 			config.headers.Authorization = `Bearer ${
 				store.getState().reflect_subdomain_loginInfo.token
 			}`;
 		}
+
+		if (config.url.includes('s3.amazonaws.com')) {
+			delete config.headers.Authorization;
+		}
+
 		if (config.method === 'get') {
 			config.data = {};
 		}
+
 		return config;
 	},
 	(error) => {

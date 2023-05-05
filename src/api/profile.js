@@ -18,11 +18,34 @@ export const setProfile = async (data) => {
 	return res;
 };
 
+export const getUploadOSSUrl = async (data) => {
+	const res = await http({
+		url: '/api/v1/upload/putPreSign',
+		data: data,
+		method: 'post',
+	});
+	return res;
+};
+
+export const uploadAvatar = async ({ url, file }) => {
+	const res = await http({
+		url,
+		file,
+		method: 'put',
+		headers: {
+			'Content-Type': file.type,
+		},
+		withCredentials: false,
+		auth: false,
+	});
+	return res;
+};
+
 export const earnDomainsList = async (data) => {
 	const res = await http({
 		url: '/api/v1/account/domains',
 		method: 'get',
-		params: {},
+		params: data,
 	});
 	return res;
 };

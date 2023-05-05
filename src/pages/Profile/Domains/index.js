@@ -31,42 +31,6 @@ const ExpiryDate = styled(Typography)(({ theme }) => ({
 	fontSize: theme.typography.fontSize,
 }));
 
-// const list = [
-// 	{
-// 		name: 'Jassen.eth',
-// 		type: 'Management',
-// 		digit: true,
-// 		tokens: {
-// 			USDT: true,
-// 			USDC: false,
-// 			ETH: false,
-// 			DAI: false,
-// 		},
-// 	},
-// 	{
-// 		name: 'meta.eth',
-// 		type: 'earn',
-// 		digit: false,
-// 		tokens: {
-// 			USDT: true,
-// 			USDC: false,
-// 			ETH: false,
-// 			DAI: false,
-// 		},
-// 	},
-// 	{
-// 		name: 'hash.eth',
-// 		type: 'Management',
-// 		digit: false,
-// 		tokens: {
-// 			USDT: true,
-// 			USDC: false,
-// 			ETH: false,
-// 			DAI: false,
-// 		},
-// 	},
-// ];
-
 const Domains = () => {
 	const { address } = useAccount();
 	const [expanded, setExpanded] = useState();

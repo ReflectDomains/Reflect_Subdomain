@@ -4,9 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import SwitchButton from './SwitchButton';
 import LineBarChart from './LineBarChart';
 import TransactionTable from './TransactionTable';
-import { buyChat, earnChat, getProfile, overview } from '../../../api/profile';
+import { buyChat, earnChat, overview } from '../../../api/profile';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
 
 const StatisticsWrapper = styled(Box)(({ theme }) => ({
 	display: 'grid',
@@ -31,15 +30,11 @@ const dates = ['ALL', 'Day', 'Week', 'Month'];
 
 const Portfolio = () => {
 	const [switchValue, setSwitchValue] = useState('domain');
-	const dispatch = useDispatch();
 	const [times, setTimes] = useState('Day');
 
 	const [earnData, setEarnData] = useState({});
 	const [buyData, setBuyData] = useState({});
 	const [overviewData, setOverviewData] = useState();
-
-	console.log('earnData:', earnData);
-	console.log('buyData:', buyData);
 
 	const handleSwitch = useCallback((value) => {
 		setSwitchValue(value);
@@ -71,13 +66,6 @@ const Portfolio = () => {
 		}
 	}, []);
 
-	const getProfileData = useCallback(async () => {
-		const resp = await getProfile();
-		if (resp?.code === 0 && resp?.data) {
-			dispatch({ type: 'SET_PROFILE', action: resp.data });
-		}
-	}, [dispatch]);
-
 	const getOverview = useCallback(async () => {
 		const resp = await overview();
 		if (resp?.code === 0 && resp?.data) {
@@ -89,7 +77,6 @@ const Portfolio = () => {
 		getEarnChartData();
 		getBuyChartData();
 		getOverview();
-		getProfileData();
 		// eslint-disable-next-line
 	}, []);
 
