@@ -131,7 +131,7 @@ const SearchInput = () => {
 					if (
 						resp?.code === 0 &&
 						resp?.data?.ens_domains &&
-						resp?.data.ens_domains[0]?.domain.includes(searchTerm[1])
+						resp?.data.ens_domains[0]?.domain === `${searchTerm}.eth`
 					) {
 						setHost(true);
 					}

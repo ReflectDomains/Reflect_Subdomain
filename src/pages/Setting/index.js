@@ -6,7 +6,7 @@ import MultipleInput from '../../components/CommonUI/MultipleInput';
 import { InputLabel, Stack } from '@mui/material';
 import AvatarInput from '../../components/CommonUI/AvatarInput';
 import { LoadingButton } from '@mui/lab';
-import { getProfile, setProfile, uploadAvatar } from '../../api/profile';
+import { getProfile, setProfile } from '../../api/profile';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
