@@ -19,10 +19,15 @@ const AvatarInput = ({
 	const [uploading, setUploading] = useState(false);
 
 	const handleUpload = useCallback(async ({ file, type }) => {
-		const ossResp = await getUploadOSSUrl({ content_type: type });
-		if (ossResp?.code === 0 && ossResp?.data) {
-			const resp = await uploadAvatar({ url: ossResp.data.url, file });
-			console.log('resp:', resp);
+		try {
+			const ossResp = await getUploadOSSUrl({ content_type: type });
+			if (ossResp?.code === 0 && ossResp?.data) {
+				await uploadAvatar({ url: ossResp.data.url, file });
+				return true;
+			}
+			return false;
+		} catch (error) {
+			return false;
 		}
 	}, []);
 
@@ -45,7 +50,6 @@ const AvatarInput = ({
 				try {
 					//upload image
 					const res = await handleUpload({ file, type });
-					console.log('avatarRes:', res);
 
 					if (res) {
 						onSuccess(inputRef, imgURL, file);
@@ -59,14 +63,14 @@ const AvatarInput = ({
 				}
 			}
 		},
-		[onSuccess, onError]
+		[onSuccess, onError, handleUpload]
 	);
 
 	return (
 		<Box>
 			<InputLabel sx={labelSx}>{label}</InputLabel>
 			<Stack direction="row" alignItems="center" spacing={2} mt={1}>
-				<CommonAvatar scope={100} address={address} />
+				<CommonAvatar avatar={avatar} scope={100} address={address} />
 				<LoadingButton component="label" loading={uploading}>
 					Replace
 					<input

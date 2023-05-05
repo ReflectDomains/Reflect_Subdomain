@@ -5,7 +5,8 @@ import {
 	TableRow,
 	styled,
 	TableCell,
-	Pagination,
+	// Pagination,
+	TableContainer,
 } from '@mui/material';
 import { memo } from 'react';
 import { formatUnitsWitheDecimals } from '../../../utils';
@@ -29,7 +30,7 @@ const Cell = styled(TableCell)(({ theme }) => ({
 
 const TransactionTable = ({ data = [] }) => {
 	return (
-		<>
+		<TableContainer sx={{ maxHeight: '300px', overflowY: 'auto' }}>
 			<Table>
 				<TableHead>
 					<TableRow sx={{ borderRadius: '20px' }}>
@@ -61,7 +62,7 @@ const TransactionTable = ({ data = [] }) => {
 				</TableBody>
 			</Table>
 
-			<Pagination
+			{/* <Pagination
 				count={10}
 				shape="rounded"
 				size="small"
@@ -71,8 +72,8 @@ const TransactionTable = ({ data = [] }) => {
 						justifyContent: 'flex-end',
 					},
 				}}
-			/>
-		</>
+			/> */}
+		</TableContainer>
 	);
 };
 

@@ -84,7 +84,7 @@ const Profile = () => {
 	return (
 		<CommonPage title="Profile" sx={{ padding: '0' }}>
 			{/* background image */}
-			<ProfileBackground img={addrAvatar}>
+			<ProfileBackground img={profileInfo.avatar || addrAvatar}>
 				<Box
 					sx={{
 						width: '100%',
@@ -106,7 +106,11 @@ const Profile = () => {
 				})}
 			>
 				<UserBasicInfo>
-					<CommonAvatar address={address} scope={100} />
+					<CommonAvatar
+						avatar={profileInfo.avatar}
+						address={address}
+						scope={100}
+					/>
 					<Box>
 						<Stack direction="row" alignItems="center" spacing={3}>
 							<Name>{profileInfo.nickname || splitAddress(address)}</Name>

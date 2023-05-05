@@ -6,7 +6,7 @@ import MultipleInput from '../../components/CommonUI/MultipleInput';
 import { InputLabel, Stack } from '@mui/material';
 import AvatarInput from '../../components/CommonUI/AvatarInput';
 import { LoadingButton } from '@mui/lab';
-import { getProfile, setProfile } from '../../api/profile';
+import { getAvatar, getProfile, setProfile } from '../../api/profile';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -27,11 +27,15 @@ const Setting = () => {
 
 	const handleSetProfile = async (data) => {
 		setSaveLoading(true);
-		const resp = await setProfile(data);
+		const reqParams = {
+			...data,
+			avatar,
+		};
+		const resp = await setProfile(reqParams);
 		if (resp?.code === 0) {
 			toast.success(resp.msg);
 			navigate('/profile');
-			dispatch({ type: 'SET_PROFILE', value: data });
+			dispatch({ type: 'SET_PROFILE', value: reqParams });
 		}
 		setSaveLoading(false);
 	};
@@ -41,8 +45,13 @@ const Setting = () => {
 		console.log('resp:', resp);
 	};
 
-	const handleUploadAvatarSuccess = useCallback(async (inputRef, img, file) => {
+	const handleUploadAvatarSuccess = useCallback(async (inputRef, img) => {
 		setAvatar(img);
+		const resp = await getAvatar();
+		if (resp?.code === 0 && resp?.data?.url) {
+			console.log('avatarUrl:', resp?.data?.url);
+			setAvatar(resp?.data?.url);
+		}
 		inputRef.current.value = '';
 	}, []);
 

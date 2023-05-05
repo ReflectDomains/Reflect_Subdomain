@@ -18,6 +18,15 @@ export const setProfile = async (data) => {
 	return res;
 };
 
+export const getAvatar = async (data) => {
+	const res = await http({
+		url: '/api/v1/upload/getPreSign',
+		params: data,
+		method: 'get',
+	});
+	return res;
+};
+
 export const getUploadOSSUrl = async (data) => {
 	const res = await http({
 		url: '/api/v1/upload/putPreSign',
@@ -28,7 +37,7 @@ export const getUploadOSSUrl = async (data) => {
 };
 
 export const uploadAvatar = async ({ url, file }) => {
-	console.log(file, 'file' ,url)
+	console.log(file, 'file', url);
 	const res = await http({
 		url,
 		data: file,
