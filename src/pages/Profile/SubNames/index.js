@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { DelIcon, EditIcon, SetPrimaryNameIcon } from '../../../assets';
 import { useENSJS } from '../../../provider/EnsjsProdiver';
@@ -50,9 +50,23 @@ const SubNames = () => {
 
 	const { childrenList } = useENSJS();
 
+	const [searchValue, setSearchValue] = useState('');
+	const [searchInputTemp, setSearchInputTemp] = useState('');
+
 	const handleChange = (panel) => (_, newExpanded) => {
 		setExpanded(newExpanded ? panel : false);
 	};
+
+	const handleChangeSearchVal = (e) => {
+		setSearchInputTemp(e.target.value);
+	};
+
+	const filterChildList = useMemo(() => {
+		if (!searchValue) {
+			return childrenList;
+		}
+		return childrenList.filter((item) => item.name.indexOf(searchValue) >= 0);
+	}, [searchValue, childrenList]);
 
 	const jumpToENSProfile = (name) => {
 		window.open(`https://app.ens.domains/${name}`);
@@ -69,8 +83,10 @@ const SubNames = () => {
 			>
 				<Input
 					variant="filled"
+					value={searchInputTemp}
 					disableUnderline={true}
 					placeholder="Search for subdomain"
+					onChange={handleChangeSearchVal}
 					endAdornment={
 						<Button
 							sx={{
@@ -78,6 +94,9 @@ const SubNames = () => {
 								minWidth: 'unset',
 								height: 'unset',
 								background: 'white',
+							}}
+							onClick={() => {
+								setSearchValue(searchInputTemp);
 							}}
 						>
 							<SearchIcon
@@ -90,7 +109,7 @@ const SubNames = () => {
 
 			{/* SubNames list */}
 			<Stack spacing={1} pt={2}>
-				{childrenList.map((item, index) => (
+				{filterChildList.map((item, index) => (
 					<Accordion
 						key={index}
 						expanded={expanded === `panel${index}`}
