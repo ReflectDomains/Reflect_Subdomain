@@ -36,6 +36,8 @@ const Setting = () => {
 			toast.success(resp.msg);
 			navigate('/profile');
 			dispatch({ type: 'SET_PROFILE', value: reqParams });
+		} else {
+			toast.error(resp.msg);
 		}
 		setSaveLoading(false);
 	};

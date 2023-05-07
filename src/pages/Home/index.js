@@ -2,7 +2,7 @@ import { Button, Stack, Typography, styled } from '@mui/material';
 import { MentionIcon } from '../../assets';
 import PopularDomainCard from './PopularDomainCard';
 import { useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { popularList } from '../../api/subdomain';
 
 const Title = styled(Typography)(() => ({
