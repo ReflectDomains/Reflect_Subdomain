@@ -16,8 +16,7 @@ const LineBarChart = ({ data, type }) => {
 			xList.push(moment(item.timestamp * 1000).format('MM-DD'));
 			growList.push(formatUnitsWitheDecimals(item.amount.toString(), 18));
 			usdtList.push(formatUnitsWitheDecimals(item.amount.toString(), 18));
-			// growList.push(item.growth);
-			// usdtList.push(item.growth);
+			return item;
 		});
 		setGrowthData(growList);
 		setUSDTData(usdtList);
