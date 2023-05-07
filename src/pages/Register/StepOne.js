@@ -25,6 +25,7 @@ import {
 	formatUnitsWitheDecimals,
 	isSubdomainRegx,
 	splitEth,
+	zeroAddress,
 } from '../../utils';
 import {
 	useContract,
@@ -76,7 +77,9 @@ const StepOne = ({
 	dispatch,
 	prepareSuccess = false,
 	onConfirm,
+	refetch,
 }) => {
+	console.log(onConfirm, 'onConfirm');
 	const params = useParams();
 	const { address } = useAccount();
 	const [checked, setChecked] = useState('usdt');
@@ -129,7 +132,7 @@ const StepOne = ({
 	);
 
 	const domainHasOwner = useMemo(
-		() => domainOwnerAddress !== '0x0000000000000000000000000000000000000000',
+		() => domainOwnerAddress !== zeroAddress,
 		[domainOwnerAddress]
 	);
 
@@ -162,8 +165,11 @@ const StepOne = ({
 				};
 			} else {
 				return {
-					symbol: contractForToken[item.token],
-					price: formatUnitsWitheDecimals(p?.[0], contractForDec['USDT']) || 10,
+					symbol: contractForToken[item.token] ?? '',
+					price:
+						p.length <= 0
+							? '10'
+							: formatUnitsWitheDecimals(p?.[0], contractForDec['USDT']) || 10,
 				};
 			}
 		});
@@ -171,7 +177,7 @@ const StepOne = ({
 
 	const showPriceText = useMemo(() => {
 		const checkedObj = pricesDisplay.find(
-			(v) => v && v.symbol.toLowerCase() === checked
+			(v) => v && v.symbol?.toLowerCase() === checked
 		);
 		return checkedObj?.price || 10;
 	}, [checked, pricesDisplay]);
@@ -235,6 +241,12 @@ const StepOne = ({
 		}
 	}, [obj, dispatch]);
 
+	useEffect(() => {
+		if (isApprove && !onConfirm) {
+			refetch?.();
+		}
+	}, [isApprove, onConfirm, refetch]);
+
 	return (
 		<>
 			<TypographyInfo sx={{ mb: '10px' }}>Supported Tokens:</TypographyInfo>
@@ -244,7 +256,7 @@ const StepOne = ({
 						key={item.symbol}
 						value="usdt"
 						label={`${item.price} ${item.symbol}`}
-						checked={checked === item.symbol.toLowerCase()}
+						checked={checked === item.symbol?.toLowerCase()}
 						control={<Radio999 />}
 					/>
 				))}

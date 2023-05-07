@@ -16,6 +16,7 @@ import AuthRouter from './provider/AuthRouter';
 import { ThemeProvider } from '@mui/material';
 import theme from './config/theme';
 import store from './store';
+import EnsjsProdiver from './provider/EnsjsProdiver';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -25,8 +26,10 @@ root.render(
 				<WagmiConfig client={wagmiClient}>
 					<RainbowKitProvider chains={chains}>
 						<AuthRouter>
-							<App />
-							<ToastContainer />
+							<EnsjsProdiver>
+								<App />
+								<ToastContainer />
+							</EnsjsProdiver>
 						</AuthRouter>
 					</RainbowKitProvider>
 				</WagmiConfig>

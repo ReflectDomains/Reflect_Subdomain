@@ -19,6 +19,19 @@ http.interceptors.request.use(
 				store.getState().reflect_subdomain_loginInfo.token
 			}`;
 		}
+
+		if (config.url.includes('s3.amazonaws.com')) {
+			console.log('in----')
+			config.headers['Content-Type'] = config.contentType??'image/png';
+			delete config.headers.Authorization;
+		}
+
+		if (config.method === 'get') {
+			config.data = {};
+		}
+
+		console.log('config:', config);
+
 		return config;
 	},
 	(error) => {

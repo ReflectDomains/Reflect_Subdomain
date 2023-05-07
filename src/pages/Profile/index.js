@@ -4,15 +4,17 @@ import CommonPage from '../../components/CommonUI/CommonPage';
 import CommonAvatar from '../../components/CommonAvatar';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { TabContext, TabList } from '@mui/lab';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SubNames from './SubNames';
 import Domains from './Domains';
 import Portfolio from './Portfolio';
 import { useAccount } from 'wagmi';
 import { AvatarGenerator } from 'random-avatar-generator';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { splitAddress } from '../../utils';
 import SocialMedia from '../../components/SocialMedia';
+import { useENSJS } from '../../provider/EnsjsProdiver';
+import { getProfile } from '../../api/profile';
 
 const ProfileBackground = styled(Box)(({ ...props }) => ({
 	width: '100%',
@@ -50,6 +52,8 @@ const ProfileTab = styled(Tab)(({ theme }) => ({
 const Profile = () => {
 	const navigate = useNavigate();
 	const { address } = useAccount();
+	const { getNames } = useENSJS();
+	const dispatch = useDispatch();
 	const { profileInfo } = useSelector((state) => ({
 		profileInfo: state.reflect_subdomain_loginInfo,
 	}));
@@ -59,14 +63,26 @@ const Profile = () => {
 	// portfolio | subNames | domains
 	const [tabValue, setTabValue] = useState('portfolio');
 
+	const getProfileData = useCallback(async () => {
+		const resp = await getProfile();
+		if (resp?.code === 0 && resp?.data) {
+			dispatch({ type: 'SET_PROFILE', value: resp.data });
+		}
+	}, [dispatch]);
+
 	const handleChangeTab = (_, newValue) => {
 		setTabValue(newValue);
 	};
 
+	useEffect(() => {
+		getNames();
+		getProfileData();
+	}, [getNames, getProfileData]);
+
 	return (
-		<CommonPage title="Profile" sx={(theme) => ({ padding: '0' })}>
+		<CommonPage title="Profile" sx={{ padding: '0' }}>
 			{/* background image */}
-			<ProfileBackground img={addrAvatar}>
+			<ProfileBackground img={profileInfo.avatar || addrAvatar}>
 				<Box
 					sx={{
 						width: '100%',
@@ -88,7 +104,11 @@ const Profile = () => {
 				})}
 			>
 				<UserBasicInfo>
-					<CommonAvatar address={address} scope={100} />
+					<CommonAvatar
+						avatar={profileInfo.avatar}
+						address={address}
+						scope={100}
+					/>
 					<Box>
 						<Stack direction="row" alignItems="center" spacing={3}>
 							<Name>{profileInfo.nickname || splitAddress(address)}</Name>

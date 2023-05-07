@@ -35,6 +35,7 @@ import {
 	formatUnitsWitheDecimals,
 	parseUnitsWithDecimals,
 	splitAddress,
+	zeroAddress,
 } from '../../utils';
 
 const Cell = styled(TableCell)(({ theme }) => ({
@@ -179,7 +180,6 @@ const ManageDomain = ({
 					: [...digitsDifferentLengthToDefaultPrice];
 				const newPrice = v.target.value;
 				oldTokenPrice.splice(pricePlace, 1, newPrice);
-				console.log(oldTokenPrice, 'old ');
 				setTokenPriceList((v) => {
 					return {
 						...v,
@@ -208,8 +208,10 @@ const ManageDomain = ({
 	}, [onClick]);
 
 	useEffect(() => {
-		if (defaultValue.length > 0) {
+		console.log(defaultValue, defaultValue.length, defaultValue[0]?.token)
+		if (defaultValue.length > 0 && defaultValue[0]?.token !== zeroAddress) {
 			defaultValue.forEach((item) => {
+				console.log(item.mode, 'mode', !!item.mode)
 				setDightChecked(!!item.mode);
 				const symbolToken = contractForToken[item.token];
 				setCheckList((v) => {
@@ -320,7 +322,6 @@ const ManageDomain = ({
 										<Cell component="th" scope="row">
 											{value}
 										</Cell>
-										<Cell>{tokenPriceList[value]}</Cell>
 										{tokenPriceList[value] &&
 											tokenPriceList[value].map((price, index) => (
 												<Cell component="th" scope="row" key={index}>

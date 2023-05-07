@@ -17,7 +17,6 @@ const LoginReducer = (state = initialLoginState, action) => {
 			return { ...state, preAccount: action.value };
 		}
 		case 'SET_PROFILE': {
-			console.log('value:', action.value);
 			return { ...state, ...action.value };
 		}
 		case 'LOGOUT':

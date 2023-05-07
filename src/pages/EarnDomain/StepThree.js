@@ -4,9 +4,10 @@ import ManageDomain from '../../components/ManageDomain';
 import useWriteContract from '../../hooks/useWriteContract';
 import { useParams } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { tokenContract } from '../../config/contract';
+import { contractForDec, tokenContract } from '../../config/contract';
 import useGetPrice from '../../hooks/useGetPrice';
-import { splitEth } from '../../utils';
+import { parseUnitsWithDecimals, splitEth, zeroAddress } from '../../utils';
+
 
 const StepsWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -22,12 +23,20 @@ const StepsWrapper = styled(Box)(({ theme }) => ({
 const StepThree = ({ handleStep }) => {
 	const params = useParams();
 	const { address } = useAccount();
-	const [priceArray, setPriceArray] = useState([]);
+	const [priceArray, setPriceArray] = useState([
+		{
+			mode: 0,
+			token: tokenContract['USDT'],
+			prices: [parseUnitsWithDecimals('10', contractForDec['USDT'])],
+		},
+	]);
 	const [receivingAddress, setReceivingAddress] = useState('');
 
 	const labelStrig = useMemo(() => splitEth(params?.address), [params]);
 
 	const prices = useGetPrice(params?.address, [tokenContract['USDT']]);
+
+	const needSetPrice = useMemo(() => !prices || prices[0]?.token === zeroAddress, [prices])
 
 	const adr = useMemo(
 		() => receivingAddress || address,
@@ -56,7 +65,9 @@ const StepThree = ({ handleStep }) => {
 		<Box>
 			<StepsWrapper>
 				<ManageDomain
-					defaultValue={prices || []}
+					defaultValue={
+						prices || [parseUnitsWithDecimals('10', contractForDec['USDT'])]
+					}
 					onClick={confirmSetting}
 					onChange={changePriceList}
 					onChangeReceiving={changeReceivingAddress}
@@ -69,13 +80,14 @@ const StepThree = ({ handleStep }) => {
 				<Button
 					variant="outlined"
 					onClick={() => {
-						handleStep(1, params?.address);
+						handleStep(-1, params?.address);
 					}}
 				>
 					Back
 				</Button>
 				<Button
 					variant="contained"
+					disabled={needSetPrice}
 					onClick={() => {
 						handleStep(3, params?.address);
 					}}

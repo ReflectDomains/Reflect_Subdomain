@@ -10,3 +10,12 @@ export const searchSubdomain = async (data) => {
 	});
 	return res;
 };
+
+export const popularList = async (data) => {
+	const res = await http({
+		url: '/api/v1/subdomain/popularDomains',
+		method: 'get',
+		params: data,
+	});
+	return res;
+};

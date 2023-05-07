@@ -5,7 +5,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.10.6",
 		"@emotion/styled": "^11.10.6",
-		"@ensdomains/ensjs": "^3.0.0-alpha.61",
+		"@ensdomains/ensjs": "^3.0.0-alpha.62",
 		"@mui/icons-material": "^5.11.16",
 		"@mui/lab": "^5.0.0-alpha.125",
 		"@mui/material": "^5.11.16",
@@ -16,6 +16,7 @@
 		"@testing-library/jest-dom": "^5.16.5",
 		"@testing-library/react": "^13.4.0",
 		"@testing-library/user-event": "^13.5.0",
+		"bignumber.js": "^9.1.1",
 		"craco": "^0.0.3",
 		"craco-less": "^2.0.0",
 		"cross-env": "^7.0.3",
@@ -65,8 +66,8 @@
 		]
 	},
 	"devDependencies": {
+		"buffer": "^6.0.3",
 		"graphql": "^16.6.0",
-		"path": "^0.12.7",
 		"stream-browserify": "^3.0.0"
 	}
 }

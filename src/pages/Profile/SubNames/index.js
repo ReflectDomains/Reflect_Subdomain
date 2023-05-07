@@ -12,9 +12,10 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SearchIcon from '@mui/icons-material/Search';
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { DelIcon, EditIcon, SetPrimaryNameIcon } from '../../assets';
+import { DelIcon, EditIcon, SetPrimaryNameIcon } from '../../../assets';
+import { useENSJS } from '../../../provider/EnsjsProdiver';
 
 const Title = styled(Typography)(({ theme }) => ({
 	color: theme.typography.caption.color,
@@ -44,13 +45,31 @@ const DomainCard = styled(Box)(({ theme, ...props }) => ({
 	},
 }));
 
-const list = [0, 1, 2, 3];
-
 const SubNames = () => {
 	const [expanded, setExpanded] = useState('panel0');
 
+	const { childrenList } = useENSJS();
+
+	const [searchValue, setSearchValue] = useState('');
+	const [searchInputTemp, setSearchInputTemp] = useState('');
+
 	const handleChange = (panel) => (_, newExpanded) => {
 		setExpanded(newExpanded ? panel : false);
+	};
+
+	const handleChangeSearchVal = (e) => {
+		setSearchInputTemp(e.target.value);
+	};
+
+	const filterChildList = useMemo(() => {
+		if (!searchValue) {
+			return childrenList;
+		}
+		return childrenList.filter((item) => item.name.indexOf(searchValue) >= 0);
+	}, [searchValue, childrenList]);
+
+	const jumpToENSProfile = (name) => {
+		window.open(`https://app.ens.domains/${name}`);
 	};
 
 	return (
@@ -64,8 +83,10 @@ const SubNames = () => {
 			>
 				<Input
 					variant="filled"
+					value={searchInputTemp}
 					disableUnderline={true}
 					placeholder="Search for subdomain"
+					onChange={handleChangeSearchVal}
 					endAdornment={
 						<Button
 							sx={{
@@ -73,6 +94,9 @@ const SubNames = () => {
 								minWidth: 'unset',
 								height: 'unset',
 								background: 'white',
+							}}
+							onClick={() => {
+								setSearchValue(searchInputTemp);
 							}}
 						>
 							<SearchIcon
@@ -85,8 +109,9 @@ const SubNames = () => {
 
 			{/* SubNames list */}
 			<Stack spacing={1} pt={2}>
-				{list.map((item, index) => (
+				{filterChildList.map((item, index) => (
 					<Accordion
+						key={index}
 						expanded={expanded === `panel${index}`}
 						onChange={handleChange(`panel${index}`)}
 					>
@@ -100,26 +125,24 @@ const SubNames = () => {
 									gap: '100px',
 									alignItems: 'center',
 									justifyContent: 'flex-start',
-									transition: 'all 0.3s',
+									transition: 'all 0.1s linear',
 								},
 								'& .MuiAccordionSummary-content.Mui-expanded': {
 									flexDirection: 'column',
 									alignItems: 'flex-start',
 									gap: theme.spacing(1),
 									paddingTop: '40px',
-									transition: 'font 0.3s ease',
+									transition: 'font 0.1s linear',
 									'.title': {
-										transition: 'font 0.3s ease',
+										transition: 'font 0.1s linear',
 										fontSize: '26px !important',
 									},
 									'.des': { color: theme.typography.subtitle1.color },
 								},
 							})}
 						>
-							<Title className="title">reflect.metabown.eth</Title>
-							<ExpiryDate className="des">
-								Expiry: 2025.02.21(XX days)
-							</ExpiryDate>
+							<Title className="title">{item.truncatedName}</Title>
+							<ExpiryDate className="des">Expiry: {item.expiryDate}</ExpiryDate>
 						</AccordionSummary>
 						<AccordionDetails
 							sx={(theme) => ({
@@ -130,13 +153,13 @@ const SubNames = () => {
 							<Stack direction="row" spacing={1} pt={1}>
 								<DomainCard type="parent">
 									<span className="role">parent</span>
-									<span className="name">metabowen.eth</span>
+									<span className="name">{item?.parent.name}</span>
 								</DomainCard>
 
-								<DomainCard>
+								{/* <DomainCard>
 									<span className="role">manager</span>
-									<span className="name">metabowen.eth</span>
-								</DomainCard>
+									<span className="name">{item?.parent.name}</span>
+								</DomainCard> */}
 							</Stack>
 
 							<Divider
@@ -147,14 +170,30 @@ const SubNames = () => {
 							/>
 
 							<Stack direction="row" justifyContent="space-between">
-								<LoadingButton startIcon={<DelIcon />} sx={{ mr: 1 }}>
+								<LoadingButton
+									startIcon={<DelIcon />}
+									sx={{ mr: 1 }}
+									onClick={() => {
+										jumpToENSProfile(item.truncatedName);
+									}}
+								>
 									Delete subname
 								</LoadingButton>
 								<Stack direction="row" spacing={0.5}>
-									<LoadingButton startIcon={<SetPrimaryNameIcon />}>
+									<LoadingButton
+										startIcon={<SetPrimaryNameIcon />}
+										onClick={() => {
+											jumpToENSProfile(item.truncatedName);
+										}}
+									>
 										Set as primary name
 									</LoadingButton>
-									<LoadingButton startIcon={<EditIcon />}>
+									<LoadingButton
+										startIcon={<EditIcon />}
+										onClick={() => {
+											jumpToENSProfile(item.truncatedName);
+										}}
+									>
 										Edit profile
 									</LoadingButton>
 									{/* <LoadingButton startIcon={<SellIcon />} variant="contained">
