@@ -16,13 +16,13 @@ const LabelText = { fontSize: '20px', fontWeight: 600 };
 const Setting = () => {
 	const dispatch = useDispatch();
 	const { initialProfile } = useSelector((state) => ({
-		initialProfile: state.reflect_subdomain_loginInfo,
+		initialProfile: state.reflect_loginInfo,
 	}));
 	const navigate = useNavigate();
 	const { handleSubmit, control, reset } = useForm({
 		defaultValues: initialProfile,
 	});
-	const [avatar, setAvatar] = useState();
+	const [avatar, setAvatar] = useState(initialProfile.avatar);
 	const [saveLoading, setSaveLoading] = useState(false);
 
 	const handleSetProfile = async (data) => {

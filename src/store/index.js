@@ -5,7 +5,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import LoginReducer from './reducer/loginInfo';
 
 const rootReducer = combineReducers({
-	reflect_subdomain_loginInfo: LoginReducer,
+	reflect_loginInfo: LoginReducer,
 });
 
 const persistConfig = {
