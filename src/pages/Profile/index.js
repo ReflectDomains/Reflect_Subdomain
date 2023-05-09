@@ -55,7 +55,7 @@ const Profile = () => {
 	const { getNames } = useENSJS();
 	const dispatch = useDispatch();
 	const { profileInfo } = useSelector((state) => ({
-		profileInfo: state.reflect_subdomain_loginInfo,
+		profileInfo: state.reflect_loginInfo,
 	}));
 
 	const generator = new AvatarGenerator();

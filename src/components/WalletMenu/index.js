@@ -25,8 +25,9 @@ const ConnectWallet = () => {
 	const { data: singer, isLoading, isSuccess } = useSigner();
 
 	const dispatch = useDispatch();
-	const { preAccount } = useSelector((state) => ({
-		preAccount: state.reflect_subdomain_loginInfo.preAccount,
+
+	const { profileInfo } = useSelector((state) => ({
+		profileInfo: state.reflect_loginInfo,
 	}));
 
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -85,7 +86,7 @@ const ConnectWallet = () => {
 	useEffect(() => {
 		if (singer && isSuccess && !isLoading && isConnected) {
 			singer.getAddress().then((_account) => {
-				if (_account !== preAccount) handleLogin(singer);
+				if (_account !== profileInfo.preAccount) handleLogin(singer);
 			});
 		}
 		// eslint-disable-next-line
@@ -109,7 +110,13 @@ const ConnectWallet = () => {
 				<LoadingButton
 					id="wallet-menu"
 					shape="round"
-					startIcon={<CommonAvatar scope={24} address={address} />}
+					startIcon={
+						<CommonAvatar
+							scope={24}
+							address={address}
+							avatar={profileInfo.avatar}
+						/>
+					}
 					aria-controls={open ? 'wallet-menu' : undefined}
 					aria-haspopup="true"
 					aria-expanded={open ? 'true' : undefined}
