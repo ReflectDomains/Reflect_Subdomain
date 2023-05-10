@@ -51,8 +51,8 @@ const Setting = () => {
 		setAvatar(img);
 		const resp = await getAvatar();
 		if (resp?.code === 0 && resp?.data?.url) {
-			console.log('avatarUrl:', resp?.data?.url);
-			setAvatar(resp?.data?.url);
+			const url = resp?.data?.url.split('?')[0];
+			setAvatar(url);
 		}
 		inputRef.current.value = '';
 	}, []);
